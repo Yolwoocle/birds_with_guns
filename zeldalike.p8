@@ -2,8 +2,64 @@ pico-8 cartridge // http://www.pico-8.com
 version 32
 __lua__
 function _init()
+	function init_playeur()
+end
+
+function _update60()
 	
 end
+
+function _draw()
+	
+end
+-->8
+--playeur
+function init_playeur()
+	playeur={}
+	add(p,{nb_playeur=1,x=64,y=64})
+end
+
+-->8
+--bulette
+function inti_bulette()
+	bulette = {}
+end
+
+function spawn_bulette(x,y,type_bulette,speed)
+ xy = get_traj(x,y,mouse_x,mouse_y)
+ traj_x = xy.x
+ traj_y = xy.y
+	add(bluette,{x=x,y=y,type_bulette=type_bulette,speed,traj_x,traj_y})
+	
+end
+
+function update_bulette()
+	for i in all(bulette) do
+		i.x += traj_x
+		i.y += traj_y
+	end
+end
+
+function draw_bulette()
+	for i in all(bulette) do
+		spr(type_bulette,i.x,i.y)
+	end
+end
+
+-->8
+--mousse
+function mouse_x_y()
+	poke(0x5f2d, 1)
+	mouse_x=stat(32)
+	mouse_y=stat(33)
+end
+
+function get_traj(x_satr,y_start,x_end,y_end)
+	angle=atan2(x_end-x_satr, y_end-y_start)
+	return {x = cos(angle),
+	y += sin(angle)}
+end
+
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
