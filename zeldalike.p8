@@ -19,6 +19,7 @@ function _draw()
 	draw_bullet()
 	draw_mouse()
 	draw_player()
+	print(xy)
 end
 -->8
 --player
@@ -36,7 +37,7 @@ end
 -->8
 --bullet
 function init_bullet()
-	bulette = {}
+	bullet = {}
 end
 
 function spawn_bullet(x,y,type_bulette,speed)
@@ -70,8 +71,7 @@ end
 
 function get_traj(x_satr,y_start,x_end,y_end)
 	angle=atan2(x_end-x_satr, y_end-y_start)
-	return {x = cos(angle),
-	y = sin(angle)}
+	return {x = cos(angle),y = sin(angle)}
 end
 
 function draw_mouse()
