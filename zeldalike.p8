@@ -9,8 +9,10 @@ end
 function _update60()
  mouse_x_y()
 	update_bullet()
+	player_update()
 	for i in all(player) do
-	 if (btn(🅾️)) spawn_bullet(i.x,i.y,1,1)
+	 --if (btn(🅾️)) 
+	 spawn_bullet(i.x,i.y,1,1)
  end
 end
 
@@ -26,6 +28,15 @@ end
 function init_player()
 	player={}
 	add(player,{nb_player=1,x=64,y=64})
+end
+
+function player_update()
+	for i in all(player) do
+	 if (btn(⬅️)) i.x-=1
+	 if (btn(➡️)) i.x+=1
+	 if (btn(⬆️)) i.y-=1
+	 if (btn(⬇️)) i.y+=1
+	end  
 end
 
 function draw_player()
@@ -44,7 +55,7 @@ function spawn_bullet(x,y,type_bullet,speed)
  xy = get_traj(x,y,mouse_x,mouse_y)
  traj_x = xy.x
  traj_y = xy.y
-	add(bullet,{x=x,y=y,type_bullet=type_bullet,speed,traj_x,traj_y})
+	add(bullet,{x=x,y=y,type_bullet=type_bullet,speed=speed,traj_x=traj_x,traj_y=traj_y})
 	
 end
 
