@@ -1,6 +1,8 @@
 pico-8 cartridge // http://www.pico-8.com
-version 32
+version 33
 __lua__
+--main
+
 function _init()
 	function init_playeur()
 end
@@ -12,6 +14,7 @@ end
 function _draw()
 	
 end
+<<<<<<< HEAD
 -->8
 --playeur
 function init_playeur()
