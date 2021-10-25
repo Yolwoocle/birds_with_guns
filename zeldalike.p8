@@ -40,7 +40,7 @@ function init_bullet()
 	bullet = {}
 end
 
-function spawn_bullet(x,y,type_bulette,speed)
+function spawn_bullet(x,y,type_bullet,speed)
  xy = get_traj(x,y,mouse_x,mouse_y)
  traj_x = xy.x
  traj_y = xy.y
@@ -57,7 +57,7 @@ end
 
 function draw_bullet()
 	for i in all(bullet) do
-		spr(type_bullet,i.x,i.y)
+		spr(i.type_bullet,i.x,i.y)
 	end
 end
 
