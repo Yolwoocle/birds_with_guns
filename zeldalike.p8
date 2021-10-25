@@ -29,8 +29,7 @@ function _update60()
 	update_bullet()
 	player_update()
 	for i in all(player) do
-	 --if (btn(🅾️)) 
-	 spawn_bullet(i.x,i.y,1,1)
+	 if (btn(🅾️)) spawn_bullet(i.x,i.y,1,1)
  end
 end
 
