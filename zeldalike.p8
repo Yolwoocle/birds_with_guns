@@ -83,16 +83,16 @@ function player_update()
 	 p.y += p.dy
 	 
 	 --angle
-	 p.a = atan2(mouse_x-p.x,
-	 mouse_y-p.y)
-	 
-	 --shooting
-	 local fire=stat(34)&1 > 0
-	 local active=stat(34)&2 > 0
-	 
-	 if fire then
-	 	p.gun.shoot(p.x+4,p.y+4,p.a)
-	 end
+		p.a = atan2(mouse_x-p.x,
+		mouse_y-p.y)
+		
+		--shooting
+		local fire=stat(34)&1 > 0
+		local active=stat(34)&2 > 0
+		
+		if fire then
+			p.gun.shoot(p.x+4,p.y+4,p.a)
+		end
 	end
 end
 
