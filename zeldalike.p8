@@ -40,7 +40,7 @@ function init_player()
 		x=64,y=64,
 		dx=0,dy=0,
 		
-		spd=.5,
+		spd=.30,
 		fric=0.8,
 		
 		bx=0,by=0,
@@ -52,6 +52,10 @@ function player_update()
 	for p in all(players) do
 	 local dx,dy = p.dx,p.dy
 	 local spd = p.spd
+	 
+	 if stat(34) & 1==1 then
+	  spawn_bullet(p.x,p.y,1,2)
+	 end
 	 
 	 if (btn(⬅️,p.n)) p.dx-=spd
 	 if (btn(➡️,p.n)) p.dx+=spd
@@ -89,7 +93,7 @@ end
 
 function update_bullet()
 	for i in all(bullet) do
-		if check_flag(1,i.x+(i.traj_x*1.5)+4,i.y+4+(i.traj_y*1.5)) then
+		if is_solid(i.x+(i.traj_x*1.5)+4,i.y+4+(i.traj_y*1.5)) then
 		 del(bullet,i)
 	 end
 		i.x += i.traj_x
