@@ -13,9 +13,10 @@ function _update60()
  mouse_x_y()
 	update_bullet()
 	player_update()	
+	updaterafale()
 	for i in all(players) do
-	 if (stat(34) & 1==1) spawn_bullet(i.x,i.y,2,2,10,1,3)
-	 if (stat(34) & 2==2) spawn_bullet(i.x,i.y,2,4,5,6,10)
+	 if (stat(34) & 1==1) spawn_bullet(i.x,i.y,1,1,10,1,60)
+	 if (stat(34) & 2==2) spawn_bullet(i.x,i.y,2,1,5,6,10,10)
 	end
 end
 
@@ -30,6 +31,7 @@ function _draw()
 	print(players[1].dx, 0,0)
 	print(players[1].dy, 0,10)
 	print (timeur_bullet,15,15)
+	print(rafalels[1],64,64)
 
 end
 -->8
@@ -47,7 +49,7 @@ function init_player()
 		fric=0.8,
 		
 		bx=0,by=0,
-		bw=8,bh=8,
+		bw=8,bh=8,gun
 	})
 end
 
@@ -83,9 +85,10 @@ end
 function init_bullet()
 	bullet = {}
 	timeur_bullet = 0
+	rafalels = {}
 end
 
-function spawn_bullet(x,y,type_bullet,speed,timeur_bullet1,sprite,nb_bullet)
+function spawn_bullet(x,y,type_bullet,speed,timeur_bullet1,sprite,nb_bullet,ecartement)
  if timeur_bullet == 0 then
  local xy = get_traj(x,y,mouse_x,mouse_y)
  local traj_x = xy.x*speed
@@ -94,18 +97,21 @@ function spawn_bullet(x,y,type_bullet,speed,timeur_bullet1,sprite,nb_bullet)
 	timeur_bullet = timeur_bullet1
 	
 	if type_bullet == 1 then
-	 add(bullet,{x=x,y=y,type_bullet=type_bullet,traj_x=traj_x,traj_y=traj_y,sprite=sprite})
+	 nvelement = {x=x,y=y,type_bullet=type_bullet,traj_x=traj_x,traj_y=traj_y,sprite=sprite}
+  rafale(10,nvelement)
  end
  
  if type_bullet == 2 then
-  for i=1,nb_bullet do
-  	add(bullet,
+  for i=0,nb_bullet do
+   if nb_bullet == 0 then
+    add(bullet,{x=x,y=y,type_bullet=type_bullet,traj_x=traj_x,traj_y=traj_y,sprite=sprite})
+  	else add(bullet,
   	{x=x,y=y
   	,type_bullet=type_bullet
-  	,traj_x=cos(angle+i/10)*speed
-  	,traj_y=sin(angle+i/10)*speed
+  	,traj_x=cos((angle-((1/ecartement)/2)+(i/nb_bullet)/ecartement))*speed
+  	,traj_y=sin((angle-((1/ecartement)/2)+(i/nb_bullet)/ecartement))*speed
   	,sprite=sprite})
-   
+   end
   end
  end
  end
@@ -128,6 +134,17 @@ function draw_bullet()
 	end
 end
 
+function rafale(nb,bullet)
+ add(rafalels,{nb=nb,bullet=bullet})
+end
+
+function updaterafale()	
+	for i in all(rafalels) do
+  if (i.nb<1) del(rafalels,i)
+  add(bullet,i.bullet)
+  i.nb -=1
+	end
+end
 -->8
 --mouse
 function mouse_x_y()
