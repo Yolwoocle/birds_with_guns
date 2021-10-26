@@ -1,6 +1,9 @@
 pico-8 cartridge // http://www.pico-8.com
-version 32
+version 33
 __lua__
+--game name goes here
+--by gouspourd,yolwoocle,notgoyome
+
 function _init()
 	init_player()
 	init_bullet()
@@ -12,7 +15,7 @@ function _update60()
 	player_update()	
 	for i in all(player) do
 	 if (stat(34) & 1==1) spawn_bullet(i.x,i.y,1,2)
- end
+	end
 end
 
 function _draw()
@@ -42,13 +45,13 @@ local ynext = 0
 	   i.x+=xnext
 	   i.y+=ynext
 	  end
-  end
+	 end
 end
 
 function draw_player()
- for i in all(player) do
-  spr(3,i.x,i.y)
- end
+	for i in all(player) do
+		spr(3,i.x,i.y)
+	end
 end
 
 -->8
