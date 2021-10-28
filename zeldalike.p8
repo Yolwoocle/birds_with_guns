@@ -425,7 +425,7 @@ function make_enemy(x,y,spr)
 		dx=0,dy=0,
 		
 		spr=spr,
-		gun=guns.revolver,
+		gun=guns.shotgun,
 		bx=0,by=0,
 		bw=8,bh=8,
 		cd=20,
@@ -476,7 +476,9 @@ function canshoot(e)
 		e.a=angle
 	 local x = cos(angle)
 	 local y = sin(angle)
-	for i =1,sqrt(abs(players[1].y-e.y)^2+abs(players[1].x-e.x)^2)/5 do
+	 local dist =sqrt(abs(players[1].y-e.y)^2+abs(players[1].x-e.x)^2)/5
+	 if abs(dist)<15 then
+	for i =1,dist do
 	 add(checker,{x=e.x+x*i*5,y=e.y+y*i*5})
 	end
 	 for i in all (checker) do
@@ -486,7 +488,8 @@ function canshoot(e)
 			end
 	end
 	delchecker()
-	return true 
+	return true
+	end 
 end
 
 function drawcheck()
