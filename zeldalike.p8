@@ -20,6 +20,7 @@ function _init()
 	create_room(2)
 	copy_room(0,co_y)
 	create_room(3)
+	cde = 5
 end
 
 function _update60()
@@ -38,9 +39,15 @@ function _update60()
 		update_enemy(e)
 		if(e.destroy_flag)del(enemy,e)
 	end
+	 cde = max(cde-1,0)
+	if stat(34)&2==2 and cde==0then
+	spenemie(mouse_x,mouse_y)
+	cde = 5
+	end
 end
 
 function _draw()
+ 
 	pal(1,129,1)
 	camera(players[1].x-60)
 
@@ -63,8 +70,10 @@ function _draw()
 	for e in all(enemies) do
 		draw_enemy(e)
 	end
-	
+	drawcheck()
 	draw_mouse()
+ print(a,50,50)
+ 
 end
 -->8
 --player
@@ -104,7 +113,7 @@ function player_update()
 		p.dx *= p.fric
 		p.dy *= p.fric
 		
-		collide(p)
+		collide(p,0.1)
 		
 		p.x += p.dx
 		p.y += p.dy
@@ -132,7 +141,8 @@ function draw_player()
 		local x=p.x+cos(p.a)*6 +0
 		local y=p.y+sin(p.a)*3 +0
 		spr(p.gun.spr,x,y,1,1, p.flip)
-		
+		print(cos(p.a),2,2,7)
+		print(p.a,2,10,7)
 		spr(p.spr,p.x,p.y,1,1, p.flip)
 	end
 end
@@ -193,7 +203,6 @@ guns = {
 function spawn_bullet(x,y,dir,spd,spr)
 	local dx=cos(dir)*spd
 	local dy=sin(dir)*spd
-	
 	add(actors,{
 		x=x,  y=y,
 		dx=dx,dy=dy,
@@ -299,7 +308,7 @@ end
 --mouse
 function mouse_x_y()
 	poke(0x5f2d, 1)
-	mouse_x=stat(32)+players[1].x-60
+	mouse_x=stat(32)+players[1]	.x-60
 	mouse_y=stat(33)
 end
 
@@ -330,12 +339,12 @@ function collision(x,y,w,h,flag)
 	or is_solid(x+w,y+h) 
 end
 
-function collide(o)
+function collide(o,bounce1)
 	local x,y = o.x,o.y
 	local dx,dy = o.dx,o.dy
 	local w,h = o.bw,o.bh
 	local ox,oy = x+o.bx,y+o.by
-	local bounce = 0.1
+	local bounce = bounce1
 	
 	--collisions
 	local e = 1
@@ -412,23 +421,84 @@ end
 function make_enemy(x,y,spr)
 	return {
 		x=x, y=y,
+		angle=0,
 		dx=0,dy=0,
 		
 		spr=spr,
+		gun=guns.revolver,
+		bx=0,by=0,
+		bw=8,bh=8,
+		cd=20,
+		timeur = 0,
+		a=0,
 	}
 end
 
 function init_enemies()
 	enemies = {}
-	add(enemies,make_enemy(64,64,96))
+	checker = {}
+end
+
+function spenemie(x,y)
+	add(enemies,make_enemy(x,y,96))
 end
 
 function update_enemy(e)
-	
+	for i in all(enemies) do 
+	 changedirection(i)
+		collide(i,1)
+		i.x += i.dx
+	 i.y += i.dy
+	 i.gun:update()
+	 if canshoot(i) and i.gun.timer<=0 
+	 then
+			i.gun:fire(i.x+4,i.y+4,i.a)
+		end
+	end
 end
 
 function draw_enemy(e)
 	spr(e.spr, e.x,e.y)
+end
+
+function changedirection(i)
+	i.timeur-=1
+	if i.timeur < 1 and rnd({1,2})==1then
+	 i.angle += rnd(0.5)-0.25
+	 i.timeur=i.cd
+	 i.dx=cos(i.angle)/3 i.dy= sin(i.angle)/3
+	end
+end
+
+function canshoot(e)
+	local angle = atan2(players[1].x-e.x,
+		players[1].y-e.y)
+		e.a=angle
+	 local x = cos(angle)
+	 local y = sin(angle)
+	for i =1,sqrt(abs(players[1].y-e.y)^2+abs(players[1].x-e.x)^2)/5 do
+	 add(checker,{x=e.x+x*i*5,y=e.y+y*i*5})
+	end
+	 for i in all (checker) do
+	 	if is_solid(i.x,i.y) then
+	 	 delchecker()
+	 		return false 
+			end
+	end
+	delchecker()
+	return true 
+end
+
+function drawcheck()
+	for i in all(checker) do
+	 spr(19,i.x,i.y)
+	end
+end
+
+function delchecker()
+	for i in all(checker) do
+	  del(checker,i)
+	end
 end
 __gfx__
 00000000000000007000000000000000116611655500005500000000000000000000000000000000000000000000000000000000000000000000000000000000
