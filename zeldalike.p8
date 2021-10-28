@@ -9,7 +9,7 @@ function _init()
 	init_player()
 	--create_room(r1)
 	init_enemies()
-	create_room(r2)
+	--create_room(r2)
 	mx=0
 	my=0
 	copy_room(1,co_y)
@@ -299,7 +299,7 @@ end
 --mouse
 function mouse_x_y()
 	poke(0x5f2d, 1)
-	mouse_x=stat(32)
+	mouse_x=stat(32)+players[1].x-60
 	mouse_y=stat(33)
 end
 
