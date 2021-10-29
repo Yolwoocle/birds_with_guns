@@ -159,7 +159,7 @@ function init_player()
 		
 		spr=112+rnd(12),
 		
-		gun=copy(guns.revolver),
+		gun=copy(guns.shotgun),
 	})
 end
 
@@ -330,6 +330,9 @@ function update_bullet(b)
 		local dy=e.y+4-b.y
 		if dx*dx+dy*dy < e.r*e.r then
 			e.life -= b.dmg
+			e.dx+=b.dx*0.5*#enemies/2
+			e.dy+=b.dy*0.5*#enemies/2
+			e.timer = 6
 			b.destroy_flag = true
 		end
 	end
@@ -576,7 +579,7 @@ function swichtile(x,y)
 end
 -->8
 --enemies
-function make_enemy(x,y,spr,spd,gunt)
+function make_enemy(x,y,spr,spd,life,gunt)
 	return {
 		x=x, y=y,
 		angle=0,
@@ -588,7 +591,7 @@ function make_enemy(x,y,spr,spd,gunt)
 		r=8,
 		
 		spr=spr,
-		life=10,
+		life=life,
 		
 		gun=gunt,
 		cd=30,
@@ -605,7 +608,7 @@ end
 function spenemie(x,y)
 	add(enemies,make_enemy(
 	 x,y,
-	 96,1,
+	 96,1,5,
 	 copy(guns.enemy_revolver)
 	))
 end
