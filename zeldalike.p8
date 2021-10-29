@@ -250,13 +250,13 @@ end
 --------
 
 --[[
-function spawn_bullet(x,y,type_bullet,speed,timeur_bullet1,sprite,nb_bullet,ecartement)
-	if timeur_bullet == 0 then
+function spawn_bullet(x,y,type_bullet,speed,timer_bullet1,sprite,nb_bullet,ecartement)
+	if timer_bullet == 0 then
 		local xy = get_traj(x,y,mouse_x,mouse_y)
 		local traj_x = xy.x*speed
 		local traj_y = xy.y*speed
 		local angle = xy.angle
-		timeur_bullet = timeur_bullet1
+		timer_bullet = timer_bullet1
 		
 		if type_bullet == 1 then
 			nvelement = {
@@ -295,7 +295,7 @@ end
 
 -- -(i/2)+i/nb_bullet
 function update_bullet()
- if (timeur_bullet>0)timeur_bullet-=1
+ if (timer_bullet>0)timer_bullet-=1
 	for i in all(bullet) do
 		if is_solid(i.x+(i.traj_x*1.5)+4,i.y+4+(i.traj_y*1.5)) then
 		 del(bullet,i)
@@ -458,8 +458,8 @@ function make_enemy(x,y,spr,spd,gunt)
 		life=10,
 		
 		gun=gunt,
-		cd=40,
-		timeur = 0,
+		cd=6000,
+		timer = 0,
 		a=0,
 	}
 end
@@ -479,13 +479,14 @@ end
 
 function update_enemy(e)
 	for i in all(enemies) do 
-	 changedirection(i)
+		changedirection(i)
 		collide(i,1)
 		i.x += i.dx
-	 i.y += i.dy
-	 i.gun:update()
-	 if canshoot(i) and i.gun.timer<=0 
-	 then
+		i.y += i.dy
+		i.gun:update()
+		
+		if canshoot(i) and 
+		i.gun.timer<=0 then
 			i.gun:fire(i.x+4,i.y+4,i.a)
 		end
 	end
@@ -494,15 +495,15 @@ end
 function draw_enemy(e)
 	spr(e.spr, e.x,e.y)
 	print(e.life, e.x+8,e.y,7)
-	--print(e.timeur,e.x,e.y)
+	--print(e.timer,e.x,e.y)
 	--print(e.dy,e.x,e.y+6)
 end
 
 function changedirection(i)
-	i.timeur-=1--(1/(#enemies))
-	if i.timeur < 1 then
+	i.timer-=1--(1/(#enemies))
+	if i.timer < 1 then
 	 i.angle += rnd(0.5)-0.25
-	 i.timeur=i.cd
+	 i.timer=i.cd
 	 i.dx=cos(i.angle)/8--/(#enemies)*i.spd 
 	 i.dy=sin(i.angle)/8--/(#enemies)*i.spd
 	end
