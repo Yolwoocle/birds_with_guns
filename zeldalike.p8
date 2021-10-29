@@ -32,7 +32,6 @@ function _update60()
 	delchecker()
 	mouse_x_y()
 	player_update()
-	
 	for i in all(players) do
 	end
 	
@@ -40,7 +39,6 @@ function _update60()
 		a:update()
 		if(a.destroy_flag)del(actors,a)
 	end
-	
 	for e in all(enemies) do
 		update_enemy(e)
 		if(e.destroy_flag)del(enemy,e)
@@ -121,6 +119,7 @@ function draw_ghost_connector()
 	if camx<0 then
 		map(3*16,0, -128,0, 16,16)
 	end
+	print(unloaded,players[1].x+10,players[1].y)
 end
 
 -->8
@@ -303,8 +302,8 @@ function update_bullet(b)
 		          y=e.y+e.dy+e.bh}
 		if not b.is_enemy and rect_overlap(a1,a2,b1,b2)then
 			e.life -= 1--b.dmg
-			e.dx+=b.dx*0.5*#enemies/2
-			e.dy+=b.dy*0.5*#enemies/2
+			e.dx+=b.dx*0.5*(#enemies-unloaded)/2
+			e.dy+=b.dy*0.5*(#enemies-unloaded)/2
 			e.timer = 6
 			b.destroy_flag = true
 		end
@@ -581,14 +580,16 @@ function update_enemy(e)
 	 if(i.life<1)del(enemies,i)
 		changedirection(i)
 		collide(i,1)
-		i.x += i.dx/#enemies
-		i.y += i.dy/#enemies
+		i.x += i.dx/(#enemies)
+		i.y += i.dy/(#enemies)
 
 		i.gun.timer = max(i.gun.timer-1/#enemies,0)
 		if i.gun.timer<=0 and 
 		canshoot(i) then
 			i.gun:fire(i.x+4,i.y+4,i.a)
 		end
+		else i.x+=cos(i.angle)/8/(#enemies)
+	 i.y+=sin(i.angle)/8/(#enemies)
 	end
 	end
 end
