@@ -155,7 +155,7 @@ end
 -->8
 --gun & bullet
 
-function make_gun(name,spr,cd,spd,oa,fire,is_enemy)
+function make_gun(name,spr,cd,spd,oa,is_enemy,fire)
 	local gun = {
 		name=name,
 		spr=spr,
@@ -176,7 +176,7 @@ function make_gun(name,spr,cd,spd,oa,fire,is_enemy)
 		
 		spd = spd or gun.spd
 		spawn_bullet(x,y,dir,
-		spd,3,s)
+		spd,3,s,is_enemy)
 		gun.timer = gun.cooldown
 	end
 	
@@ -189,8 +189,8 @@ end
 
 guns = {
 	revolver = make_gun("revolver",
---spr cd spd oa
-		64, 10,3, .02,
+--spr cd spd oa is_enemy
+		64, 10,3, .02,false,
 		function(gun,x,y,dir)
 			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
@@ -198,8 +198,8 @@ guns = {
 	),
 	
 	shotgun = make_gun("shotgun",
---spr cd spd oa
-	 65, 60,4, .05,
+--spr cd spd oa is_enemy
+	 65, 60,4, .05,false,
 	 function(gun,x,y,dir)
 	 	for i=1,8 do
 	 		local o=rnd(.1)-.05
@@ -210,8 +210,8 @@ guns = {
 	 
 	 
 	enemy_revolver = make_gun("revolver",
---spr cd spd oa
-		64, 10,3, .02,
+--spr cd spd oa is_enemy
+		64, 100,1, .02,true   ,
 		function(gun,x,y,dir)
 			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
@@ -219,7 +219,7 @@ guns = {
 	,true),
 }
 
-function spawn_bullet(x,y,dir,spd,r,spr)
+function spawn_bullet(x,y,dir,spd,r,spr,is_enemy)
 	local dx=cos(dir)*spd
 	local dy=sin(dir)*spd
 	add(actors,{
@@ -228,7 +228,7 @@ function spawn_bullet(x,y,dir,spd,r,spr)
 		r=r,
 		
 		spr=spr,
-		
+		is_enemy=is_enemy,
 		destroy_flag=false,
 		update=update_bullet,
 		draw=draw_bullet,
@@ -499,8 +499,8 @@ function update_enemy(e)
 		i.y += i.dy/#enemies
 
 		i.gun.timer = max(i.gun.timer-1/#enemies,0)
-		if canshoot(i) and 
-		i.gun.timer<=0 then
+		if i.gun.timer<=0 and 
+		canshoot(i) then
 			i.gun:fire(i.x+4,i.y+4,i.a)
 		end
 	end
@@ -509,8 +509,8 @@ end
 function draw_enemy(e)
 	spr(e.spr, e.x,e.y)
 	print(e.life, e.x,e.y-8,7)
-	print(e.gun.timer,e.x,e.y)
-	print(e.dy,e.x,e.y+6)
+	--print(e.gun.timer,e.x,e.y)
+	--print(e.dy,e.x,e.y+6)
 end
 
 function changedirection(i)
@@ -525,24 +525,22 @@ end
 
 function canshoot(e)
 	local angle = atan2(players[1].x-e.x,
-		players[1].y-e.y)
-		e.a=angle
-	 local x = cos(angle)
-	 local y = sin(angle)
-	 local dist =sqrt(abs(players[1].y-e.y)^2+abs(players[1].x-e.x)^2)/8
-	 if abs(dist)<7.5 then
-	for i =1,dist do
-	 add(checker,{x=e.x+x*i*8,y=e.y+y*i*8})
-	end
-	 for i in all (checker) do
-	 	if is_solid(i.x+4,i.y+4) then
+	players[1].y-e.y)
+	e.a=angle
+	local x = cos(angle)
+	local y = sin(angle)
+	local dist =sqrt(abs(players[1].y-e.y)^2+abs(players[1].x-e.x)^2)/8
+	if abs(dist)<7.5 then
+	 for i =1,dist do
+	 add(checker,{x=e.x+x*i*8,y=e.y+y*i*8})  
+	  if is_solid(checker[#checker].x+4,checker[#checker].y+4) then
 	 	 delchecker()
-	 		return false 
-			end
+	   return false 
+	  end
+	 end
+	 delchecker()
+	 return true 
 	end
-	delchecker()
-	return true
-	end 
 end
 
 function drawcheck()
