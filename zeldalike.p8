@@ -541,6 +541,7 @@ end
 
 function update_enemy(e)
 	for i in all(enemies) do 
+	if abs(players[1].x-e.x)<70 then
 		changedirection(i)
 		collide(i,1)
 		i.x += i.dx/#enemies
@@ -551,6 +552,7 @@ function update_enemy(e)
 		canshoot(i) then
 			i.gun:fire(i.x+4,i.y+4,i.a)
 		end
+	end
 	end
 end
 
@@ -578,7 +580,7 @@ function canshoot(e)
 	local x = cos(angle)
 	local y = sin(angle)
 	local dist =sqrt(abs(players[1].y-e.y)^2+abs(players[1].x-e.x)^2)/8
-	if abs(dist)<7.5 then
+	if abs(dist)<7 and abs(players[1].x-e.x)<128 then
 	 for i =1,dist do
 	 add(checker,{x=e.x+x*i*8,y=e.y+y*i*8})  
 	  if is_solid(checker[#checker].x+4,checker[#checker].y+4) then
