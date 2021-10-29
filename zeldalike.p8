@@ -472,7 +472,7 @@ function make_enemy(x,y,spr,spd,gunt)
 		life=10,
 		
 		gun=gunt,
-		cd=6000,
+		cd=30,
 		timer = 0,
 		a=0,
 	}
@@ -495,10 +495,10 @@ function update_enemy(e)
 	for i in all(enemies) do 
 		changedirection(i)
 		collide(i,1)
-		i.x += i.dx
-		i.y += i.dy
-		i.gun:update()
-		
+		i.x += i.dx/#enemies
+		i.y += i.dy/#enemies
+
+		i.gun.timer = max(i.gun.timer-1/#enemies,0)
 		if canshoot(i) and 
 		i.gun.timer<=0 then
 			i.gun:fire(i.x+4,i.y+4,i.a)
@@ -508,13 +508,13 @@ end
 
 function draw_enemy(e)
 	spr(e.spr, e.x,e.y)
-	print(e.life, e.x+8,e.y,7)
-	--print(e.timer,e.x,e.y)
-	--print(e.dy,e.x,e.y+6)
+	print(e.life, e.x,e.y-8,7)
+	print(e.gun.timer,e.x,e.y)
+	print(e.dy,e.x,e.y+6)
 end
 
 function changedirection(i)
-	i.timer-=1--(1/(#enemies))
+	i.timer-=1
 	if i.timer < 1 then
 	 i.angle += rnd(0.5)-0.25
 	 i.timer=i.cd
