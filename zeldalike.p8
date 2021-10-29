@@ -24,6 +24,7 @@ function _init()
 end
 
 function _update60()
+ delchecker()
 	update_room()	
 	mouse_x_y()
 	player_update()
@@ -42,7 +43,7 @@ function _update60()
 	 cde = max(cde-1,0)
 	if stat(34)&2==2 and cde==0then
 	spenemie(mouse_x,mouse_y)
-	cde = 5
+	cde = 10
 	end
 end
 
@@ -72,7 +73,6 @@ function _draw()
 	end
 	drawcheck()
 	draw_mouse()
- print(a,50,50)
  
 end
 -->8
@@ -418,17 +418,17 @@ function update_room()
 end
 -->8
 --enemies
-function make_enemy(x,y,spr)
+function make_enemy(x,y,spr,spd,gunt)
 	return {
 		x=x, y=y,
 		angle=0,
 		dx=0,dy=0,
-		
+		spd=spd,
 		spr=spr,
-		gun=guns.shotgun,
+		gun=gunt,
 		bx=0,by=0,
 		bw=8,bh=8,
-		cd=20,
+		cd=40,
 		timeur = 0,
 		a=0,
 	}
@@ -440,7 +440,7 @@ function init_enemies()
 end
 
 function spenemie(x,y)
-	add(enemies,make_enemy(x,y,96))
+	add(enemies,make_enemy(x,y,96,1,guns.revolver))
 end
 
 function update_enemy(e)
@@ -459,14 +459,17 @@ end
 
 function draw_enemy(e)
 	spr(e.spr, e.x,e.y)
+	--print(e.timeur,e.x,e.y)
+	--print(e.dy,e.x,e.y+6)
 end
 
 function changedirection(i)
-	i.timeur-=1
-	if i.timeur < 1 and rnd({1,2})==1then
+	i.timeur-=(1/(#enemies))
+	if i.timeur < 1 then
 	 i.angle += rnd(0.5)-0.25
 	 i.timeur=i.cd
-	 i.dx=cos(i.angle)/3 i.dy= sin(i.angle)/3
+	 i.dx=cos(i.angle)/8/(#enemies)*i.spd 
+	 i.dy=sin(i.angle)/8/(#enemies)*i.spd
 	end
 end
 
@@ -476,13 +479,13 @@ function canshoot(e)
 		e.a=angle
 	 local x = cos(angle)
 	 local y = sin(angle)
-	 local dist =sqrt(abs(players[1].y-e.y)^2+abs(players[1].x-e.x)^2)/5
-	 if abs(dist)<15 then
+	 local dist =sqrt(abs(players[1].y-e.y)^2+abs(players[1].x-e.x)^2)/8
+	 if abs(dist)<7.5 then
 	for i =1,dist do
-	 add(checker,{x=e.x+x*i*5,y=e.y+y*i*5})
+	 add(checker,{x=e.x+x*i*8,y=e.y+y*i*8})
 	end
 	 for i in all (checker) do
-	 	if is_solid(i.x,i.y) then
+	 	if is_solid(i.x+4,i.y+4) then
 	 	 delchecker()
 	 		return false 
 			end
@@ -499,9 +502,7 @@ function drawcheck()
 end
 
 function delchecker()
-	for i in all(checker) do
-	  del(checker,i)
-	end
+	checker = {}
 end
 __gfx__
 00000000000000007000000000000000116611655500005500000000000000000000000000000000000000000000000000000000000000000000000000000000
