@@ -135,7 +135,6 @@ function draw_ghost_connector()
 	if camx<0 then
 		map(3*16,0, -128,0, 16,16)
 	end
-	print(unloaded,players[1].x+10,players[1].y)
 end
 
 -->8
@@ -329,8 +328,8 @@ function update_bullet(b)
 		local dy=e.y+4-b.y
 		if not b.is_enemy and dx*dx+dy*dy < e.r*e.r then
 			e.life -= b.dmg
-			e.dx+=b.dx*0.5*(#enemies-unloaded)/2
-			e.dy+=b.dy*0.5*(#enemies-unloaded)/2
+			e.dx+=b.dx*0.5*(#enemies)/2
+			e.dy+=b.dy*0.5*(#enemies)/2
 			e.timer = 6
 			b.destroy_flag = true
 		end
