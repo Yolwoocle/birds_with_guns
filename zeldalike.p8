@@ -287,7 +287,7 @@ end
 guns = {
 	revolver = make_gun("revolver",
 --spr cd spd oa dmg is_enemy
-		64, 15,3, .02,3   ,false,
+		64, 1,3, .02,3   ,false,
 		function(gun,x,y,dir)
 			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
@@ -372,7 +372,7 @@ function update_bullet(b)
 	end
 	
 	--destroy on collision
-	if is_solid(b.x,b.y) or b.x<camx or b.x>camx+128 then
+	if is_solid(b.x,b.y) or b.x+11<camx or b.x>camx+128+11 then
 		if check_flag(1,b.x,b.y) then
 		 mset(b.x\8,b.y\8,rnd({39}))
 		 add(random,{x=(b.x\8)*8+4,y=(b.y\8)*8+4,spr=rnd({55,22,1,1}),f=rnd({true,false}),r=rnd({true,false})})
