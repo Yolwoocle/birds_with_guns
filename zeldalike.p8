@@ -327,7 +327,7 @@ guns = {
 	
 	assaultrifle = make_gun("assault rifle",
 --spr cd spd oa dmg is_enemy
-		67, 30,3, .02,1   ,false,
+		67, 30,4, .02,1   ,false,
 		function(gun,x,y,dir)
 			dir+=rnd(2*gun.oa)-gun.oa
 			gun.burst = 4
