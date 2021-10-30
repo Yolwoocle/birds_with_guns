@@ -94,6 +94,8 @@ function _draw()
 	end
 	
 	drawcheck()
+	draw_player_ui()
+	--no more code below this--
 	draw_mouse()
 end
 
@@ -162,9 +164,14 @@ function init_player()
 		bx=2,by=2,
 		bw=4,bh=4,
 		
+		life=10,
+		maxlife=10,
+		ammo=250,
+		maxammo=250,
+		
 		spr=112+rnd(12),
 		
-		gun=copy(guns.sniper),
+		gun=copy(guns.revolver),
 	})
 end
 
@@ -225,7 +232,6 @@ function player_update()
 				p.x -= 128*wagonlen
 				p.x = max(p.x, 0)
 			end
-
 		end
 	end
 end
@@ -251,6 +257,11 @@ function draw_player()
 		
 		palt()
 	end
+end
+
+function draw_player_ui()
+	local p = players[1]
+	rectfill(camx+1,1,camx+20,6,7)
 end
 
 -->8
@@ -279,7 +290,9 @@ function make_gun(name,spr,cd,spd,oa,dmg,is_enemy,fire)
 		--remove? it complicates code
 		local s=93
 		if(gun.is_enemy)s=95
-		if(not gun.is_enemy)shake+=0.5*max(0,1-shake)
+		if not gun.is_enemy then
+			shake += 2*max(0,1-shake)
+		end
 		
 		spd = spd or gun.spd
 		spawn_bullet(x,y,dir,
