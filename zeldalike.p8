@@ -56,7 +56,7 @@ function _update60()
 	
 	local wl = wagonlen
 	--unlock next wagon
-	if btn(❎) and--#enemies <= 0 and 
+	if #enemies <= 0 and 
 	not enemiescleared then
 		local x=(wl-1)*16
 		
