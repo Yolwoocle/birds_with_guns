@@ -144,7 +144,7 @@ function update_camera()
 	
 	if cam_follow_player then
 		--camera follows player
-		camx = max(0,px-60)
+		camx = max(-8,px-60)
 		camx = min(camx,128*(wl-2)+8)
 		camx = flr(camx)
 		camy = 0
@@ -238,7 +238,7 @@ function player_update()
 			
 			--pan cam to next wagon
 			camx = -128
-			targetcamx=0
+			targetcamx=-8
 			--teleport players
 			for p in all(players)do
 				p.x -= 128*wagonlen
