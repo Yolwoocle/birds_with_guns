@@ -416,7 +416,7 @@ function update_bullet(b)
 	end
 	
 	--destroy on collision
-	if is_solid(b.x,b.y) then
+	if is_solid(b.x,b.y) or b.x+11<camx or b.x>camx+128+11 then
 		if check_flag(1,b.x,b.y) then
 		 mset(b.x\8,b.y\8,39)
 		 add(random,{x=(b.x\8)*8+4,y=(b.y\8)*8+4,spr=rnd({55,22,1,1}),f=rnd({true,false}),r=rnd({true,false})})
