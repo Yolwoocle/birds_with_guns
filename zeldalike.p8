@@ -287,7 +287,7 @@ end
 guns = {
 	revolver = make_gun("revolver",
 --spr cd spd oa dmg is_enemy
-		64, 1,3, .02,3   ,false,
+		64, 15,3, .02,3   ,false,
 		function(gun,x,y,dir)
 			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
@@ -317,7 +317,7 @@ guns = {
 	
 	snipeurpisto = make_gun("gunslime",
 --spr cd spd oa  dmg is_enemy
-		64, 100,5, 0, 10, true,
+		64, 100,1, 0, 10, true,
 		function(gun,x,y,dir)
 			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
@@ -630,8 +630,10 @@ function swichtile(x,y)
 end
 
 function parcourmap()
-	for x=camx/8,(camx+(128*wagonlen-1))/8 do
-	 for y=camy/8,camy+128/8 do
+	local x1=0
+	if(wagon_n==0)x1=16
+	for x=x1,16*(wagonlen-1) do
+	 for y=2,12 do
 	  if mget(x,y)==39 and rnd({1,2,3,4,5})==5 then
 	   spenemie(x*8,y*8,enemy.snipeur)
 	  end
