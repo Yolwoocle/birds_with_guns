@@ -53,7 +53,7 @@ function _update60()
 	
 	 cde = max(cde-1,0)
 	if stat(34)&2==2 and cde==0then
-		spenemie(mouse_x,mouse_y)
+		spenemie(mouse_x,mouse_y,enemy.slime)
 		cde = 10
 	end
 	
@@ -603,14 +603,23 @@ end
 function init_enemies()
 	enemies = {}
 	checker = {}
-end
-
-function spenemie(x,y)
-	add(enemies,make_enemy(
+	enemy= {
+	
+ slime=make_enemy(
 	 x,y,
 	 96,1,5,
-	 copy(guns.enemy_revolver)
-	))
+	 guns.enemy_revolver)
+
+}
+
+end
+
+function spenemie(x,y,name)
+ local a=copy(name)
+ a.x = x
+ a.y = y
+ a.gun = copy(a.gun)
+	add(enemies,a)
 end
 
 function update_enemy(e)
