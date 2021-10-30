@@ -41,10 +41,10 @@ function _update60()
 		a:update()
 		if(a.destroy_flag)del(actors,a)
 	end
-	for e in all(enemies) do
+	--for e in all(enemies) do
 		update_enemy(e)
-		if(e.destroy_flag)del(enemy,e)
-	end
+		--if(e.destroy_flag)del(enemy,e)
+	--end
 	
 	for p in all(particles) do
 		update_ptc(p)
@@ -157,7 +157,7 @@ function init_player()
 		
 		spr=112+rnd(12),
 		
-		gun=copy(guns.shotgun),
+		gun=copy(guns.revolver),
 	})
 end
 
@@ -221,8 +221,9 @@ function draw_player()
 	for p in all(players) do
 		local x=flr(p.x) + cos(p.a)*6 +0
 		local y=flr(p.y) + sin(p.a)*3 +0
-		spr(p.gun.spr,x,y,1,1, p.flip)
 		spr(p.spr,p.x,p.y,1,1, p.flip)
+		spr(p.gun.spr,x,y,1,1, p.flip)
+		
 	end
 	palt()
 end
@@ -303,7 +304,7 @@ function spawn_bullet(x,y,dir,spd,r,spr,dmg,is_enemy)
 		dx=dx,dy=dy,
 		r=4,
 		dmg=dmg,
-		
+		spd=spd,
 		spr=spr,
 		is_enemy=is_enemy,
 		destroy_flag=false,
@@ -328,9 +329,10 @@ function update_bullet(b)
 		local dy=e.y+4-b.y
 		if not b.is_enemy and dx*dx+dy*dy < e.r*e.r then
 			e.life -= b.dmg
-			e.dx+=b.dx*0.5*(#enemies)/2
-			e.dy+=b.dy*0.5*(#enemies)/2
-			e.timer = 6
+			e.dx+=b.dx*b.spd/10
+			e.dy+=b.dy*b.spd/10
+			e.timer = 5
+			make_ptc(b.x,b.y,rnd(4)+6,10,.8)
 			b.destroy_flag = true
 		end
 	end
@@ -613,30 +615,30 @@ end
 
 function update_enemy(e)
 	for i in all(enemies) do 
-	if abs(camx+64-e.x)<70 then
+	if abs(camx+64-i.x)<70 then
 	 if(i.life<1)del(enemies,i)
 		changedirection(i)
-		collide(i,1)
-		i.x += i.dx/#enemies
-		i.y += i.dy/#enemies
+		collide(i,0.2)
 		
-		i.gun.timer = max(i.gun.timer-1/#enemies,0)
+		i.x += i.dx
+		i.y += i.dy
+		
+		i.gun.timer = max(i.gun.timer-1--/#enemies
+		,0)
 		if i.gun.timer<=0 and 
 		canshoot(i) then
 			i.gun:fire(i.x+4,i.y+4,i.a)
 		end
-		else i.x+=cos(i.angle)/8/(#enemies)
-	 i.y+=sin(i.angle)/8/(#enemies)
 	end
 	end
 end
 
 function draw_enemy(e)
 	spr(e.spr, e.x,e.y)
-	print(e.life, e.x,e.y-8,7)
+	--print(e.life, e.x,e.y-8,7)
 	--circ(e.x+4,e.y+4,e.r,12)
 	--print(e.gun.timer,e.x,e.y)
-	--print(e.dy,e.x,e.y+6)
+	--print(abs(e.dy)+abs(e.dx),e.x,e.y+6)
 end
 
 function changedirection(i)
@@ -644,8 +646,8 @@ function changedirection(i)
 	if i.timer < 1 then
 	 i.angle += rnd(0.5)-0.25
 	 i.timer=i.cd
-	 i.dx=cos(i.angle)/8--/(#enemies)*i.spd 
-	 i.dy=sin(i.angle)/8--/(#enemies)*i.spd
+	 i.dx=cos(i.angle)/8*i.spd 
+	 i.dy=sin(i.angle)/8*i.spd
 	end
 end
 
