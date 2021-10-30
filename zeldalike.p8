@@ -708,7 +708,7 @@ function init_enemies()
 	
  slime=make_enemy(
 --x,y,sprite,speed,life,range,  
-	 x,y,96    ,1    ,5   ,7    ,  
+	 x,y,108    ,1    ,5   ,7    ,  
 	 guns.gunslime),
 	 
 	 snipeur=make_enemy(
