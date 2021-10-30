@@ -678,7 +678,7 @@ function parcourmap()
 	if(wagon_n==0)x1=16
 	for x=x1,16*(wagonlen-1) do
 	 for y=2,12 do
-	  if mget(x,y)==39 and rnd({1,2,3,4,5})==5 then
+	  if mget(x,y)==39 and ceil(rnd(15))==1 then
 	   spenemie(x*8,y*8,enemy.snipeur)
 	  end
 	  if mget(x,y)==21  then
