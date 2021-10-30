@@ -219,12 +219,13 @@ function player_update()
 			
 			wagon_n += 1
 			update_room()
+			enemiescleared=false
+			parcourmap()
 			
 			--pan cam to next wagon
 			camx = -128
 			targetcamx=0
 			enemies = {}
-	parcourmap()
 			--teleport players
 			for p in all(players)do
 				p.x -= 128*wagonlen
