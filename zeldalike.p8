@@ -286,7 +286,7 @@ end
 guns = {
 	revolver = make_gun("revolver",
 --spr cd spd oa dmg is_enemy
-		64, 10,3, .02,3   ,false,
+		64, 1,3, .02,3   ,false,
 		function(gun,x,y,dir)
 			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
@@ -629,7 +629,7 @@ function swichtile(x,y)
 end
 
 function parcourmap()
-	for x=camx/8,(camx+(128*4))/8 do
+	for x=camx/8,(camx+(128*wagonlen-1))/8 do
 	 for y=camy/8,camy+128/8 do
 	  if mget(x,y)==39 and rnd({1,2,3,4,5})==5 then
 	   spenemie(x*8,y*8,enemy.snipeur)
@@ -676,7 +676,7 @@ function init_enemies()
 	 
 	 snipeur=make_enemy(
 --x,y,sprite,speed,life,range,  
-	 x,y,96   ,0.1  ,15  ,10    ,  
+	 x,y,96   ,0.1  ,1  ,10    ,  
 	 guns.snipeurpisto),
 
 }
@@ -693,7 +693,7 @@ end
 
 function update_enemy(e)
 	for i in all(enemies) do
-	if(i.life<1)  make_ptc(i.x+4,i.y+4,rnd(4)+10,10,.8) del(enemies,i) 
+	if(i.life<1)  make_ptc(i.x+4,i.y+4,rnd(4)+10,8,.8) del(enemies,i) 
 	if abs(camx+64-i.x)<71 then
 
 
