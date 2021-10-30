@@ -674,21 +674,19 @@ function swichtile(x,y)
 end
 
 function parcourmap()
-	local x1=0
-	if(wagon_n==0)x1=16
-	for x=x1,16*(wagonlen-1) do
-	 for y=2,12 do
-	  if mget(x,y)==39 and ceil(rnd(15))==1 then
-	   spenemie(x*8,y*8,enemy.snipeur)
-	  end
-	  if mget(x,y)==21  then
-	   spenemie(x*8,y*8,enemy.slime)
-	  end
-	 end
-	end
+    local x1=5
+    if(wagon_n==0)x1=16
+    for x=x1,16*(wagonlen-1) do
+     for y=2,12 do
+      if fget(mget(x,y),2) and ceil(rnd(15))==1 then
+       spenemie(x * 8,y * 8,enemy.snipeur)
+      end
+      if mget(x,y)==21  then
+       spenemie(x * 8,y * 8,enemy.slime)
+      end
+     end
+    end
 end
-
-
 
 
 -->8
