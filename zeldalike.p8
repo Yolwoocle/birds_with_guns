@@ -668,7 +668,7 @@ function parcourmap()
 	  if fget(mget(x,y),2) and ceil(rnd(15))==1 then
 	   spenemie(x*8,y*8,enemy.snipeur)
 	  end
-	  if mget(x,y)==21 and ceil(rnd(15))==1 then
+	  if mget(x,y)==21  then
 	   spenemie(x*8,y*8,enemy.slime)
 	  end
 	 end
