@@ -54,7 +54,7 @@ function _update60()
 	
 	 cde = max(cde-1,0)
 	if stat(34)&2==2 and cde==0then
-		spenemie(mouse_x,mouse_y,enemy.slime)
+		spenemie(mouse_x,mouse_y,enemy.snipeur)
 		cde = 10
 	end
 	
@@ -203,6 +203,7 @@ function player_update()
 		
 		--next wagon
 		if p.x>128*wagonlen then
+			random = {}
 			wagon_n += 1
 			update_room()
 			
@@ -287,9 +288,18 @@ guns = {
 	 end),
 	 
 	 
-	enemy_revolver = make_gun("revolver",
+	gunslime = make_gun("gunslime",
 --spr cd spd oa  dmg is_enemy
-		64, 100,1, .02,3,  true,
+		64, 100,1, .02,1,  true,
+		function(gun,x,y,dir)
+			dir+=rnd(2*gun.oa)-gun.oa
+			gun:shoot(x,y,dir)
+		end
+	,true),
+	
+	snipeurpisto = make_gun("gunslime",
+--spr cd spd oa  dmg is_enemy
+		64, 100,5, 0, 10, true,
 		function(gun,x,y,dir)
 			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
@@ -588,13 +598,13 @@ function swichtile(x,y)
 end
 -->8
 --enemies
-function make_enemy(x,y,spr,spd,life,gunt)
+function make_enemy(x,y,spr,spd,life,agro,gunt)
 	return {
 		x=x, y=y,
 		angle=0,
 		dx=0,dy=0,
 		spd=spd,
-		
+		agro=agro,
 		bx=1,by=1,
 		bw=6,bh=6,
 		r=8,
@@ -615,9 +625,14 @@ function init_enemies()
 	enemy= {
 	
  slime=make_enemy(
-	 x,y,
-	 96,1,5,
-	 guns.enemy_revolver)
+--x,y,sprite,speed,life,range,  
+	 x,y,96    ,1    ,5   ,7    ,  
+	 guns.gunslime),
+	 
+	 snipeur=make_enemy(
+--x,y,sprite,speed,life,range,  
+	 x,y,124   ,0.1  ,15  ,10    ,  
+	 guns.snipeurpisto),
 
 }
 
@@ -676,7 +691,7 @@ function canshoot(e)
 	local x = cos(angle)
 	local y = sin(angle)
 	local dist =sqrt(abs(players[1].y-e.y)^2+abs(players[1].x-e.x)^2)/8
-	if abs(dist)<7 and abs(players[1].x-e.x)<128 then
+	if abs(dist)<e.agro and abs(players[1].x-e.x)<128 then
 	 for i =1,dist do
 	 add(checker,{x=e.x+x*i*8,y=e.y+y*i*8})  
 	  if is_solid(checker[#checker].x+4,checker[#checker].y+4) then
