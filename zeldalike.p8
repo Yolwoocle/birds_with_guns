@@ -203,6 +203,10 @@ function player_update()
 			p.gun = nextgun(p)
 			--p.gun=copy(p.gun)
 		end
+		if stat(36) == -1 then
+			p.gun = prevgun(p)
+			--p.gun=copy(p.gun)
+		end
 		
 		
 		local fire=stat(34)&1 > 0
@@ -268,6 +272,17 @@ function nextgun(p)
 	if p.gunls[i] == p.gun then
 	sfx(0)
 	 return p.gunls[(i)%#p.gunls+1]
+	end
+	end
+end
+
+function prevgun(p)
+ local f = 0
+ for i=1,#p.gunls do
+	if p.gunls[i] == p.gun then
+	sfx(0)
+	 if (((i-1)%#p.gunls)<1) f = #p.gunls
+	 return p.gunls[((i-1)%#p.gunls)+f]
 	end
 	end
 end
@@ -369,7 +384,7 @@ guns = {
 	
 	sniper = make_gun("sniper",
 --spr cd spd oa dmg is_enemy
-		68, 40,5, .015,5   ,false,
+		68, 40,7, .0,5   ,false,
 		function(gun,x,y,dir)
 			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
