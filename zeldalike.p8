@@ -296,8 +296,11 @@ end
 
 function draw_player_ui(p)
 	--life counter
-	rectfill(camx+1,1,camx+40,7,2)
-	rectfill(camx+2,2,camx+39,6,8)
+	rectfill(camx+1,1,camx+43,7,2)
+	
+	local l=40*(p.life/p.maxlife)
+	rectfill(camx+2,2,camx+2+l,6,8)
+	
 	local s="♥"..p.life.."/"..p.maxlife.." "
 	print(s, camx+2,2,7)
 	
