@@ -1059,6 +1059,7 @@ end
 --particles & screenshake
 function init_ptc()
 	particles={}
+	grass = {}
 end
 
 function make_ptc(x,y,r,col,fric,dx,dy)
@@ -1089,6 +1090,10 @@ end
 
 function draw_ptc(p)
 	circfill(p.x,p.y,p.r,p.col)
+end
+
+function grasstile()
+	add(grass,)
 end
 
 ----
