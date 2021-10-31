@@ -503,9 +503,9 @@ guns = {
 	
 	shotgunmechant = make_gun("shotgunmechant",
 --spr cd spd oa dmg is_enemy
-	 65, 60,2, .05,1,  true,
+	 65, 60,1.35, .04,1,  true,
 	 function(gun,x,y,dir)
-	 	for i=1,8 do
+	 	for i=1,4 do
 	 		local o=rnd(.1)-.05
 	 		local ospd=gun.spd*(rnd(.2)+.9)
 	 		gun:shoot(x,y,dir+o, ospd)
