@@ -5,7 +5,7 @@ __lua__
 --by gouspourd,yolwoocle,notgoyome
 
 function _init()
- random = {}
+	random = {}
 	mx=0
 	my=0
 	camx=0
@@ -261,7 +261,10 @@ end
 
 function draw_player_ui()
 	local p = players[1]
-	rectfill(camx+1,1,camx+20,6,7)
+	rectfill(camx+1,1,camx+33,7,7)
+	rectfill(camx+2,2,camx+32,6,8)
+	print(p.life.."/"..p.maxlife,
+	camx+8,2, 7)
 end
 
 -->8
