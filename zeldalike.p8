@@ -129,9 +129,9 @@ end
 ----------
 function begin_game()
 	if birdchoice == 0 then
-		birdchoice=flr(rnd(12))
+		birdchoice=flr(rnd(12))+1
 	end
-	init_player(112+birdchoice)
+	init_player(111+birdchoice)
 	
 	for p in all(players) do
 		p.x = 6*8
@@ -239,7 +239,7 @@ function init_player(bird)
 		
 		spr=bird,
 		
-		gun=copy(guns.revolver),
+		gun=copy(guns.debuggun),
 		gunn=guns.revolver,
 		gunls={guns.revolver,guns.shotgun,guns.sniper,guns.machinegun,guns.assaultrifle}
 	})
@@ -787,7 +787,7 @@ function gen_train()
 		for j=0,wagonlen-2 do
 			
 			local n = 10+flr(rnd(21))
-			if(#nums>0)n=nums[flr(rnd(6))]--#nums
+			if(#nums>0)n=nums[flr(rnd(#nums+1))]--#nums
 			train[w+j]=n
 			del(nums,n)
 			
