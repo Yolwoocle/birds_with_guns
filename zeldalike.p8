@@ -186,6 +186,7 @@ function init_player()
 		
 		bx=2,by=2,
 		bw=4,bh=4,
+		r=2,
 		
 		life=10,
 		maxlife=10,
@@ -223,7 +224,7 @@ function player_update()
 		p.a = atan2(mouse_x-p.x,
 		mouse_y-p.y)
 		
-		p.flip=false
+		p.flip = false
 		if(p.a<.75and.25<p.a)p.flip=true
 		
 		--shooting
@@ -358,7 +359,7 @@ spd,oa,dmg,is_enemy,fire)
 		local s=93
 		if(gun.is_enemy)s=95
 		if not gun.is_enemy then
-			shake= min(shake+2,2) 
+			shake= min(shake+1,1) 
 		end
 		
 		spd = spd or gun.spd
@@ -479,33 +480,29 @@ function update_bullet(b)
 	b.y += b.dy
 	
 	debug=""
-	for e in all(enemies)do
-		--[[ rect collision
-		local ex2 = e.x+e.bx+e.bw 
-		local ey2 = e.y+e.by+e.bh
-		if touches_rect(b.x,b.y,
-		e.x,e.y,ex2,ey2) then
-		--]]
-		--local ex2 = e.x+e.bx+e.bw 
-		--local ey2 = e.y+e.by+e.bh
+	if b.is_enemy then
+		for p in all(players)do
+			if circ_coll(p,b) then
+				p.life -= b.dmg
+				p.dx+=b.dx*b.spd*2
+				p.dy+=b.dy*b.spd*2
+				make_ptc(b.x,b.y,rnd(4)+6,7,.8)
+				b.destroy_flag = true
+			end
+		end
 		
-		-- circle coll (dist squared)
-		--https://www.lexaloffle.com/bbs/?tid=28999
-		local dx=e.x+4 - b.x
-		local dy=e.y+4 - b.y
-		local d = max(dx,dy)
-		dx /= d
-		dy /= d
-		local sr = (b.r+e.r)/d
+	else
 		
-		if not b.is_enemy and
-		dx*dx+dy*dy < sr*sr then
-			e.life -= b.dmg
-			e.dx+=b.dx*b.spd/5
-			e.dy+=b.dy*b.spd/5
-			e.timer = 5
-			make_ptc(b.x,b.y,rnd(4)+6,10,.8)
-			b.destroy_flag = true
+		for e in all(enemies)do
+			-- circle coll (dist squared)
+			if circ_coll(e,b) then
+				e.life -= b.dmg
+				e.dx+=b.dx*b.spd*.1
+				e.dy+=b.dy*b.spd*.1
+				e.timer = 5
+				make_ptc(b.x,b.y,rnd(4)+6,7,.8)
+				b.destroy_flag = true
+			end
 		end
 	end
 	
@@ -648,6 +645,19 @@ function touches_rect(x,y,x1,y1,x2,y2)
 	   and x2 >= x
 	   and y1 <= y
 	   and y2 >= y
+end
+
+function circ_coll(a,b)
+	--https://www.lexaloffle.com/bbs/?tid=28999
+	--b: bullet
+	local dx=a.x+4 - b.x
+	local dy=a.y+4 - b.y
+	local d = max(dx,dy)
+	dx /= d
+	dy /= d
+	local sr = (a.r+b.r)/d
+	
+	return dx*dx+dy*dy < sr*sr 
 end
 
 function rect_overlap(a1,a2,b1,b2)
@@ -1230,7 +1240,7 @@ dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
 dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd
 
 __gff__
-0000000404040100040403040101010100000004040300010403030401030101030303030101010401010000010301000303030301010100010100000103010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000404040100040403040101010100000004040300010403030401030101030303030101010401010101010301000303030301010100010101010103010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __map__
 0404040404040404040404040404040404040404040404040404040404040404040404040404040404040404040404041339383939393939393939393939391539393938383939393938393939383939393939383839393939383939393839393939393838393939393839393938393939393938383939393938393939383939
