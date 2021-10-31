@@ -825,7 +825,7 @@ function make_enemy(x,y,spr,spd,life,agro,gunt)
 		agro=agro,
 		bx=-1,by=-1,
 		bw=10,bh=10,
-		r=6,
+		r=5,
 		
 		spr=spr,
 		life=life,
@@ -870,7 +870,6 @@ function spenemie(x,y,name)
 end
 
 function update_enemy(e)
- a=#enemies
 	for i in all(enemies) do
 	if(i.life<1)  make_ptc(i.x+4,i.y+4,rnd(4)+10,8,.8) del(enemies,i) 
 	if loaded(i) then
@@ -941,7 +940,7 @@ function delchecker()
 end
 
 function loaded(i)
-	return abs(camx+64-i.x)<71
+	return abs(camx+64-i.x)<71--71
 end
 -->8
 --particles & screenshake
