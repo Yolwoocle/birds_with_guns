@@ -951,9 +951,11 @@ function canshoot(e)
 	if abs(dist)<e.agro and abs(players[1].x-e.x)<128 then
  return cansee(e,angle,x,y,dist)
  elseif abs(dist)<e.seerange and abs(dist)>e.agro and e.chase and cansee(e,angle,x,y,dist) then
-  e.dx+=x/30
-  e.dy+=y/30
+  
+  e.dx+=x*(e.spd/30)
+  e.dy+=y*(e.spd/30)
   mouvrnd = false
+
  end	
 end
  
