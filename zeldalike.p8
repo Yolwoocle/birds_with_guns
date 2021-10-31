@@ -502,6 +502,7 @@ function update_bullet(b)
 				e.timer = 5
 				make_ptc(b.x,b.y,rnd(4)+6,7,.8)
 				b.destroy_flag = true
+				return
 			end
 		end
 	end
@@ -806,7 +807,7 @@ function parcourmap()
        spenemie(x * 8,y * 8,enemy.slime)
       end
       if mget(x,y)==5  then
-       spenemie(x * 8,y * 8,enemy.snipeur)
+       spenemie(x * 8,y * 8,enemy.slime)
       end
      end
      end
@@ -823,8 +824,8 @@ function make_enemy(x,y,spr,spd,life,agro,gunt)
 		dx=0,dy=0,
 		spd=spd,
 		agro=agro,
-		bx=-1,by=-1,
-		bw=10,bh=10,
+		bx=1,by=1,
+		bw=6,bh=6,
 		r=5,
 		
 		spr=spr,
@@ -844,7 +845,7 @@ function init_enemies()
 	
  slime=make_enemy(
 --x,y,sprite,speed,life,range,  
-	 x,y,108    ,10    ,5   ,7   ,  
+	 x,y,108    ,1    ,5   ,7   ,  
 	 guns.gunslime),
 	 
 	 snipeur=make_enemy(
@@ -861,6 +862,7 @@ function spenemie(x,y,name)
  a.x = x
  a.y = y
  a.gun = copy(a.gun)
+ a.gun.cooldown += rnd(180)-60
  if a.x<175 then
   a.gun.timer += 60
   a.timer = 60
