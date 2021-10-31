@@ -5,7 +5,7 @@ __lua__
 --by gouspourd,yolwoocle,notgoyome
 
 function _init()
- random = {}
+	random = {}
 	mx=0
 	my=0
 	camx=0
@@ -96,6 +96,8 @@ function _draw()
 	end
 	
 	drawcheck()
+	draw_player_ui()
+	--no more code below this--
 	draw_mouse()
 end
 
@@ -164,6 +166,11 @@ function init_player()
 		
 		bx=2,by=2,
 		bw=4,bh=4,
+		
+		life=10,
+		maxlife=10,
+		ammo=250,
+		maxammo=250,
 		
 		spr=112+rnd(12),
 		
@@ -242,7 +249,6 @@ function player_update()
 				p.x -= 128*wagonlen
 				p.x = max(p.x, 0)
 			end
-
 		end
 	end
 end
@@ -307,7 +313,9 @@ function make_gun(name,spr,cd,spd,oa,dmg,is_enemy,fire)
 		--remove? it complicates code
 		local s=93
 		if(gun.is_enemy)s=95
-		if(not gun.is_enemy)shake+=0.5*max(0,1-shake)
+		if not gun.is_enemy then
+			shake += 2*max(0,1-shake)
+		end
 		
 		spd = spd or gun.spd
 		spawn_bullet(x,y,dir,
