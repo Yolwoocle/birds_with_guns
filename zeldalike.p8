@@ -16,7 +16,7 @@ function _init()
 	cam_follow_player=true
 	shake = 0
 	
-	trainpal = {{8,2},{11,3},{10,9}}
+	trainpal = {{8,2},{11,3},{7,13},{10,9}}
 	pal_n = 1
 	
 	menu = "main"
@@ -132,7 +132,7 @@ function begin_game()
 	if birdchoice == 0 then
 		birdchoice=flr(rnd(12))
 	end
-	init_player(111+birdchoice)
+	init_player(112+birdchoice)
 	
 	for p in all(players) do
 		p.x = 6*8
@@ -144,8 +144,8 @@ function begin_game()
 		make_ptc(
 		 6*8 + rnd(16)-8,
 		 7*8 + rnd(16)-8,
-		 8+rnd(8),rnd({2,4,6}),0.9,
-		 rnd(10)-5,rnd(10)-5
+		 8+rnd(8),rnd({2,4,6}),0.95,
+		 rnd(4)-2,rnd(4)-2
 		)
 	end
 end
@@ -289,7 +289,6 @@ function player_update()
 		and p.ammo > 0 then
 			make_ptc(p.x+cos(p.a)*6+4, 
 			p.y+sin(p.a)*3+4, rnd(3)+6,7,.7)
-			shake += .00
 			
 			p.gun:fire(p.x+4,p.y+4,p.a)
 		end
@@ -404,7 +403,7 @@ spd,oa,dmg,is_enemy,fire)
 		local s=93
 		if(gun.is_enemy)s=95
 		if not gun.is_enemy then
-			shake= min(shake+1,1) 
+			if(shake<3)shake+=1 
 		end
 		
 		spd = spd or gun.spd
