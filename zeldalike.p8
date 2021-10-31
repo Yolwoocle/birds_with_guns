@@ -197,7 +197,7 @@ function init_player()
 		
 		spr=112+rnd(12),
 		
-		gun=guns.revolver,
+		gun=copy(guns.revolver),
 		gunn=guns.revolver,
 		gunls={guns.revolver,guns.shotgun,guns.sniper,guns.machinegun,guns.assaultrifle}
 	})
@@ -236,12 +236,7 @@ function player_update()
 			p.gun=copy(p.gunn)
 			p.gun.timer = p.gun.cooldown/2
 		end
-		--if stat(36) == -1 then
-			--p.gun = prevgun(p)
-			--p.gun=copy(p.gun)
-		--end
-		
-		
+
 		local fire=stat(34)&1 > 0
 		local active=stat(34)&2 > 0
 		
@@ -320,20 +315,10 @@ function draw_player_ui(p)
 end
 
 function nextgun(p)
- for i=1,#p.gunls do
-	if p.gunls[i] == p.gun then
-		sfx(0)
-	 return p.gunls[(i)%#p.gunls+1]
-	end
-	end
-end
-
-function prevgun(p)
  local f = 0
  for i=1,#p.gunls do
-	if p.gunls[i] == p.gunn then
-	sfx(0)
-	if (((i+stat(36))%#p.gunls)<1) f = #p.gunls
+ if p.gunls[i] == p.gunn then
+ if (((i+stat(36))%#p.gunls)<1) f = #p.gunls
 	 return p.gunls[(i+stat(36))%(#p.gunls)+f]
 	end
 	end
