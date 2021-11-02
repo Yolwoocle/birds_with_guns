@@ -320,6 +320,7 @@ function player_update()
 		--next wagon
 		if p.x>128*wagonlen then
 			random = {}
+			
 			wagon_n += 1
 			update_room()
 			enemiescleared=false
@@ -340,8 +341,6 @@ function player_update()
 end
 
 function draw_player()
-	palt(0,false)
-	palt(1,true)
 	for p in all(players) do
 		local x=flr(p.x) + cos(p.a)*6 +0
 		local y=flr(p.y) + sin(p.a)*3 +0
@@ -355,9 +354,13 @@ function draw_player()
 			p.y+s*128,8)
 		end
 		spr(p.gun.spr,x,y,1,1, p.flip)
+		
+		palt(0,false)
+		palt(1,true)
 		spr(p.spr,p.x,p.y,1,1, p.flip)
+		
+		palt()
 	end
-	palt()
 end
 
 function draw_player_ui(p)
@@ -411,6 +414,10 @@ spd,oa,dmg,is_enemy,fire)
 		timer=0,
 		cooldown=cd,
 		is_enemy=is_enemy,
+		
+		x=0,y=0,
+		dir=0,
+		burst=0,
 	}
 	
 	gun.fire = fire
@@ -431,6 +438,10 @@ spd,oa,dmg,is_enemy,fire)
 	
 	gun.update=function(gun)
 		gun.timer = max(gun.timer-1,0)
+		if gun.burst > 0 then
+			gun:shoot(gun.x,gun.y,gun.dir)
+			gun.burst -= 1
+		end
 	end
 	
 	return gun
@@ -448,7 +459,7 @@ guns = {
 
 	revolver = make_gun("revolver",
 --spr cd spd oa dmg is_enemy
-		64, 10,3, .02,3,  false,
+		64, 15,3, .02,3   ,false,
 		function(gun,x,y,dir)
 			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
@@ -800,6 +811,13 @@ test = 0
 wagon_n = 0
 
 function gen_train()
+	--gen talbe of all wagon nums
+	nums = {[0]=10}
+	for i=11,30 do
+		add(nums,i)
+	end
+	
+	--gen train
 	train = {}
 	
 	for i=0,5 do
@@ -844,23 +862,14 @@ function update_door()
 			  7*8 + rnd(16)-8,
 			8+rnd(8),rnd({9,10}))
 		end
-	end
+		
+		mset(x,6,40)
+		mset(x,7,7)
+		
+		shake += 10
+		
+	end 
 end
-
-function paste_room(number)
-	number = number*16
-	local cx = 0
-	local cy = 0
-	for sprite in all(room_all) do
-		mset(cx+number,0+cy,sprite)
-		cx += 1
-		if cx%16 == 0 then
-			cx = cx%16
-			cy += 1
-		end
-	end
-end
---]]
 
 function update_room()
 	for i=0,3 do
