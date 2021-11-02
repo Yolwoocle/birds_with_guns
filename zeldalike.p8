@@ -279,7 +279,9 @@ function init_player(bird)
 		
 		gun=nil,
 		gunn=1,
-		gunls={copy(guns.debuggun),copy(guns.revolver),copy(guns.shotgun)}
+		gunls={copy(guns.debuggun),copy(guns.revolver),copy(guns.shotgun)},
+	
+		lmbp = true,
 	}
 	p.gun = p.gunls[p.gunn]
 	add(players,p)
@@ -326,16 +328,34 @@ function player_update()
 		local fire=stat(34)&1 > 0
 		local active=stat(34)&2 > 0
 		
+		
+		
 		p.gun:update()
-		if fire and p.gun.timer<=0 
+		test = p.gun.name
+		-- not auto
+		if fire and
+		p.gun.timer<=0 and
+		p.ammo > 0 and p.gun.auto == false
+		then
+			if p.lmbp == true then
+				make_ptc(p.x+cos(p.a)*6+4, 
+				p.y+sin(p.a)*3+4, rnd(3)+6,7,.7)
+				p.ammo -= 1
+				p.gun:fire(p.x+4,p.y+4,p.a)
+				p.lmbp = false
+			end
+		-- auto
+		elseif fire and p.gun.timer<=0 
 		and p.ammo > 0 then
 			make_ptc(p.x+cos(p.a)*6+4, 
 			p.y+sin(p.a)*3+4, rnd(3)+6,7,.7)
-			
 			p.ammo -= 1
 			p.gun:fire(p.x+4,p.y+4,p.a)
 		end
-		
+		-- if mleft not pressed 
+		if stat(34)&1 == 0 then
+			p.lmbp = true
+		end
 		--next wagon
 		if p.x>128*wagonlen then
 			random = {}
@@ -412,6 +432,7 @@ function draw_player_ui(p)
 	--wagon
 	oprint("wagon "..wagon_n+1,
 	camx+50,2,7,1)
+	--print(test,0,80)
 end
 
 function nextgun(p)
@@ -431,7 +452,7 @@ end
 --gun & bullet
 
 function make_gun(name,spr,cd,
-spd,oa,dmg,is_enemy,fire)
+spd,oa,dmg,is_enemy,auto,fire)
 	--todo:not have 3000 args
 	local gun = {
 		name=name,
@@ -440,6 +461,7 @@ spd,oa,dmg,is_enemy,fire)
 		oa=oa,--offset angle in [0,1[
 		dmg=dmg,
 		shake=shake,
+		auto=auto,
 		
 		ammo=0,
 		maxammo=0,
@@ -485,8 +507,8 @@ end
 
 guns = {
 	debuggun = make_gun("debuggun",
---spr cd spd oa dmg isenemy
-		64, 1, 3, .02,10, false,
+--spr cd spd oa dmg is_enemy auto
+		64, 1, 3, .02,10, false,  true,
 		function(gun,x,y,dir)
 			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
@@ -494,8 +516,8 @@ guns = {
 	),
 
 	revolver = make_gun("revolver",
---spr cd spd oa dmg is_enemy
-		64, 15,3, .02,3   ,false,
+--spr cd spd oa dmg is_enemy auto
+		64, 15,3, .02,3   ,false,  false,
 		function(gun,x,y,dir)
 			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
@@ -503,8 +525,8 @@ guns = {
 	),
 	
 	shotgun = make_gun("shotgun",
---spr cd spd oa dmg is_enemy
-	 65, 60,4, .05,1,  false,
+--spr cd spd oa dmg is_enemy auto
+	 65, 60,4, .05,1,  false,   false,
 	 function(gun,x,y,dir)
 	 	for i=1,8 do
 	 		local o=rnd(.1)-.05
@@ -514,8 +536,8 @@ guns = {
 	 end),
 	 
 	machinegun = make_gun("machinegun",
---spr cd spd oa dmg is_enemy
-		66, 7, 3, .05,2   ,false,
+--spr cd spd oa dmg is_enemy auto
+		66, 7, 3, .05,2   ,false,  true,
 		function(gun,x,y,dir)
 			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
@@ -523,8 +545,8 @@ guns = {
 	),
 	
 	assaultrifle = make_gun("assault rifle",
---spr cd spd oa dmg is_enemy
-		67, 30,4, .02,1   ,false,
+--spr cd spd oa dmg is_enemy auto
+		67, 30,4, .02,1   ,false,  true,
 		function(gun,x,y,dir)
 			dir+=rnd(2*gun.oa)-gun.oa
 			gun.burst = 4
@@ -535,8 +557,8 @@ guns = {
 	),
 	
 	sniper = make_gun("sniper",
---spr cd spd oa dmg is_enemy
-		68, 40,7, .0, 5  ,false,
+--spr cd spd oa dmg is_enemy auto
+		68, 40,7, .0, 5  ,false,   false,
 		function(gun,x,y,dir)
 			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
@@ -544,8 +566,8 @@ guns = {
 	),
 	
 	gunslime = make_gun("gunslime",
---spr cd spd oa  dmg is_enemy
-		64, 100,0.9, .02,1,  true,
+--spr cd spd oa  dmg is_enemy auto
+		64, 100,0.9, .02,1,  true,  true,
 		function(gun,x,y,dir)
 			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
@@ -553,8 +575,8 @@ guns = {
 	,true),
 	
 	snipeurpisto = make_gun("gunslime",
---spr cd spd oa  dmg is_enemy
-		64, 100,2.5, 0, 5, true,
+--spr cd spd oa  dmg is_enemy auto
+		64, 100,2.5, 0, 5, true,    true,
 		function(gun,x,y,dir)
 			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
@@ -562,8 +584,8 @@ guns = {
 	,true),
 	
 	shotgunmechant = make_gun("shotgunmechant",
---spr cd spd oa dmg is_enemy
-	 65, 60,1.35, .04,1,  true,
+--spr cd spd oa dmg is_enemy  auto
+	 65, 60,1.35, .04,1,  true,  true,
 	 function(gun,x,y,dir)
 	 	for i=1,4 do
 	 		local o=rnd(.1)-.05
