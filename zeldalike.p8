@@ -313,7 +313,7 @@ function player_update()
 		
 		--ammo & life
 		p.life=min(max(0,p.life),p.maxlife)
-		p.ammo=min(max(0,p.ammo),p.maxammo)
+		p.gun.ammo=min(max(0,p.gun.ammo),p.gun.maxammo)
 		
 		--shooting
 		if stat(36) ==1 or stat(36) ==-1 then
@@ -328,11 +328,11 @@ function player_update()
 		
 		p.gun:update()
 		if fire and p.gun.timer<=0 
-		and p.ammo > 0 then
+		and p.gun.ammo > 0 then
 			make_ptc(p.x+cos(p.a)*6+4, 
 			p.y+sin(p.a)*3+4, rnd(3)+6,7,.7)
 			
-			p.ammo -= 1
+			p.gun.ammo -= 1
 			p.gun:fire(p.x+4,p.y+4,p.a)
 		end
 		
@@ -393,10 +393,10 @@ function draw_player_ui(p)
 	
 	--ammo bar
 	rectfill(camx+84,1,camx+84+42,7,4)
-	local l=40*(p.ammo/p.maxammo)
+	local l=40*(p.gun.ammo/p.gun.maxammo)
 	if(p.ammo>0)rectfill(camx+85,2,camx+85+l,6,9)
 	
-	s = tostr(p.ammo)
+	s = tostr(p.gun.ammo)
 	spr(110,camx+89,2)
 	print(s, camx+95,2,7)
 	
@@ -417,7 +417,7 @@ end
 function nextgun(p)
 	p.gunn += 1
 	if(p.gunn > #p.gunls) p.gunn = 1
-	p.gun = p.gunls[p.gunn]
+	update_gun(p)
 	--[[local f = 0
 	for i=1,#p.gunls do
 	if p.gunls[i] == p.gunn then
@@ -425,6 +425,10 @@ function nextgun(p)
 		 return p.gunls[(i+stat(36))%(#p.gunls)+f]
 		end
 	end]]
+end
+
+function update_gun(p)
+	p.gun = p.gunls[p.gunn]
 end
 
 -->8
@@ -441,8 +445,8 @@ spd,oa,dmg,is_enemy,fire)
 		dmg=dmg,
 		shake=shake,
 		
-		ammo=0,
-		maxammo=0,
+		ammo=250,
+		maxammo=250,
 		
 		timer=0,
 		cooldown=cd,
@@ -573,7 +577,7 @@ guns = {
 	 end),
 }
 
---table of guns but num-indexed
+--table of number-indexed guns
 local iguns={}
 for k,v in pairs(guns)do
 	if(not v.is_enemy)add(iguns,v)
@@ -642,6 +646,7 @@ function update_bullet(b)
 					e.dy+=b.dy*b.spd*.1
 				end
 				
+				spawn_loot(e.x,e.y)
 				e.timer = 5
 				make_ptc(b.x,b.y,rnd(4)+6,7,.8)
 				b.destroy_flag = true
@@ -1394,6 +1399,8 @@ function make_drop(x,y,spr,type,q)
 	 type=type,
 	 
 	 q=q,
+	 touched=false,
+	 cooldown=0,
 	 
 	 destroy=false,
 	})
@@ -1401,39 +1408,69 @@ end
 
 function update_drops()
 	for d in all(drops) do
+		d.cooldown=max(0,d.cooldown-1)
+		
 		for p in all(players) do
-			if touches_rect(p.x+4,p.y+4,
-			d.x,d.y,d.x+8,d.y+8) then
+			
+			local touches = touches_rect(
+			p.x+4,p.y+4,
+			d.x,d.y,d.x+8,d.y+8)
+			
+			if(not touches)d.touched=false
+			if touches then
 				
 				local col=7
-				d.destroy = true
+				local txt=""
+				local do_ptc = false
+				
 				if d.type=="ammo" then
+					d.destroy = true
 					p.ammo += d.q
-					col=9
-				elseif d.type=="health"then
-					p.life += d.q
-					col=8
-				elseif d.type=="gun"then
-					p.gunls[p.gunn]=d.q
-					col=6
 					
-					local txt=d.q.name
-					make_ptc(
+					do_ptc=true
+					col=9
+					txt="+"..d.q.." ammo"
+					
+				elseif d.type=="health"then
+					d.destroy = true
+					p.life += d.q
+					
+					do_ptc=true
+					col=8
+					txt="+"..d.q.." health"
+					
+				elseif d.type=="gun" 
+				and not d.touched
+				and d.cooldown<=0 then
+					d.touched = true
+					d.cooldown = 60
+					
+					do_ptc=true
+					col=6
+					txt=d.q.name
+					
+					p.gunls[p.gunn],d.q=d.q,p.gunls[p.gunn]
+					update_gun(p)
+					d.spr = d.q.spr
+					
+				end
+				
+				if do_ptc then
+					for i=1,5 do
+						make_ptc(
+						   d.x+rnd(16)-8,
+						   d.y+rnd(16)-8,
+						   rnd(5)+5,col,
+						   0.9+rnd(0.07))
+					end 
+				end
+				
+				make_ptc(
 				   d.x+4-(#txt*2),
 				   d.y+4,
 				   rnd(5)+5,7,
 				   .98,0,-0.3,txt
-					)
-				else
-					
-				end
-				
-				make_ptc(
-				   d.x+rnd(16)-8,
-				   d.y+rnd(16)-8,
-				   rnd(5)+5,col
 				)
-				
 			end
 		end
 		
@@ -1450,7 +1487,7 @@ end
 function spawn_loot(x,y)
 	local r = rnd(1)
 	
-	if r < .1 then
+	if r < .01 then
 		local g = rnd_gun()
 		make_drop(x,y,g.spr,"gun",
 		copy(g))
