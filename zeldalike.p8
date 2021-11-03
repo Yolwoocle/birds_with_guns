@@ -1033,7 +1033,7 @@ function parcourmap()
    if fget(mget(x,y),2) and ceil(rnd(max(3,30-(wagon_n*2))))==1 then
     if ceil(rnd(max(3,25-(wagon_n*2))))==1 then
      spenemie(x * 8,y * 8,enemy.juggernaut)
-    elseif ceil(rnd(max(3,0-(wagon_n*2))))==1 then
+    elseif ceil(rnd(max(3,13-(wagon_n*2))))==1 then
      for i=0,ceil(rnd(wagon_n*1.2))+10 do
      spenemie(x * 8,y * 8,enemy.warm)
      end
@@ -1104,7 +1104,7 @@ function init_enemies()
 	 
 	 warm=make_enemy(
 --x,y,sprite,speed,life,shootrange,  
-	 x,y,126    ,1.5  ,1  ,0   ,  
+	 x,y,126    ,0.9+rnd(0.3)  ,1  ,0   ,  
 --chase,seerange
   true,7, 
 	 guns.null),
@@ -1192,9 +1192,9 @@ function canshoot(e)
   o= e.dx+e.dy
    e.dx=x*(e.spd*2)/max(dist,4)
    e.dy=y*(e.spd*2)/max(dist,4)
-   if not e.spr==126 then
+   
     mouvrnd = false
-   end 
+   
   
  end	
 end
