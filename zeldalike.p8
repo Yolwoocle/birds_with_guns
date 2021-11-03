@@ -282,6 +282,7 @@ function init_player(bird)
 		gunls={copy(guns.debuggun),copy(guns.revolver),copy(guns.shotgun)},
 	
 		lmbp = true,
+		tbnd=30,
 	}
 	p.gun = p.gunls[p.gunn]
 	add(players,p)
@@ -289,6 +290,8 @@ end
 
 function player_update()
 	for p in all(players) do
+	 --damage
+	 p.tbnd = max(0,p.tbnd-1)
 		--movement
 		local dx,dy = p.dx,p.dy
 		local spd = p.spd
@@ -381,13 +384,9 @@ function player_update()
 			if touches_rect(
 			p.x+4,p.y+4,
 			e.x+1,e.y+1,e.x+7,e.y+7) then
-			 p.life-=e.gun.dmg
+			if (p.tbnd == 0)p.life-=e.gun.dmg p.tbnd = 30 
    knockback_player(p,e)
    
-			--if (abs(e.dx)+abs(e.dy<30)) then
-			e.dx+=p.dx*p.spd*10
-			e.dy+=p.dy*p.spd*10
-		 --end
 			end
 		end
 	end
@@ -395,6 +394,7 @@ end
 
 function draw_player()
 	for p in all(players) do
+	if (p.tbnd%5) == 0  then
 		local x=flr(p.x) + cos(p.a)*6 +0
 		local y=flr(p.y) + sin(p.a)*3 +0
 		
@@ -413,6 +413,7 @@ function draw_player()
 		spr(p.spr,p.x,p.y,1,1, p.flip)
 		
 		palt()
+	end
 	end
 end
 
@@ -467,7 +468,7 @@ function update_gun(p)
 end
 
 function knockback_player(p,e)
-	if abs(p.dx)+abs(p.dy) < 0 then
+	if abs(p.dx)+abs(p.dy) < 3 then
 			  p.dx+=e.dx*e.spd*2
 				 p.dy+=e.dy*e.spd*2
 			end	
@@ -627,6 +628,15 @@ guns = {
 	 		gun:shoot(x,y,dir+o, ospd)
 	 	end
 	 end),
+	 
+	 null = make_gun("null",
+--spr cd spd oa dmg is_enemy  auto
+	 1, 0,0, 0,1,  true,  true,
+	 function(gun,x,y,dir) 	
+	 		local o=rnd(.1)-.05
+	 		local ospd=gun.spd*(rnd(.2)+.9)
+	 		gun:shoot(x,y,dir+o, ospd)
+	 end),
 }
 
 --table of number-indexed guns
@@ -674,7 +684,7 @@ function update_bullet(b)
 			if touches_rect(x,y,
 			p.x+p.hx, p.y+p.hy,
 			x2,y2) then
-				p.life -= b.dmg
+				if (p.tbnd == 0)p.life-=b.dmg p.tbnd = 30
 				knockback_player(p,b)
 				make_ptc(b.x,b.y,rnd(4)+6,7,.8)
 				b.destroy_flag = true
@@ -1094,10 +1104,10 @@ function init_enemies()
 	 
 	 warm=make_enemy(
 --x,y,sprite,speed,life,shootrange,  
-	 x,y,88    ,2  ,1  ,0   ,  
+	 x,y,126    ,1.5  ,1  ,0   ,  
 --chase,seerange
   true,7, 
-	 guns.snipeurpisto),
+	 guns.null),
 }
 
 end
@@ -1182,7 +1192,9 @@ function canshoot(e)
   o= e.dx+e.dy
    e.dx=x*(e.spd*2)/max(dist,4)
    e.dy=y*(e.spd*2)/max(dist,4)
-   mouvrnd = false
+   if not e.spr==126 then
+    mouvrnd = false
+   end 
   
  end	
 end
@@ -1276,7 +1288,7 @@ function grasstile()
 	for i in all(grass)do
 	 i.x = i.x
 		i.x-=2.5
-		if (i.x<1)i.x = 128
+		if (i.x<-8)i.x = 128
 	end
 end
 
@@ -1617,8 +1629,8 @@ ddddddd144444444111444441111111112222222222222112222222111211211ffffffff00000000
 11115d1111113b111111111111288e1110001111111eeee111167711111167111111eef111000011dccccd111111888111d66dd5007777000000000011100000
 1115ddd1111333b111111111127078710779aa01111e7075116079a1111677711111f0ee1000000111c777c1117888811d6777dd070000700000000017110000
 11152dd111130aa111111111127770770c799990e111ee151167799a1116079951111ff100a70999111d707d167779aa6777776d707744070000000017711000
-5113dd7711133a991111441118870066077888892eeeee11100005191166777115544ff10000aa111111d771677077887772777d7077ff070000000017771000
-56623331dddd334111414691aa88881100770118122ee1111000005166666671545544e100077611cd7ccc71677777787728e7767041f2070000000017111000
+5113dd7711133a991111441118870066077888892eeeee11100005191166777115544ff10000aa111111d771677077887772777d7077ff07000ff00017771000
+56623331dddd334111414691aa88881100770118122ee1111000005166666671545544e100077611cd7ccc71677777787728e7767041f2070fd00df017111000
 d566222116664441111461111baa821100000111117171110007000156666771feff4411000776111cd7c76166777761677877767044ff070000000011100000
 1d666611116444111111111111cc2111100011111171711117700011157776111e11e11100776611117776111667761117777611070404700000000000000000
 118181111191911111111111115151111c1c11111121211111911911111e1e111e11e11100755001111515111191911111761111007777000000000000000000
