@@ -393,7 +393,7 @@ function player_update()
 			if touches_rect(
 			p.x+4,p.y+4,
 			e.x+1,e.y+1,e.x+7,e.y+7) then
-			if (p.tbnd == 0)p.life-=e.gun.dmg p.tbnd = 30 
+			if (p.tbnd == 0)p.life-=e.gun.dmg p.tbnd = 30 shake += 3 
    knockback_player(p,e)
    
 			end
@@ -661,7 +661,7 @@ guns = {
 	 
 	 machinegunmechant = make_gun("machinegunmechant",
 --spr cd spd oa dmg is_enemy auto
-		66, 7, 2, .03,2   ,true,  true,
+		66, 7, 2, .04,2   ,true,  true,
 		function(gun,x,y,dir)
 			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
@@ -714,7 +714,7 @@ function update_bullet(b)
 			if touches_rect(x,y,
 			p.x+p.hx, p.y+p.hy,
 			x2,y2) then
-				if (p.tbnd == 0)p.life-=b.dmg p.tbnd = 30
+				if (p.tbnd == 0)p.life-=b.dmg p.tbnd = 30 shake += 3
 				knockback_player(p,b)
 				make_ptc(b.x,b.y,rnd(4)+6,7,.8)
 				b.destroy_flag = true
@@ -867,7 +867,7 @@ function mouse_x_y()
 	lmb=stat(34)&1 > 0
 	rmb=stat(34)&2 > 0
 	mmb=stat(34)&4 > 0
-end
+end	
 
 function get_traj(x_satr,y_start,x_end,y_end)
 	angle=atan2(x_end-x_satr-4, y_end-y_start-4)
