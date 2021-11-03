@@ -60,9 +60,9 @@ end
 
 function _update60()
 	mouse_x_y()
-	grasstile()
 	
 	if menu == "game" then
+		grasstile()
 		delchecker()
 		
 		update_drops()
@@ -89,8 +89,6 @@ function _update60()
 		
 		cde = max(cde-1,0)
 		
-		shake -= 0.3
-		shake = max(0,shake)
 		--shake = 0
 		
 		update_camera()
@@ -100,6 +98,9 @@ function _update60()
 	else
 		
 	end
+	
+	shake -= 0.3
+	shake = max(0,shake)
 end
 
 
@@ -158,12 +159,12 @@ function begin_game()
 		p.y = 7*8
 	end
 	
-	shake += 5
+	shake += 7
 	for i=1,10 do
 		make_ptc(
 		 6*8 + rnd(16)-8,
 		 7*8 + rnd(16)-8,
-		 8+rnd(8),rnd({2,4,6}),0.95,
+		 8+rnd(8),rnd({2,4,6}),0.97,
 		 rnd(4)-2,rnd(4)-2
 		)
 	end
@@ -316,6 +317,14 @@ function player_update()
 		--ammo & life
 		p.life=min(max(0,p.life),p.maxlife)
 		p.gun.ammo=min(max(0,p.gun.ammo),p.gun.maxammo)
+		
+		--death
+		if p.life <= 0 
+		and menu!="death"then
+			menu = "death"
+			shake += 9
+			burst_ptc(p.x+4,p.y+4,7)
+		end
 		
 		--shooting
 		if stat(36) ==1 or stat(36) ==-1 then
@@ -1119,7 +1128,7 @@ end
 function update_enemy(e)
 	for i in all(enemies) do
 		if i.life <= 0 then  
-			make_ptc(i.x+4,i.y+4,rnd(4)+10,8,.8) 
+			burst_ptc(i.x+4,i.y+4,8) 
 			del(enemies,i)
 		end
 		if loaded(i) then
@@ -1319,9 +1328,55 @@ end
 function init_menus()
 	menus = {}
 	menus.main = make_main_menu()
+	menus.death = make_death_menu()
 end
 
+function make_death_menu()
+	local m = {
+	  update=update_death_menu,
+	  draw=draw_death_menu,
+	  
+	  circt=1,
+	  timer=0,
+	  showtext=false,
+	}
+	
+	return m
+end
+
+function update_death_menu(m)
+	m.circt=min(m.circt*1.05,600)
+	if m.circt>=600 then
+		m.showtext=true
+		m.timer += 1
+	end
+end
+
+function draw_death_menu(m)
+	palt(1,true)
+	for p in all(players)do
+		local x,y = p.x+4,p.y+4
+		circfill(x,y,m.circt    ,9)
+		circfill(x,y,m.circt*.75,2)
+		circfill(x,y,m.circt*.5 ,1)
+		circfill(x,y,m.circt*.25,0)
+		spr(p.spr,p.x,p.y)
+	end
+	palt()
+	
+	local t=m.timer/100
+	oxxl("game over",
+	     camx+30+cos(t)*3,
+	     1/t +10+sin(t)*3)
+	oprint("[retry]",
+	   camx+50+cos(t+.1)*3,
+	   1/t+ 80+sin(t+.1)*3)
+end
+
+------
+
 function make_main_menu()
+	--this code could be better
 	local m = {
 	  update=update_main_menu,
 	  draw=draw_main_menu,
@@ -1450,8 +1505,13 @@ function draw_main_menu(m)
 		
 		if i.n==13and i.active then
 			oprint("a game by:",2,13, 14)
-			oprint("\nyolwoocle\ngouspourd\nnotgoyome",
-			2,13)
+			oprint("\nyOLWOOCLE"..
+			"\ngOUSPOURD\nnOTGOYOME"..
+			"\nsIMON.t",2,13)
+			oprint("\ncode,art"..
+			"\ncode,level design"..
+			"\ncode"..
+			"\nmusic",45,13, 13)
 		end
 	end
 	
@@ -1471,15 +1531,28 @@ end
 
 function draw_logo(x,y)
 	--"birds"
-	oxxl("birds",x,y, 10)
-	oxxl("guns",x+4,y+15, 6)
+	oxxl("birds",
+	x+cos(t())*1,
+	y+sin(t())*1,
+	10)
+	
+	oxxl("guns", 
+	x+cos(t()+.2)*1+4,
+	y+15+sin(t()+.2)*1, 
+	6)
 	
 	--"with"
-	oprint("with",x+11,y+10)
-	oprint("with",x+11,y+9)
+	oprint("with",
+	x+11+cos(t()+.1)*1,
+	y+10+sin(t()+.1)*1)
+	
+	oprint("with",
+	x+11+cos(t()+.1)*1,
+	y+9+sin(t()+.1)*1)
 end
 
 function oxxl(t,x,y,col)
+	--credit to freds72
 	for ix=-2,2 do
 		for iy=-2,4 do
 			if abs(ix)==2 
