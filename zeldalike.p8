@@ -641,7 +641,7 @@ guns = {
 	
 	shotgunmechant = make_gun("shotgunmechant",
 --spr cd spd oa dmg is_enemy  auto
-	 65, 60,1.35, .04,1,  true,  true,
+	 65, 60,1.35, .04,2,  true,  true,
 	 function(gun,x,y,dir)
 	 	for i=1,4 do
 	 		local o=rnd(.1)-.05
