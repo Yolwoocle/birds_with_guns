@@ -280,7 +280,7 @@ function init_player(bird)
 		
 		gun=nil,
 		gunn=1,
-		gunls={copy(guns.debuggun),copy(guns.shotgun)},
+		gunls={copy(guns.revolver),copy(guns.shotgun)},
 	
 		lmbp = true,
 		tbnd=30,
@@ -658,6 +658,15 @@ guns = {
 	 		local ospd=gun.spd*(rnd(.2)+.9)
 	 		gun:shoot(x,y,dir+o, ospd)
 	 end),
+	 
+	 machinegunmechant = make_gun("machinegunmechant",
+--spr cd spd oa dmg is_enemy auto
+		66, 7, 2, .03,2   ,true,  true,
+		function(gun,x,y,dir)
+			dir+=rnd(2*gun.oa)-gun.oa
+			gun:shoot(x,y,dir)
+		end
+	),
 }
 
 --table of number-indexed guns
@@ -1053,15 +1062,17 @@ function parcourmap()
  for x=x1,16*(wagonlen-1) do
   for y=2,12 do
    if x>3 or players[1].y-20>y*8 or players[1].y+20<y*8 then
-    if fget(mget(x,y),2) and ceil(rnd(max(3,30-(wagon_n*2))))==1 then
+    if fget(mget(x,y),2) and ceil(rnd(max(3,15-(wagon_n*1.75))))==1 then
      if ceil(rnd(max(3,25-(wagon_n*2))))==1 then
       spenemie(x * 8,y * 8,enemy.juggernaut)
-     elseif ceil(rnd(max(3,13-(wagon_n*2))))==1 then
+     elseif ceil(rnd(max(3,15-(wagon_n*1.5))))==1 then
       for i=0,ceil(rnd(wagon_n*1.2))+10 do
       spenemie(x * 8,y * 8,enemy.warm)
       end
+      elseif ceil(rnd(max(3,25-(wagon_n*2))))==1 then
+      spenemie(x * 8,y * 8,enemy.tourelle)
      else 
-      if ceil(rnd(wagon_n*2))>4 then
+      if ceil(rnd(23))>23-(wagon_n*2) then
        spenemie(x * 8,y * 8,enemy.hedgehogbuff)
       else spenemie(x * 8,y * 8,enemy.hedgehog)
       
@@ -1118,7 +1129,7 @@ function init_enemies()
 	 
 	hedgehogbuff=make_enemy(
 --x,y,sprite,speed,life,shootrange,  
-	 x,y,92   ,1    ,15   ,7   ,
+	 x,y,92   ,1    ,10   ,7   ,
 --chase,seerange
 	 false,1,
 	 guns.gunslimebuff),
@@ -1135,8 +1146,15 @@ function init_enemies()
 --x,y,sprite,speed,life,shootrange,  
 	 x,y,126    ,1  ,1  ,0   ,  
 --chase,seerange
-  true,7, 
+  true,6.5, 
 	 guns.null),
+	 
+	 tourelle=make_enemy(
+--x,y,sprite,speed,life,shootrange,  
+	 x,y,125   ,0    ,30   ,6   ,
+--chase,seerange
+	 false,1,
+	 guns.machinegunmechant),
 }
 
 end
@@ -1147,7 +1165,7 @@ function spenemie(x,y,name)
  a.y = y
  a.gun = copy(a.gun)
  a.gun.cooldown += rnd(60)
- if (a.spr == 126) a.spd = 0.9+rnd(0.3)
+ if (a.spr == 126) a.spd = 0.8+rnd(0.4)
  if a.x<175 then
   a.gun.timer += 60
   a.timer = 60
