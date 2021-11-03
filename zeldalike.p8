@@ -368,6 +368,7 @@ function player_update()
 			--pan cam to next wagon
 			camx = -128
 			targetcamx=0
+			drops = {}
 			enemies = {}
 			parcourmap()
 			--teleport players
@@ -994,12 +995,17 @@ function parcourmap()
  for x=x1,16*(wagonlen-1) do
   for y=2,12 do
   if x>3 or players[1].y-20>y*8 or players[1].y+20<y*8 then
-   if fget(mget(x,y),2) and ceil(rnd(20))==1 then
-    spenemie(x * 8,y * 8,enemy.hedgehog)
+   if fget(mget(x,y),2) and ceil(rnd(max(3,30-(wagon_n*2))))==1 then
+    if ceil(rnd(max(3,25-(wagon_n*2))))==1 then
+     spenemie(x * 8,y * 8,enemy.juggernaut)
+    elseif ceil(rnd(max(3,0-(wagon_n*2))))==1 then
+     for i=0,ceil(rnd(wagon_n*1.2))+10 do
+     spenemie(x * 8,y * 8,enemy.warm)
+     end
+    else spenemie(x * 8,y * 8,enemy.hedgehog)
+    end
    end
-   if mget(x,y)==5  then
-    spenemie(x * 8,y * 8,enemy.juggernaut)
-   end
+   
   end
   end
  end
@@ -1060,6 +1066,13 @@ function init_enemies()
 --chase,seerange
   true,8, 
 	 guns.shotgunmechant),
+	 
+	 warm=make_enemy(
+--x,y,sprite,speed,life,shootrange,  
+	 x,y,88    ,2  ,1  ,0   ,  
+--chase,seerange
+  true,7, 
+	 guns.snipeurpisto),
 }
 
 end
@@ -1069,7 +1082,7 @@ function spenemie(x,y,name)
  a.x = x
  a.y = y
  a.gun = copy(a.gun)
- a.gun.cooldown += rnd(180)-60
+ a.gun.cooldown += rnd(60)
  if a.x<175 then
   a.gun.timer += 60
   a.timer = 60
@@ -1142,8 +1155,8 @@ function canshoot(e)
  return cansee(e,angle,x,y,dist)
  elseif abs(dist)<e.seerange and abs(dist)>e.agro and e.chase and cansee(e,angle,x,y,dist) then
   o= e.dx+e.dy
-   e.dx=x*(e.spd*2)/dist
-   e.dy=y*(e.spd*2)/dist
+   e.dx=x*(e.spd*2)/max(dist,4)
+   e.dy=y*(e.spd*2)/max(dist,4)
    mouvrnd = false
   
  end	
