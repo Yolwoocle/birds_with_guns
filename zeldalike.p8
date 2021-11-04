@@ -385,7 +385,7 @@ function player_update()
 		local active=stat(34)&2 > 0
 		
 		
-		guns.kak:update()
+		kak:update()
 		p.gun:update()
 		test = p.gun.name
 		-- not auto
@@ -411,7 +411,7 @@ function player_update()
 		elseif fire and
         p.gun.ammo < 1 and
         p.lmbp == true and
-        guns.kak.timer<=0 then
+        kak.timer<=0 then
         coupdekak(p) 
         p.lmbp = false
 		end
@@ -568,7 +568,7 @@ function coupdekak(p)
  local x=flr(p.x) + cos(p.a)*6 +0
 	local y=flr(p.y) + sin(p.a)*3 +0
  
- guns.kak:fire(x+4,y+4,p.a)
+ kak:fire(x+4,y+4,p.a)
    
 end
 -->8
@@ -763,18 +763,18 @@ guns = {
 		end
 	),
 	
-	kak = make_gun("kak",
+}
+
+kak = make_gun("kak",
 --spr cd spd oa dmg is_enemy auto
-		57, 20, 2, .005,2   ,false,  false,
+		57, 20, 2.1, .005,2   ,false,  false,
 		--maxammo
 		0,
 		function(gun,x,y,dir)
 			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
 		end
-	),
-	
-}
+	)
 
 --table of number-indexed guns
 local iguns={}
@@ -839,6 +839,7 @@ function update_bullet(b)
 	else
 		
 		for e in all(enemies)do
+		 if loaded(e) then
 			local x,y= b.x,b.y
 			local x2 = e.x+e.hx+e.hw
 			local y2 = e.y+e.hx+e.hw 
@@ -858,6 +859,7 @@ function update_bullet(b)
 				b.destroy_flag = true
 				return
 			end
+		end
 		end
 	end
 	
