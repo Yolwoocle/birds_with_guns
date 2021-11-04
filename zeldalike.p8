@@ -4,6 +4,10 @@ __lua__
 -- -- birds with guns --
 --by gouspourd,yolwoocle,notgoyome
 
+--bird ideas
+--goose,pelican,colibri,
+--dinosaur,crow
+
 function _init()
 	--mouse
 	mx=0
@@ -1248,7 +1252,8 @@ function update_enemy(e)
 			end
 			collide(i,0.1)
 			
-			i.flip=isleft(i.angle)
+			--i.flip=isleft(i.angle)
+			i.flip = i.dx<0
 			
 			i.x += i.dx
 			i.y += i.dy
@@ -1258,9 +1263,9 @@ end
 
 function draw_enemy(e)
 	spr(e.spr, e.x,e.y,1,1,e.flip)
+	
 	local x=flr(e.x)+cos(e.angle)*6
 	local y=flr(e.y)+sin(e.angle)*3
-		
 	spr(e.gun.spr,x,y,1,1, e.flip)
 		
 	--print(e.life, e.x,e.y-8,7)
