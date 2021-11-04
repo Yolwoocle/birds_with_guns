@@ -1650,8 +1650,7 @@ end
 function draw_logo(x,y)
 	--"birds"
 	oxxl("birds",x,y,10)
-	
-	oxxl("guns",x,y+15, 6)
+	oxxl("guns",x+4,y+15, 6)
 	
 	--"with"
 	oprint("with",x+11,y+10)
