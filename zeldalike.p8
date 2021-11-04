@@ -1464,7 +1464,7 @@ function update_death_menu(m)
 	
 	local b = m.buttons[1]
 	local t=m.timer / 100
-	b.x = camx+50+cos(t+.4)*3
+	b.x = camx+54+cos(t+.4)*3
 	b.y = 1/t+ 100+sin(t+.4)*3
 	
 	b.active = false
@@ -1827,7 +1827,7 @@ function spawn_loot(x,y)
 		make_drop(x,y,g.spr,"gun",
 		copy(g))
 	elseif r < .03 then
-		make_drop(x,y,79,"ammo",50)
+		make_drop(x,y,79,"ammo",20)
 	elseif r < .05 then
 		make_drop(x,y,78,"health",2)
 	end
