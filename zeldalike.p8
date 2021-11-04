@@ -737,7 +737,7 @@ guns = {
 	 
 	 machinegunmechant = make_gun("machinegunmechant",
 --spr cd spd oa dmg is_enemy auto
-		66, 2, .75, .05,2   ,true,  true,
+		66, 1, .75, .05,2   ,true,  true,
 		--maxammo
 		250,
 		function(gun,x,y,dir)
@@ -1150,7 +1150,7 @@ function parcourmap()
     if fget(mget(x,y),2) and ceil(rnd(max(3,20-(wagon_n*1.65))))==1 then
      
      --spawn juggernaut
-     if ceil(rnd(35))>37.5-(wagon_n*1.25) then
+     if ceil(rnd(35))>37-(wagon_n*1.25) then
       spenemie(x * 8,y * 8,enemy.juggernaut)
      
      --spawn warm
