@@ -1197,7 +1197,7 @@ function parcourmap()
       spenemie(x * 8,y * 8,enemy.juggernaut)
      
      --spawn warm
-     elseif ceil(rnd(30))>27-(wagon_n*0.7) and wagon_n>0 then
+     elseif ceil(rnd(30))>28.5-(wagon_n*0.7) and wagon_n>0 then
       for i=0,ceil(rnd(wagon_n*1.2))+7 do
       spenemie(x * 8,y * 8,enemy.warm)
       end
