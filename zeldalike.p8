@@ -1222,7 +1222,7 @@ function parcourmap()
       end
      
      --spawn tourelle 
-      elseif ceil(rnd(30))>30-(wagon_n*1) and wagon_n>2 then
+      elseif ceil(rnd(30))>29-(wagon_n*1) and wagon_n>2 then
       spawn_enemy(x * 8,y * 8,enemy.tourelle)
      
      --spawn hedgehog 
