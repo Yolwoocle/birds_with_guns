@@ -385,7 +385,7 @@ function player_update()
 		local active=stat(34)&2 > 0
 		
 		
-		
+		guns.kak:update()
 		p.gun:update()
 		test = p.gun.name
 		-- not auto
@@ -408,7 +408,15 @@ function player_update()
 			p.y+sin(p.a)*3+4, rnd(3)+6,7,.7)
 			p.gun.ammo -= 1
 			p.gun:fire(p.x+4,p.y+4,p.a)
+		elseif fire and
+        p.gun.ammo < 1 and
+        p.lmbp == true and
+        guns.kak.timer<=0 then
+        coupdekak(p) 
+        p.lmbp = false
 		end
+	
+		
 		
 		-- if mleft not pressed 
 		if stat(34)&1 == 0 then
@@ -556,6 +564,13 @@ function animplayer(p)
 	 end
 end
 
+function coupdekak(p)
+ local x=flr(p.x) + cos(p.a)*6 +0
+	local y=flr(p.y) + sin(p.a)*3 +0
+ 
+ guns.kak:fire(x+4,y+4,p.a)
+   
+end
 -->8
 --gun & bullet
 
@@ -589,13 +604,15 @@ spd,oa,dmg,is_enemy,auto,maxammo,fire)
 		--remove? it complicates code
 		local s=93
 		if(gun.is_enemy)s=95
+		if(gun.name=="kak")s=77 lifspa=5
 		if not gun.is_enemy and gun.name!="debuggun" then
 			if(shake<1)shake+=1 
 		end
 		
 		spd = spd or gun.spd
 		spawn_bullet(x,y,dir,
-		spd,3,s,dmg,is_enemy)
+		spd,3,s,dmg,is_enemy,lifspa)
+		lifspa=nil
 		gun.timer = gun.cooldown
 	end
 	
@@ -627,9 +644,9 @@ debuggun = make_gun("debuggun",
 guns = {
 	revolver = make_gun("revolver",
 --spr cd spd oa dmg is_enemy auto
-		64, 15,3, .02,3   ,false,  false,
+		64, 15,2.5, .02,2   ,false,  false,
 		--maxammo
-		250,
+		2,
 		function(gun,x,y,dir)
 			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
@@ -726,7 +743,7 @@ guns = {
 	 
 	 null = make_gun("null",
 --spr cd spd oa dmg is_enemy  auto
-	 1, 0,57, 0,1,  true,  true,
+	 57, 0,57, 0,1,  true,  true,
 	 --maxammo
 		250,
 	 function(gun,x,y,dir) 	
@@ -737,7 +754,7 @@ guns = {
 	 
 	 machinegunmechant = make_gun("machinegunmechant",
 --spr cd spd oa dmg is_enemy auto
-		66, 2, .75, .05,2   ,true,  true,
+		66, 100, .75, .05,2   ,true,  true,
 		--maxammo
 		250,
 		function(gun,x,y,dir)
@@ -745,6 +762,18 @@ guns = {
 			gun:shoot(x,y,dir)
 		end
 	),
+	
+	kak = make_gun("kak",
+--spr cd spd oa dmg is_enemy auto
+		57, 20, 2, .005,2   ,false,  false,
+		--maxammo
+		0,
+		function(gun,x,y,dir)
+			dir+=rnd(2*gun.oa)-gun.oa
+			gun:shoot(x,y,dir)
+		end
+	),
+	
 }
 
 --table of number-indexed guns
@@ -760,7 +789,7 @@ function rnd_gun()
 	return iguns[flr(rnd(#iguns))+1]
 end
 
-function spawn_bullet(x,y,dir,spd,r,spr,dmg,is_enemy)
+function spawn_bullet(x,y,dir,spd,r,spr,dmg,is_enemy,lifspa)
 	local dx=cos(dir)*spd
 	local dy=sin(dir)*spd
 	add(actors,{
@@ -775,10 +804,15 @@ function spawn_bullet(x,y,dir,spd,r,spr,dmg,is_enemy)
 		
 		update=update_bullet,
 		draw=draw_bullet,
+		lifspa=lifspa
 	})
 end
 
 function update_bullet(b)
+ if not(b.lifspa== nil)then
+  b.lifspa-=1
+  if (b.lifspa== 0) b.destroy_flag = true
+ end
 	b.x += b.dx
 	b.y += b.dy
 	
@@ -855,7 +889,7 @@ function update_bullet(b)
 end
 
 function draw_bullet(b)
-	spr(b.spr, b.x-4, b.y-4)
+	spr(b.spr, b.x-4, b.y-4,1,1, players[1].flip)
 end
 
 function draw_random()
