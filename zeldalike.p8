@@ -4,10 +4,6 @@ __lua__
 -- -- birds with guns --
 --by gouspourd,yolwoocle,notgoyome
 
---bird ideas
---goose,pelican,colibri,
---dinosaur,crow
-
 function _init()
 	--mouse
 	mx=0
@@ -300,6 +296,9 @@ function init_player(bird)
 		tbnd=30,
 		
 		damage=damage_player,
+		spriteoffsettime=7,
+		spriteoffsetcount=7,
+		spriteoffset = 0,
 	}
 	p.gun = p.gunls[p.gunn]
 	add(players,p)
@@ -325,7 +324,12 @@ function player_update()
 		
 		p.x += p.dx
 		p.y += p.dy
+		--animation
 		
+		if  not (abs(p.dx) < 0.1) or not (abs(p.dy) < 0.1) then
+		 animplayer(p)
+		 else p.spriteoffset = 0
+		 end
 		--angle
 		p.a = atan2(mouse_x-p.x,
 		mouse_y-p.y)
@@ -447,7 +451,7 @@ function draw_player()
 		
 		palt(0,false)
 		palt(1,true)
-		spr(p.spr,p.x,p.y,1,1, p.flip)
+		spr(p.spr,p.x,p.y+p.spriteoffset,1,1, p.flip)
 		
 		palt()
 	end
@@ -518,6 +522,17 @@ function knockback_enemy(e,b)
 			e.dy+=b.dy*b.spd*.1
 		end
 
+end
+
+function animplayer(p)
+	p.spriteoffsetcount = max(0,p.spriteoffsetcount-1)
+	 if p.spriteoffsetcount==0 then
+	 p.spriteoffsetcount=p.spriteoffsettime
+	 if p.spriteoffset == 1 then
+	  p.spriteoffset=0
+	  else p.spriteoffset=1
+	 end
+	 end
 end
 
 -->8
@@ -701,7 +716,7 @@ guns = {
 	 
 	 machinegunmechant = make_gun("machinegunmechant",
 --spr cd spd oa dmg is_enemy auto
-		66, 2, .75, .04,2   ,true,  true,
+		66, 2, .75, .05,2   ,true,  true,
 		--maxammo
 		250,
 		function(gun,x,y,dir)
@@ -1252,8 +1267,7 @@ function update_enemy(e)
 			end
 			collide(i,0.1)
 			
-			--i.flip=isleft(i.angle)
-			i.flip = i.dx<0
+			i.flip=isleft(i.angle)
 			
 			i.x += i.dx
 			i.y += i.dy
@@ -1263,9 +1277,9 @@ end
 
 function draw_enemy(e)
 	spr(e.spr, e.x,e.y,1,1,e.flip)
-	
 	local x=flr(e.x)+cos(e.angle)*6
 	local y=flr(e.y)+sin(e.angle)*3
+		
 	spr(e.gun.spr,x,y,1,1, e.flip)
 		
 	--print(e.life, e.x,e.y-8,7)
