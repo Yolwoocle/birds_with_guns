@@ -280,7 +280,7 @@ function init_player(bird)
 		
 		gun=nil,
 		gunn=1,
-		gunls={copy(guns.revolver),copy(guns.shotgun)},
+		gunls={copy(guns.debuggun),copy(guns.shotgun)},
 	
 		lmbp = true,
 		tbnd=30,
@@ -554,7 +554,7 @@ guns = {
 --spr cd spd oa dmg is_enemy auto
 		64, 1, 3, .02,10, false,  true,
 --maxammo
-		250,
+		999999,
 		function(gun,x,y,dir)
 			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
@@ -673,7 +673,7 @@ guns = {
 	 
 	 machinegunmechant = make_gun("machinegunmechant",
 --spr cd spd oa dmg is_enemy auto
-		66, 7, 1.5, .04,2   ,true,  true,
+		66, 3, .75, .04,2   ,true,  true,
 		--maxammo
 		250,
 		function(gun,x,y,dir)
@@ -1075,21 +1075,21 @@ function parcourmap()
  if(wagon_n==0)x1=16
  for x=x1,16*(wagonlen-1) do
   for y=2,12 do
-   if x>3 or players[1].y-20>y*8 or players[1].y+20<y*8 then
-    if fget(mget(x,y),2) and ceil(rnd(max(3,15-(wagon_n*1.75))))==1 then
+   if x>4 or players[1].y-1000>y*8 or players[1].y+1000<y*8 then
+    if fget(mget(x,y),2) and ceil(rnd(max(3,20-(wagon_n*1.75))))==1 then
      
      --spawn juggernaut
-     if ceil(rnd(25))>25-(wagon_n*2) then
+     if ceil(rnd(35))>35-(wagon_n*1.25) then
       spenemie(x * 8,y * 8,enemy.juggernaut)
      
      --spawn warm
-     elseif ceil(rnd(25))>25-(wagon_n*2) then
+     elseif ceil(rnd(30))>30-(wagon_n*1.5) then
       for i=0,ceil(rnd(wagon_n*1.2))+10 do
       spenemie(x * 8,y * 8,enemy.warm)
       end
      
      --spawn tourelle 
-      elseif ceil(rnd(30))>30-(wagon_n*2) then
+      elseif ceil(rnd(30))>30-(wagon_n*1) then
       spenemie(x * 8,y * 8,enemy.tourelle)
      
      --spawn hedgehog 
@@ -1173,7 +1173,7 @@ function init_enemies()
 	 
 	 tourelle=make_enemy(
 --x,y,sprite,speed,life,shootrange,  
-	 x,y,125   ,0    ,20   ,6   ,
+	 x,y,125   ,0    ,15   ,6   ,
 --chase,seerange
 	 false,1,
 	 guns.machinegunmechant),
