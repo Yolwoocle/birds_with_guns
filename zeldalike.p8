@@ -496,7 +496,7 @@ end
 --gun & bullet
 
 function make_gun(name,spr,cd,
-spd,oa,dmg,is_enemy,auto,fire)
+spd,oa,dmg,is_enemy,auto,maxammo,fire)
 	--todo:not have 3000 args
 	local gun = {
 		name=name,
@@ -507,8 +507,8 @@ spd,oa,dmg,is_enemy,auto,fire)
 		shake=shake,
 		auto=auto,
 		
-		ammo=250,
-		maxammo=250,
+		ammo=maxammo,
+		maxammo=maxammo,
 		
 		timer=0,
 		cooldown=cd,
@@ -553,6 +553,8 @@ guns = {
 	debuggun = make_gun("debuggun",
 --spr cd spd oa dmg is_enemy auto
 		64, 1, 3, .02,10, false,  true,
+--maxammo
+		250,
 		function(gun,x,y,dir)
 			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
@@ -562,6 +564,8 @@ guns = {
 	revolver = make_gun("revolver",
 --spr cd spd oa dmg is_enemy auto
 		64, 15,3, .02,3   ,false,  false,
+		--maxammo
+		250,
 		function(gun,x,y,dir)
 			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
@@ -571,6 +575,8 @@ guns = {
 	shotgun = make_gun("shotgun",
 --spr cd spd oa dmg is_enemy auto
 	 65, 60,4, .05,1,  false,   false,
+	 --maxammo
+		100,
 	 function(gun,x,y,dir)
 	 	for i=1,8 do
 	 		local o=rnd(.1)-.05
@@ -582,6 +588,8 @@ guns = {
 	machinegun = make_gun("machinegun",
 --spr cd spd oa dmg is_enemy auto
 		66, 7, 3, .05,2   ,false,  true,
+		--maxammo
+		500,
 		function(gun,x,y,dir)
 			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
@@ -591,6 +599,8 @@ guns = {
 	assaultrifle = make_gun("assault rifle",
 --spr cd spd oa dmg is_enemy auto
 		67, 30,4, .02,1   ,false,  true,
+		--maxammo
+		150,
 		function(gun,x,y,dir)
 			dir+=rnd(2*gun.oa)-gun.oa
 			gun.burst = 4
@@ -603,6 +613,8 @@ guns = {
 	sniper = make_gun("sniper",
 --spr cd spd oa dmg is_enemy auto
 		68, 40,7, .0, 5  ,false,   false,
+		--maxammo
+		50,
 		function(gun,x,y,dir)
 			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
@@ -612,6 +624,8 @@ guns = {
 	gunslime = make_gun("gunslime",
 --spr cd spd oa  dmg is_enemy auto
 		64, 100,1.5, .02,1,  true,  true,
+		--maxammo
+		250,
 		function(gun,x,y,dir)
 			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
@@ -621,6 +635,8 @@ guns = {
 	gunslimebuff = make_gun("gunslimebuff",
 --spr cd spd oa  dmg is_enemy auto
 		64, 100,1, .04,1,  true,  true,
+		--maxammo
+		250,
 		function(gun,x,y,dir)
 		 for i=0,2 do
 			local o=rnd(.1)-.05
@@ -630,18 +646,12 @@ guns = {
 		end
 	,true),
 	
-	snipeurpisto = make_gun("gunslime",
---spr cd spd oa  dmg is_enemy auto
-		64, 100,2.5, 0, 5, true,    true,
-		function(gun,x,y,dir)
-			dir+=rnd(2*gun.oa)-gun.oa
-			gun:shoot(x,y,dir)
-		end
-	,true),
 	
 	shotgunmechant = make_gun("shotgunmechant",
 --spr cd spd oa dmg is_enemy  auto
 	 65, 60,1.35, .04,2,  true,  true,
+	 --maxammo
+		250,
 	 function(gun,x,y,dir)
 	 	for i=1,4 do
 	 		local o=rnd(.1)-.05
@@ -653,6 +663,8 @@ guns = {
 	 null = make_gun("null",
 --spr cd spd oa dmg is_enemy  auto
 	 1, 0,57, 0,1,  true,  true,
+	 --maxammo
+		250,
 	 function(gun,x,y,dir) 	
 	 		local o=rnd(.1)-.05
 	 		local ospd=gun.spd*(rnd(.2)+.9)
@@ -661,7 +673,9 @@ guns = {
 	 
 	 machinegunmechant = make_gun("machinegunmechant",
 --spr cd spd oa dmg is_enemy auto
-		66, 7, 2, .04,2   ,true,  true,
+		66, 7, 1.5, .04,2   ,true,  true,
+		--maxammo
+		250,
 		function(gun,x,y,dir)
 			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
@@ -1063,14 +1077,22 @@ function parcourmap()
   for y=2,12 do
    if x>3 or players[1].y-20>y*8 or players[1].y+20<y*8 then
     if fget(mget(x,y),2) and ceil(rnd(max(3,15-(wagon_n*1.75))))==1 then
-     if ceil(rnd(max(3,25-(wagon_n*2))))==1 then
+     
+     --spawn juggernaut
+     if ceil(rnd(25))>25-(wagon_n*2) then
       spenemie(x * 8,y * 8,enemy.juggernaut)
-     elseif ceil(rnd(max(3,15-(wagon_n*1.5))))==1 then
+     
+     --spawn warm
+     elseif ceil(rnd(25))>25-(wagon_n*2) then
       for i=0,ceil(rnd(wagon_n*1.2))+10 do
       spenemie(x * 8,y * 8,enemy.warm)
       end
-      elseif ceil(rnd(max(3,25-(wagon_n*2))))==1 then
+     
+     --spawn tourelle 
+      elseif ceil(rnd(30))>30-(wagon_n*2) then
       spenemie(x * 8,y * 8,enemy.tourelle)
+     
+     --spawn hedgehog 
      else 
       if ceil(rnd(23))>23-(wagon_n*2) then
        spenemie(x * 8,y * 8,enemy.hedgehogbuff)
@@ -1151,7 +1173,7 @@ function init_enemies()
 	 
 	 tourelle=make_enemy(
 --x,y,sprite,speed,life,shootrange,  
-	 x,y,125   ,0    ,30   ,6   ,
+	 x,y,125   ,0    ,20   ,6   ,
 --chase,seerange
 	 false,1,
 	 guns.machinegunmechant),
