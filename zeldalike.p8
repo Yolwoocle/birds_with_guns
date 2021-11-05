@@ -9,6 +9,7 @@ __lua__
 --dinosaur,crow,owl
 
 function _init()
+ degaplus = 0
 	--mouse
 	mx=0
 	my=0
@@ -26,7 +27,6 @@ function _init()
 	targetcamx=0
 	cam_follow_player=true
 	shake = 0
-	
 	trainpal = {{8,2},{11,3},
 	{7,13},{12,13},{10,9},{0,2}}
 	pal_n = 1
@@ -82,10 +82,11 @@ function _init()
 end
 
 function _update60()
- if btn(🅾️) and btn(❎) and menu == "main" and diffi != 15 then
- 	shake = 5
- 	diffi = 15
- end
+ --if btn(🅾️) and btn(❎) and menu == "main" and diffi != 17 then
+ 	--shake = 5
+ 	diffi = 17
+ 	degaplus = 1
+ --end
 	mouse_x_y()
 	grasstile()
 	if menu == "game" then
@@ -677,7 +678,8 @@ debuggun = make_gun("debuggun",
 		end
 	)
 
-guns = {
+degaplus = 0
+ guns = {
 	revolver = make_gun("revolver",
 --spr cd spd oa dmg is_enemy auto
 		64, 15,2.5, .02,2   ,false,  false,
@@ -740,7 +742,7 @@ guns = {
 	
 	gunslime = make_gun("gunslime",
 --spr cd spd oa  dmg is_enemy auto
-		64, 100,1.5, .02,2,  true,  true,
+		64, 100,1.5, .02,2 + degaplus,  true,  true,
 		--maxammo
 		250,
 		function(gun,x,y,dir)
@@ -751,7 +753,7 @@ guns = {
 	
 	gunslimebuff = make_gun("gunslimebuff",
 --spr cd spd oa  dmg is_enemy auto
-		64, 100,1, .04,2,  true,  true,
+		64, 100,1, .04,2+degaplus,  true,  true,
 		--maxammo
 		250,
 		function(gun,x,y,dir)
@@ -766,7 +768,7 @@ guns = {
 	
 	shotgunmechant = make_gun("shotgunmechant",
 --spr cd spd oa dmg is_enemy  auto
-	 65, 60,1.35, .04,3,  true,  true,
+	 65, 60,1.35, .04,3+degaplus*2,  true,  true,
 	 --maxammo
 		250,
 	 function(gun,x,y,dir)
@@ -779,7 +781,7 @@ guns = {
 	 
 	 null = make_gun("null",
 --spr cd spd oa dmg is_enemy  auto
-	 57, 0,57, 0,1,  true,  true,
+	 57, 0,57, 0,1+degaplus,  true,  true,
 	 --maxammo
 		250,
 	 function(gun,x,y,dir) 
@@ -787,7 +789,7 @@ guns = {
 	 
 	 machinegunmechant = make_gun("machinegunmechant",
 --spr cd spd oa dmg is_enemy auto
-		66, 5, .75, .05,2   ,true,  true,
+		66, 5, .75, .05,2+degaplus   ,true,  true,
 		--maxammo
 		250,
 		function(gun,x,y,dir)
@@ -798,7 +800,7 @@ guns = {
 	
 	explosion = make_gun("explosion",
 --spr cd spd oa dmg is_enemy auto
-		57, 0, 2, 1,5   ,true,  false,
+		57, 0, 2, 1,5+degaplus*2   ,true,  false,
 		--maxammo
 		1,
 		function(gun,x,y,dir)
@@ -813,7 +815,7 @@ guns = {
 	boss_targetgun = 
 	make_gun("boss target gun",
 --spr cd spd oa dmg is_enemy auto
-		65, 6, 1.2,.05,2   ,true,  true,
+		65, 6, 1.2,.05,2+degaplus   ,true,  true,
 		--maxammo
 		250,
 		function(gun,x,y,dir)
@@ -825,7 +827,7 @@ guns = {
 	boss_360gun = 
 	make_gun("boss 360 gun",
 --spr cd spd oa dmg is_enemy auto
-		65, 1, 1, 1,2   ,true,  true,
+		65, 1, 1, 1,2 +degaplus  ,true,  true,
 		--maxammo
 		250,
 		function(gun,x,y,dir)
@@ -837,7 +839,7 @@ guns = {
 	boss_enemygun = 
 	make_gun("boss_enemygun",
 --spr cd spd oa dmg is_enemy auto
-		65, 150, 1, 1,2   ,true,  true,
+		65, 150, 1, 1,2+degaplus   ,true,  true,
 		--maxammo
 		250,
 		function(gun,x,y,dir)
@@ -1303,6 +1305,7 @@ function swichtile(x,y)
 end
 
 function parcourmap()
+
  local x1=0
  if(wagon_n==0)x1=16
  	for x=x1,16*(wl-1) do
