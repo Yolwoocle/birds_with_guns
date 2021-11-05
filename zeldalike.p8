@@ -67,6 +67,10 @@ function _init()
 	 wagon=0,
 	}
 	
+	boss_pos = {0,0}
+	win = false
+	wintimer = 0
+	
 	--darker blue
 	--pal(1,130,1)
 	--pal(1,129,1)
@@ -83,6 +87,8 @@ end
 function _update60()
 	mouse_x_y()
 	grasstile()
+	if(win) wintimer += 1
+	if(wintimer > 180)menu="win"
 	if menu == "game" then
 		delchecker()
 		
@@ -188,9 +194,6 @@ function _draw()
 	-->>no code below this<<--
 	draw_mouse()
 	pal(1,129,1)
-	
-	oprint(wagon_n,camx+2,2)
-	oprint(tl,camx+2,10)
 end
 
 ----------
@@ -583,21 +586,21 @@ end
 
 function animplayer(p)
 	p.spriteoffsetcount = max(0,p.spriteoffsetcount-1)
-	 if p.spriteoffsetcount==0 then
+	if p.spriteoffsetcount==0 then
 	 p.spriteoffsetcount=p.spriteoffsettime
 	 if p.spriteoffset == 1 then
 	  p.spriteoffset=0
-	  else p.spriteoffset=1
+	 else 
+	  p.spriteoffset=1
 	 end
-	 end
+	end
 end
 
 function coupdekak(p)
- local x=flr(p.x) + cos(p.a)*6 +0
+	local x=flr(p.x) + cos(p.a)*6 +0
 	local y=flr(p.y) + sin(p.a)*3 +0
- 
- p.kak:fire(x+4,y+4,p.a)
-   
+	
+	p.kak:fire(x+4,y+4,p.a)
 end
 -->8
 --gun & bullet
@@ -818,7 +821,7 @@ guns = {
 	boss_360gun = 
 	make_gun("boss 360 gun",
 --spr cd spd oa dmg is_enemy auto
-		65, 1, 1, 1,2   ,true,  true,
+		65, 1, 1,  1, 2  ,true,  true,
 		--maxammo
 		250,
 		function(gun,x,y,dir)
@@ -835,7 +838,8 @@ guns = {
 		250,
 		function(gun,x,y,dir)
 			gun.timer = gun.cooldown
-			sapwnrndenemy(x/8,y/8)
+			if(rnd(2)<1)return spawn_enemy(x,y,enemy.hedgehog)
+			spawn_enemy(x,y,enemy.hedgehogbuff)
 		end
 	),
 }
@@ -925,19 +929,30 @@ function update_bullet(b)
 				
 				e.life -= b.dmg
 				if e.life<=0 then
-				 stats.kills+=1 del(enemies,e)
-				  if not(e.spr == 109) then
-				  burst_ptc(e.x+4,e.y+4,8,1,1,1)
-				  else --animation explosion
-				   for i=1,15 do
-							make_ptc(
-			  					e.x + rnd(28)-14,
-			  					e.y + rnd(28)-14,
-								8+rnd(8),rnd({9,10}))
-							end
-				   shake += 4
-				  end 
-				 if (e.spr == 109) e.gun:fire(e.x+4,e.y+4,e.a)
+					--kill enemy
+					stats.kills+=1 del(enemies,e)
+					if e.spr != 109 then
+					burst_ptc(e.x+4,e.y+4,8,1,1,1)
+					
+					--boss death
+					if e.spr==1 then
+						shake += 10
+						boss_pos = {e.x,e.y,e.flip}
+						menu = "bossdeath"
+					end
+					
+					else --animation explosion
+						
+						for i=1,15 do
+						make_ptc(
+									e.x + rnd(28)-14,
+									e.y + rnd(28)-14,
+							8+rnd(8),rnd({9,10}))
+						end
+						shake += 4
+						
+					end 
+					if (e.spr == 109) e.gun:fire(e.x+4,e.y+4,e.a)
 				end
 				bullets_hit+=1
 				
@@ -1421,7 +1436,7 @@ function init_enemies()
 	 
 	boss=make_enemy(
 --x,y,spr,speed,life,shootrange,  
-	 x,y,1  ,3    ,100 ,32,
+	 x,y,1  ,3    ,300 ,32,
 --chase,seerange
 	 true,32,
 
@@ -1450,7 +1465,7 @@ function spawn_enemy(x,y,name)
 	if(a.spr==1)r = 0
 	if (a.spr != 125)a.gun.cooldown += r
 	
- if (a.spr == 126) a.spd = 0.8+rnd(0.4)
+ if (a.spr == 126)a.spd = 0.8+rnd(0.4)
  if a.x<175 then
   a.gun.timer += 60
   a.timer = 60
@@ -1468,7 +1483,7 @@ function update_enemy(e)
 			,0)
 			
 			if i.gun.timer<=0 and 
-			canshoot(i) then
+			(canshoot(i) or i.spr==1)then
 				i.gun:fire(i.x+4,i.y+4,i.a)
 			end
 			if mouvrnd then
@@ -1502,7 +1517,15 @@ function draw_enemy(e)
 	spr(e.spr,e.x,e.y,w,w, e.flip)
 	
 	if e.spr==1 then
+		--life bar
+		rectfill(camx+1,120,
+		camx+126,126,4)
+		local l=126*(e.life/300)
+		rectfill(camx+2,121,camx+2+l,
+		125,9)
 		
+		local s="🐱"..e.life.."/".."300"
+		print(s, camx+3,121,7)
 	end
 	
 	--print(e.life, e.x,e.y-8,7)
@@ -1689,10 +1712,61 @@ end
 function init_menus()
 	menus = {}
 	menus.main = make_main_menu()
-	menus.death = make_death_menu()
+	menus.death = make_death_menu(false)
+	menus.bossdeath = make_boss_death()
+	menus.win = make_death_menu(true)
 end
 
-function make_death_menu()
+--[[
+function draw_bar(t,x,y,w,w2,c,c2)
+	rectfill(x,y,
+	x+w+2,y+5,c2)
+	local l=w*w2
+	rectfill(x+1,y+1,
+	x+1+l,y+5,c)
+	
+	print(t, x+1,y+1,7)
+end--]]
+
+function make_boss_death()
+	local m={
+	timer=400,
+	
+	update=function(m)
+		m.timer -= 3
+		
+		if m.timer<0 then
+			menu = "game"
+			win=true
+			shake += 40
+			for i=1,18 do
+				make_ptc(camx+rnd(128),
+				rnd(128),50+rnd(20),
+				rnd{8,9,10},.95)
+				
+--(x,y,r,col,fric,dx,dy,txt)
+			end
+		end
+		
+		mx,my=-10,-10
+	end,
+	
+	draw=function(m)
+		
+		local x,y = boss_pos[1]+8,boss_pos[2]+8
+		local flp = boss_pos[3]
+		local t = m.timer
+		circfill(x,y,t    ,8)
+		circfill(x,y,t*.75,9)
+		circfill(x,y,t*.5 ,10)
+		circfill(x,y,t*.25,7)
+		spr(1,x-8,y-8,2,2,flp)
+	end
+	}
+	return m
+end
+
+function make_death_menu(iswin)
 	local m = {
 	  update=update_death_menu,
 	  draw=draw_death_menu,
@@ -1700,18 +1774,23 @@ function make_death_menu()
 	  circt=1,
 	  timer=0,
 	  showtext=false,
+	  
+	  iswin=iswin,
 	}
+	
+	local t,t2="retry","change bird"
+	if(iswin)t="play again"
 	
 	m.buttons = {}
 	m.buttons[1]={
 		n=1,
-		t="retry",
+		t=t,
 		x=0,y=0, oy=0,
 		active=false
 	}
 	m.buttons[2]={
 		n=2,
-		t="change bird",
+		t=t2,
 		x=0,y=0, oy=0,
 		active=false
 	}
@@ -1751,22 +1830,35 @@ end
 
 function draw_death_menu(m)
 	--circles animation
+	palt(0,false)
 	palt(1,true)
+	local col,c2,c3,c4=0,1,2,9
+	local txtcol = 7
+	if m.iswin then
+		col,c2,c3,c4=15,9,8,2
+		txtcol = 10
+		if(t()%2<1)txtcol = 9
+	end
+	
 	for p in all(players)do
 		local x,y = p.x+4,p.y+4
-		circfill(x,y,m.circt    ,9)
-		circfill(x,y,m.circt*.75,2)
-		circfill(x,y,m.circt*.5 ,1)
-		circfill(x,y,m.circt*.25,0)
+		local c = m.circt
+		circfill(x,y,c    ,c4)
+		circfill(x,y,c*.75,c3)
+		circfill(x,y,c*.5 ,c2)
+		circfill(x,y,c*.25,col)
 		spr(p.spr,p.x,p.y)
 	end
 	palt()
 	
 	--text & buttons
 	local t=m.timer/100
-	oxxl("game over",
+	local txt="game over"
+	if(m.iswin)txt="congrats!"
+	
+	oxxl(txt,
 	     camx+30+cos(t)*3,
-	     1/t +30+sin(t)*3)
+	     1/t +20+sin(t)*3, txtcol)
 	for b in all(m.buttons) do
 		if b.active then
 			oprint(b.t,b.x,b.y,1,7)
@@ -1778,11 +1870,17 @@ function draw_death_menu(m)
 	--stats
 	local i=0
 	for k,v in pairs(stats)do
-		oprint(k,camx+30,
-		  i*8+1/t+60+sin(t+.3)*3, 6)
+		oprint(k,camx+35,
+		  i*8+1/t+40+sin(t+.3)*3, 7)
 		oprint(v,camx+80,
-		  i*8+1/t+60+sin(t+.3)*3, 13)
+		  i*8+1/t+40+sin(t+.3)*3, 13)
 		i+=1
+	end
+	
+	--hard mode prompt
+	if m.iswin then
+		oprint("hold the 'i' button\non the title screen\nto unlock hard mode\n"
+		,camx+25,1/t+70+sin(t)*2, 13)
 	end
 end
 
@@ -2210,23 +2308,23 @@ c082829282828292828282928282829282c0829282c08282828282828282c0828282828282828282
 a1727272a1d0a1727272d2727213131372e2c272d1c272c1c172e2d172e2c272d0c2727272727272727272e2d0420372c1c1a2b2c1c1c1a2b2c1c1c1a2b2c1c1
 d013d0808080b080808080b0808080d072d0425262d01212727272122232d07272021372727213137272121312721213d012727272727272727272829292c093
 c2d272d1e2d07272727291a0a0a0c1c172e3c372d3c372727272e3d372e3c372d0c3727272425272727272e3d04372727270a3b370a170a3b370a170a3b37072
-d002f0808080b180808080b1808080f072d0435363d01272727272132333d07272c2d272c2d272c2d272c2d272c2d213d012727272727272727272f272728231
+d002f0808080b180808080b1808080f072d0435363d01272727272132333d07272c2d272c2d272c2d272c2d272c2d213d012727272727272727272f2727282c1
 c3d372d3e3d07272727272727272727272727272727272727272727272727272d0a1727272435363127272a1d002727272707070707270707070727070707072
 d072f18080808080b0b08080808080f172d0727272d07272c07272722232d07272c3d372c3d372c3d372c3d372c3d372d072727272727272727272f27272f331
 7272727272d0137213e0c2d172d2e2727272727272a172727272a17272727272828241828282c082828241828272727272f27272f272f27272f272f27272f272
-d072a19080808080b1b18080808090a172d0727272d07272d07272721233d072727272727272727272727272727272726072727272727272727272f272727231
+d072a19080808080b1b18080808090a172d0727272d07272d07272721233d072727272727272727272727272727272726072727272721272727272f272727231
 72c2d1e272d02232a1d0c3d372d3e37272637272d3d2f37272f3d1d372726272727272722232d002020372727272727272f27272f213f27272f202f27272f272
-827272729090909090909090909072727282828241d07272d07272721212d072505050505050505050505050505050506072727272727272727272f27272f331
+827272729090909090909090909072727282828241d07272d07272721212d072505050505050505050505050505050506072727272721272727272f27272f331
 72c3d3e372d0233313d0a172727272727262727272d1f37272f3d27272726272727272722333d012037272727272727272f27272f213f27272f213f27272f272
-727272727272727272727272727272727272727272824141828282c082828272010101010101010101010101010101016072727272727272727272f272727231
+727272727272727272727272727272727272727272824141828282c082828272010101010101010101010101010101016072727272721272727272f272727231
 7272727272f0721272d0c272d172727272637272d3d272f3f372d2d372726372828241828282d082828241828272727272f27272f212f27272f202f27272f272
-c07272c272d172e27272c272d172e2727272727272727272727212d022327272303030303030303030303030303030306072727272727272727272f27272f331
+c07272c272d172e27272c272d172e2727272727272727272727212d022327272303030303030303030303030303030306072727272721272727272f27272f331
 7272727272f1727272d0c372d3727272727272727291a0a0a0a0517272727272d07272720262f0a172727272d072727272f27272f272f27272f272f27272f272
-d07272c372d372e37272c372d372e3727272727272727272727272f023337272727272727272727272727272727272726072727272727272727272f272727231
+d07272c372d372e37272c372d372e3727272727272727272727272f023337272727272727272727272727272727272726072727272721272727272f272727231
 727272727272727272d0a1727272727272727272727272727272727272727272d00372727272f17272727212d0a1727272c17272c1c1c17272c1c1c17272c172
 d07272727272727272727272727272727272727272c0a172727272f17272727272c2d272c2d272c2d272c2d272c2d272d072727272727272727272f27272f331
 223272727272727272d0c2d272d1e27272e2c272d1c272727272e2d172e2c272d04202727272727272720363d0223272e270f3f3e270c2f3f3e270c2f3f370c2
-d07272727272727272727272727272727272722232d07272727272127272727272c3d372c3d372c3d372c3d372c3d313d012727272727272727272f27272c031
+d07272727272727272727272727272727272722232d07272727272127272727272c3d372c3d372c3d372c3d372c3d313d012727272727272727272f27272c093
 23331312a1727272a1d0c3d372d3e37272e3c372d3c372c1c172e3d372e3c372d04362037272727272031362d0233372e37013f3e370c3f3f3e370c3f31270c3
 d0727272c272d172e2c272d172e272727272721233d07272727272727272727272721272727212131372727272727213d012727272727272727272c082828293
 82829282828292828282928282829282828292828282928282829282828282828282928282829282828292828282928282829282828292828282928282829282
