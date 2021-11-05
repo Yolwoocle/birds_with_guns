@@ -632,7 +632,7 @@ spd,oa,dmg,is_enemy,auto,maxammo,fire)
 		local s=93
 		if(gun.is_enemy)s=95
 		if(gun.name=="kak")s=77 lifspa=5
-		if(gun.name=="explosion")s=57 lifspa=13
+		if(gun.name=="explosion")s=57 lifspa=10
 		if not gun.is_enemy and gun.name!="debuggun" then
 			if(shake<1)shake+=1 
 		end
@@ -793,7 +793,7 @@ guns = {
 	
 	explosion = make_gun("explosion",
 --spr cd spd oa dmg is_enemy auto
-		57, 0, 1.5, 1,5   ,true,  false,
+		57, 0, 2, 1,5   ,true,  false,
 		--maxammo
 		1,
 		function(gun,x,y,dir)
@@ -919,7 +919,12 @@ function update_bullet(b)
 				  if not(e.spr == 109) then
 				  burst_ptc(e.x+4,e.y+4,8,1,1,1)
 				  else --animation explosion
-				   burst_ptc(e.x+4,e.y+4,10)
+				   for i=1,15 do
+							make_ptc(
+			  					e.x + rnd(28)-14,
+			  					e.y + rnd(28)-14,
+								8+rnd(8),rnd({9,10}))
+							end
 				   shake += 4
 				  end 
 				 if (e.spr == 109) e.gun:fire(e.x+4,e.y+4,e.a)
@@ -1295,8 +1300,8 @@ function parcourmap()
       spawn_enemy(x * 8,y * 8,enemy.juggernaut)
      
      --spawn warm
-     elseif ceil(rnd(30))>28.5-(wagon_n*0.7) and wagon_n>0 then
-      for i=0,ceil(rnd(wagon_n*1.2))+7 do
+     elseif ceil(rnd(30))>28.5-(wagon_n*0.6) and wagon_n>0 then
+      for i=0,ceil(rnd(wagon_n))+8 do
       spawn_enemy(x * 8,y * 8,enemy.warm)
       end
      
