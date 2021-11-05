@@ -2207,7 +2207,7 @@ function draw_drops()
 end
 
 function spawn_loot(x,y)
-	local r = rnd(2)
+	local r = rnd(1)
 	
 	if r < .01 then
 		local g = rnd_gun()
