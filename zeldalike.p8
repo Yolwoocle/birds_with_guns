@@ -684,7 +684,7 @@ guns = {
 	
 	shotgun = make_gun("shotgun",
 --spr cd spd oa dmg is_enemy auto
-	 65, 60,4, .05,1.25,  false,   false,
+	 65, 60,4, .05,1,  false,   false,
 	 --maxammo
 		100,
 	 function(gun,x,y,dir)
@@ -1319,8 +1319,8 @@ function sapwnrndenemy(x,y)
       spawn_enemy(x * 8,y * 8,enemy.juggernaut)
      
      --spawn warm
-     elseif ceil(rnd(30))>28.5-(wagon_n*0.6) and wagon_n>0 then
-      for i=0,ceil(rnd(wagon_n))+8 do
+     elseif ceil(rnd(30))>28.5-(wagon_n*0.5) and wagon_n>0 then
+      for i=0,ceil(rnd(wagon_n/2))+8 do
       spawn_enemy(x * 8,y * 8,enemy.warm)
       end
      
@@ -1331,7 +1331,7 @@ function sapwnrndenemy(x,y)
       spawn_enemy(x * 8,y * 8,enemy.tourelle)
      --spawn hedgehog 
      else 
-      if ceil(rnd(23))>27-(wagon_n*2) then
+      if ceil(rnd(23))>27-(wagon_n*2.5) then
        spawn_enemy(x * 8,y * 8,enemy.hedgehogbuff)
       else spawn_enemy(x * 8,y * 8,enemy.hedgehog)
       
