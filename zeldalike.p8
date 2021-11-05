@@ -164,7 +164,7 @@ function _update60()
 		end
 		players[1].x = 3*128
 	end
-	
+	]]
 end
 
 
