@@ -86,6 +86,7 @@ checker = {}
 		birdchoice=tonum(stat(6))
 		begin_game()
 	end
+
 end
 
 function _update60()
@@ -163,7 +164,7 @@ function _update60()
 		end
 		players[1].x = 3*128
 	end
-	]]
+	
 end
 
 
@@ -1893,10 +1894,18 @@ function draw_death_menu(m)
 	end
 	
 	--hard mode prompt
-	if m.iswin then
+	if degaplus == 0 then
+	 if m.iswin then
 		oprint("hold the ❎ and 🅾️ \non the title screen\nto unlock hard mode\n"
 		,camx+25,1/t+70+sin(t)*2, 13)
+	 end
+	else
+	if m.iswin then
+		oprint("bro what !!!\nthis was not \nsupposed to be possible !"
+		,camx+25,1/t+70+sin(t)*2, 13)
 	end
+	end
+	
 end
 
 ------
