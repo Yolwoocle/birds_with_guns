@@ -763,7 +763,7 @@ function init_guns()
 	
 	gunslimebuff = make_gun("gunslimebuff",
 --spr cd spd oa  dmg is_enemy auto
-		64, 100,1, .04,2+degaplus,  true,  true,
+		64, 100,1, .04,2+(degaplus*2),  true,  true,
 		--maxammo
 		250,
 		function(gun,x,y,dir)
@@ -799,7 +799,7 @@ function init_guns()
 	 
 	 machinegunmechant = make_gun("machinegunmechant",
 --spr cd spd oa dmg is_enemy auto
-		66, 5, .75, .05,2+degaplus   ,true,  true,
+		66, 5, .75, .05,2+degaplus*2   ,true,  true,
 		--maxammo
 		250,
 		function(gun,x,y,dir)
@@ -2224,9 +2224,11 @@ function spawn_loot(x,y)
 		copy(g))
 	elseif r < .04 then
 		make_drop(x,y,79,"ammo",30)
-	elseif r < .06 then
+	elseif degaplus == 0 and r < .06 then
 		make_drop(x,y,78,"health",2)
-	end
+	elseif degaplus == 1 and r < .045 then
+		make_drop(x,y,78,"health",1)
+		end
 end
 __gfx__
 00000000000d500000005d00777777770000000011111111777777766666666d44444444444444444444444444444444eeeeeeeeee1111ee11eeee11ee1111ee
