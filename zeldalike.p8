@@ -328,6 +328,7 @@ function init_player(bird)
 		spriteoffsettime=7,
 		spriteoffsetcount=7,
 		spriteoffset = 0,
+		kak = copy(kak)
 	}
 	p.gun = p.gunls[p.gunn]
 	add(players,p)
@@ -394,7 +395,7 @@ function player_update()
 		local active=stat(34)&2 > 0
 		
 		
-		kak:update()
+		p.kak:update()
 		p.gun:update()
 		test = p.gun.name
 		-- not auto
@@ -420,7 +421,7 @@ function player_update()
 		elseif fire and
         p.gun.ammo < 1 and
         p.lmbp == true and
-        kak.timer<=0 then
+        p.kak.timer<=0 then
         coupdekak(p) 
         p.lmbp = false
 		end
@@ -577,7 +578,7 @@ function coupdekak(p)
  local x=flr(p.x) + cos(p.a)*6 +0
 	local y=flr(p.y) + sin(p.a)*3 +0
  
- kak:fire(x+4,y+4,p.a)
+ p.kak:fire(x+4,y+4,p.a)
    
 end
 -->8
@@ -614,6 +615,7 @@ spd,oa,dmg,is_enemy,auto,maxammo,fire)
 		local s=93
 		if(gun.is_enemy)s=95
 		if(gun.name=="kak")s=77 lifspa=5
+		if(gun.name=="explosion")s=57 lifspa=13
 		if not gun.is_enemy and gun.name!="debuggun" then
 			if(shake<1)shake+=1 
 		end
@@ -772,6 +774,20 @@ guns = {
 		end
 	),
 	
+	explosion = make_gun("explosion",
+--spr cd spd oa dmg is_enemy auto
+		57, 0, 1.5, 1,5   ,true,  false,
+		--maxammo
+		1,
+		function(gun,x,y,dir)
+			for i=1,30 do
+	 		local o=rnd(1)-.5
+	 		local ospd=gun.spd*(rnd(.2)+.9)
+	 		gun:shoot(x,y,dir+o, ospd)
+	 	end
+		end
+	),
+	
 }
 
 kak = make_gun("kak",
@@ -844,8 +860,9 @@ function update_bullet(b)
 				
 			end
 		end
+	end
 		
-	else
+	if not(b.is_enemy) or b.spr == 57 then
 		
 		for e in all(enemies)do
 		 if loaded(e) then
@@ -857,7 +874,16 @@ function update_bullet(b)
 			x2,y2) then
 				
 				e.life -= b.dmg
-				if(e.life<=0) stats.kills+=1
+				if e.life<=0 then
+				 stats.kills+=1 del(enemies,e)
+				  if not(e.spr == 109) then
+				  burst_ptc(e.x+4,e.y+4,8)
+				  else --animation explosion
+				   burst_ptc(e.x+4,e.y+4,10)
+				   shake += 4
+				  end 
+				 if (e.spr == 109) e.gun:fire(e.x+4,e.y+4,e.a)
+				end
 				bullets_hit+=1
 				
 				knockback_enemy(e,b)
@@ -1211,9 +1237,11 @@ function parcourmap()
   for y=2,12 do
    if x>3 or players[1].y-1000>y*8 or players[1].y+1000<y*8 then
     if fget(mget(x,y),2) and ceil(rnd(max(3,20-(wagon_n*1.65))))==1 then
-     
+     --spawn explosive_barrel 
+      if ceil(rnd(25))==10 then
+      spawn_enemy(x * 8,y * 8,enemy.explosive_barrel)
      --spawn juggernaut
-     if ceil(rnd(32))>31-(wagon_n*0.7) and wagon_n>1 then
+     elseif ceil(rnd(32))>31-(wagon_n*0.7) and wagon_n>1 then
       spawn_enemy(x * 8,y * 8,enemy.juggernaut)
      
      --spawn warm
@@ -1223,9 +1251,8 @@ function parcourmap()
       end
      
      --spawn tourelle 
-      elseif ceil(rnd(30))>31.5-(wagon_n*1) and wagon_n>2 then
+      elseif ceil(rnd(30))>32.5-(wagon_n*1) and wagon_n>2 then
       spawn_enemy(x * 8,y * 8,enemy.tourelle)
-     
      --spawn hedgehog 
      else 
       if ceil(rnd(23))>27-(wagon_n*2) then
@@ -1323,6 +1350,13 @@ function init_enemies()
 --chase,seerange
 	 true,32,
 	 guns.machinegunmechant),
+	 
+	 explosive_barrel=make_enemy(
+--x,y,spr,speed,life,shootrange,  
+	 x,y,109  ,0    ,1 ,0,
+--chase,seerange
+	 false,0,
+	 guns.explosion),
 }
 enemy.boss.bw = 15
 enemy.boss.bh = 15
@@ -1349,10 +1383,6 @@ end
 
 function update_enemy(e)
 	for i in all(enemies) do
-		if i.life <= 0 then  
-			burst_ptc(i.x+4,i.y+4,8) 
-			del(enemies,i)
-		end
 		if loaded(i) then
 			mouvrnd = true
 			
@@ -1370,7 +1400,7 @@ function update_enemy(e)
 			
 			local p = players[1]
 			i.pangle=atan2(p.x-i.x,p.y-i.y)
-			i.flip=isleft(i.pangle)
+			if (not (i.spr== 109))i.flip=isleft(i.pangle)
 			
 			i.x += i.dx
 			i.y += i.dy
@@ -2027,14 +2057,14 @@ ddddddd144444444111444441111111112222222222222112222222111211211ffffffff00000000
 157d882553333aaa1111111112678866aa92009aee1ee7e1ddd77ddd44777d0622ff22052100000070dc111456677777d766666009a77a900666dd6008e77e80
 11d8188d33339aa21111111116772666aaaaa0cce2127f7190077009446776065028e00549994000700c0111510aa7770dd66600009aa90005d005d0008ee800
 11d8188d3003a44211242111177066119aaa0c1cee11fff17909a097444977665f8888fe21109990777cc044d0a22a70d0550550000000000d500d5000000000
-15dd88dd30139444994442111760566699aa0c1cee2100f1777997774499aa77f828828f2222a0001777764467a211a0004222000000000077700000cccccccc
-53ddddd553333994a941422116000666e9909acc2ee000116799a977499a7777f2e22e2f2222a9101177764467911997042777200000000000000000ccc77ccc
-33d3ddd1253333391a742222161006688e00aaa71ee001110719a16749a47777fffeeffe22227aa9c1777444678999774271f1700000000077700000cccccccc
-3233d3512233333216777222111288882807777712ee21110600a017444477775feeeff52222777acc1764447788887724f1f1f00000000077700000cc777ccc
-2223333122533372116777611128888225777777e11ee21101009006444d77775feeee2522267777cd71444477e88877427fff440000000077700000ccc77ccc
-2222232226557744411e1e111928882827777777ee12ee1100000010d6666777552eee2522267777d776444477788e77247777700000000000000000ccc77ccc
-62626226d66d554424e11e11aa8889a805777777ee21ee211000001066666677555eeee2222777777774444477777777024777000000000000000000cc7777cc
-6666626666666dd51224e421cca88caa00057777eee12ee110010000666666665552eeee222777777764444477777777002202200000000000000000cccccccc
+15dd88dd30139444994442111760566699aa0c1cee2100f1777997774499aa77f828828f2222a0001777764467a211a0004222000000040077700000cccccccc
+53ddddd553333994a941422116000666e9909acc2ee000116799a977499a7777f2e22e2f2222a9101177764467911997042777200000409000000000ccc77ccc
+33d3ddd1253333391a742222161006688e00aaa71ee001110719a16749a47777fffeeffe22227aa9c1777444678999774271f1700065550077700000cccccccc
+3233d3512233333216777222111288882807777712ee21110600a017444477775feeeff52222777acc1764447788887724f1f1f00655555077700000cc777ccc
+2223333122533372116777611128888225777777e11ee21101009006444d77775feeee2522267777cd71444477e88877427fff440515551077700000ccc77ccc
+2222232226557744411e1e111928882827777777ee12ee1100000010d6666777552eee2522267777d776444477788e77247777700551515000000000ccc77ccc
+62626226d66d554424e11e11aa8889a805777777ee21ee211000001066666677555eeee2222777777774444477777777024777000555555000000000cc7777cc
+6666626666666dd51224e421cca88caa00057777eee12ee110010000666666665552eeee222777777764444477777777002202200055550000000000cccccccc
 11115d1111113b111111111111288e1110001111111eeee111167711111167111111eef111000011dccccd111111888111d66dd5003bbb000000000011100000
 1115ddd1111333b111111111127078710779aa01111e7075116079a1111677711111f0ee1000000111c777c1117888811d6777dd03bbbbb00000000017110000
 11152dd111130aa111111111127770770c799990e111ee151167799a1116079951111ff100a70999111d707d167779aa6777776d331bb3100060505017711000
