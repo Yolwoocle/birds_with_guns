@@ -909,7 +909,7 @@ function update_bullet(b)
 				if e.life<=0 then
 				 stats.kills+=1 del(enemies,e)
 				  if not(e.spr == 109) then
-				  burst_ptc(e.x+4,e.y+4,8)
+				  burst_ptc(e.x+4,e.y+4,8,1,1,1)
 				  else --animation explosion
 				   burst_ptc(e.x+4,e.y+4,10)
 				   shake += 4
