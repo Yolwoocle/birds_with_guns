@@ -132,6 +132,7 @@ function _update60()
 		pal_n = tl
 		players[1].x = 3*128+90
 		players[1].gunls[1]=debuggun
+		players[1].gunls[2]=guns.spawn_mechants
 		players[1].maxlife = 2000 
 		players[1].life = 2000 
 		update_gun(players[1])
@@ -828,6 +829,17 @@ guns = {
 			gun:shoot(x,y,gun.dir)
 		end
 	),
+	
+	spawn_mechants = 
+	make_gun("spawn_mechants",
+--spr cd spd oa dmg is_enemy auto
+		65, 2, 1, 1,2   ,true,  true,
+		--maxammo
+		250,
+		function(gun,x,y,dir)
+			sapwnrndenemy(x/8,y/8)
+		end
+	),
 }
 
 kak = make_gun("kak",
@@ -1288,11 +1300,20 @@ end
 function parcourmap()
  local x1=0
  if(wagon_n==0)x1=16
- for x=x1,16*(wl-1) do
-  for y=2,12 do
-   if x>3 or players[1].y-1000>y*8 or players[1].y+1000<y*8 then
-    if fget(mget(x,y),2) and ceil(rnd(max(3,20-(wagon_n*1.65))))==1 then
-     --spawn explosive_barrel 
+ 	for x=x1,16*(wl-1) do
+  	for y=2,12 do
+   	if x>3 or players[1].y-1000>y*8 or players[1].y+1000<y*8 then
+    	if fget(mget(x,y),2) and ceil(rnd(max(3,20-(wagon_n*1.65))))==1 then
+      sapwnrndenemy(x,y)
+    	end
+   	end
+  	end
+  end
+ end
+
+
+function sapwnrndenemy(x,y)
+	--spawn explosive_barrel 
       if ceil(rnd(15))==10 then
       spawn_enemy(x * 8,y * 8,enemy.explosive_barrel)
      --spawn juggernaut
@@ -1317,16 +1338,8 @@ function parcourmap()
       else spawn_enemy(x * 8,y * 8,enemy.hedgehog)
       
      end
-    
-    end
-   end
-   
-  end
-  end
- end
+     end
 end
-
-
 -->8
 --enemies
 function make_enemy(x,y,spr,
