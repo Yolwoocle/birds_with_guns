@@ -809,7 +809,7 @@ guns = {
 	boss_targetgun = 
 	make_gun("boss target gun",
 --spr cd spd oa dmg is_enemy auto
-		65, 6, 1, .07,2   ,true,  true,
+		65, 6, 1.5,.05,2   ,true,  true,
 		--maxammo
 		250,
 		function(gun,x,y,dir)
@@ -1434,9 +1434,11 @@ local b=enemy.boss
 b.bw = 15
 b.bh = 15
 b.hw = 16
-b.guns = {guns.boss_targetgun}
-b.phase = 1
-b.phasetimer = 1
+b.guns = {guns.boss_targetgun,
+guns.boss_360gun,
+guns.boss_enemygun}
+b.phase = 0
+b.phasetimer = 0
 
 end
 
@@ -1500,7 +1502,6 @@ function draw_enemy(e)
 	
 	spr(e.spr, e.x,e.y,w,w,e.flip)
 	
-		
 	--print(e.life, e.x,e.y-8,7)
 	--circ(e.x+4,e.y+4,e.r,12)
 	--print(e.gun.timer,e.x,e.y)
@@ -1512,7 +1513,7 @@ function update_boss(i)
 	if(i.phasetimer<0)i.phasetimer=600+rnd(600); i.phase+=1
 	if(i.phase>3)i.phase=1
 	
-	--i.gun=i.guns[1]
+	i.gun=i.guns[i.phase]
 end
 
 function changedirection(i)
