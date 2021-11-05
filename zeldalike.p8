@@ -40,6 +40,7 @@ function _init()
 	init_enemies()
 	
 	init_ptc()
+	diffi = 20
 	
 	wl = 4 --wagon length
 	wagon_n = 0
@@ -81,6 +82,10 @@ function _init()
 end
 
 function _update60()
+ if btn(🅾️) and btn(❎) and menu == "main" and diffi != 15 then
+ 	shake = 5
+ 	diffi = 15
+ end
 	mouse_x_y()
 	grasstile()
 	if menu == "game" then
@@ -124,6 +129,7 @@ function _update60()
 	shake = max(0,shake)
 	
 	--remove for release
+	--[[
 	if btn(❎) then
 		for e in all(enemies)do 
 			del(enemies,e)
@@ -144,6 +150,7 @@ function _update60()
 		end
 		players[1].x = 3*128
 	end
+	
 end
 
 
@@ -1301,7 +1308,7 @@ function parcourmap()
  	for x=x1,16*(wl-1) do
   	for y=2,12 do
    	if x>3 or players[1].y-1000>y*8 or players[1].y+1000<y*8 then
-    	if fget(mget(x,y),2) and ceil(rnd(max(3,20-(wagon_n*1.65))))==1 then
+    	if fget(mget(x,y),2) and ceil(rnd(max(3,diffi-(wagon_n*1.65))))==1 then
       sapwnrndenemy(x,y)
     	end
    	end
