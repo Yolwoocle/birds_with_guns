@@ -1394,7 +1394,7 @@ function init_enemies()
 --chase,seerange
 	 true,32,
 
-	 guns.guns.boss_targetgun),
+	 guns.boss_targetgun),
 	 
 	 explosive_barrel=make_enemy(
 --x,y,spr,speed,life,shootrange,  
@@ -1402,6 +1402,7 @@ function init_enemies()
 --chase,seerange
 	 false,0,
 	 guns.explosion),
+	 }
 
 local b=enemy.boss
 b.bw = 15
