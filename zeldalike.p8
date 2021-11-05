@@ -1280,7 +1280,7 @@ function parcourmap()
    if x>3 or players[1].y-1000>y*8 or players[1].y+1000<y*8 then
     if fget(mget(x,y),2) and ceil(rnd(max(3,20-(wagon_n*1.65))))==1 then
      --spawn explosive_barrel 
-      if ceil(rnd(25))==10 then
+      if ceil(rnd(20))==10 then
       spawn_enemy(x * 8,y * 8,enemy.explosive_barrel)
      --spawn juggernaut
      elseif ceil(rnd(32))>31-(wagon_n*0.7) and wagon_n>1 then
