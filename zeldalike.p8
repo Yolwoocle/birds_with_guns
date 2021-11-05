@@ -683,7 +683,7 @@ guns = {
 	
 	shotgun = make_gun("shotgun",
 --spr cd spd oa dmg is_enemy auto
-	 65, 60,4, .05,1,  false,   false,
+	 65, 60,4, .05,2,  false,   false,
 	 --maxammo
 		100,
 	 function(gun,x,y,dir)
@@ -774,7 +774,7 @@ guns = {
 	 57, 0,57, 0,1,  true,  true,
 	 --maxammo
 		250,
-	 function(gun,x,y,dir) 	
+	 function(gun,x,y,dir) 
 	 		local o=rnd(.1)-.05
 	 		local ospd=gun.spd*(rnd(.2)+.9)
 	 		gun:shoot(x,y,dir+o, ospd)
@@ -791,7 +791,6 @@ guns = {
 		end
 	),
 	
-
 	explosion = make_gun("explosion",
 --spr cd spd oa dmg is_enemy auto
 		57, 0, 1.5, 1,5   ,true,  false,
@@ -806,9 +805,8 @@ guns = {
 		end
 	),
 	
-
 	boss_targetgun = 
-	make_gun("boss targetgun",
+	make_gun("boss target gun",
 --spr cd spd oa dmg is_enemy auto
 		65, 6, 1, .07,2   ,true,  true,
 		--maxammo
@@ -818,12 +816,23 @@ guns = {
 			gun:shoot(x,y,dir)
 		end
 	),
-
+	
+	boss_360gun = 
+	make_gun("boss 360 gun",
+--spr cd spd oa dmg is_enemy auto
+		65, 2, 1, 1,2   ,true,  true,
+		--maxammo
+		250,
+		function(gun,x,y,dir)
+			gun.dir+=.01+1/6
+			gun:shoot(x,y,gun.dir)
+		end
+	),
 }
 
 kak = make_gun("kak",
---spr cd spd oa dmg is_enemy auto
-		57, 20, 2.1, .005,2   ,false,  false,
+--spr cd spd oa  dmg is_enemy auto
+		57, 20,2.1,.005,2 ,false,  false,
 		--maxammo
 		0,
 		function(gun,x,y,dir)
@@ -1234,7 +1243,7 @@ function begin_boss()
 	mset(x,i,6)
 	for i=5,9 do
 		mset(x,i,6)
-		burst_ptc(x*8,i*8,7)
+		burst_ptc(x*8,i*8,10)
 	end
 	mset(x,i,6)
 end
@@ -1387,28 +1396,27 @@ function init_enemies()
 	 false,1,
 	 guns.machinegunmechant),
 	 
-	boss=make_enemy(
---x,y,spr,speed,life,shootrange,  
-	 x,y,1  ,3    ,300 ,32,
---chase,seerange
-	 true,32,
-
-	 guns.boss_targetgun),
-	 
 	 explosive_barrel=make_enemy(
 --x,y,spr,speed,life,shootrange,  
 	 x,y,109  ,0    ,1 ,0,
 --chase,seerange
 	 false,0,
 	 guns.explosion),
-	 }
+	 
+	boss=make_enemy(
+--x,y,spr,speed,life,shootrange,  
+	 x,y,1  ,3    ,300 ,32,
+--chase,seerange
+	 true,32,
+
+	 guns.boss_360gun),
+}
 
 local b=enemy.boss
 b.bw = 15
 b.bh = 15
 b.hw = 16
 b.guns = {guns.boss_targetgun}
-b.gun = boss_targetgun
 b.phase = 1
 b.phasetimer = 1
 
@@ -1421,9 +1429,6 @@ function spawn_enemy(x,y,name)
  a.gun = copy(a.gun)
  local r = rnd(60)
 	if(a.spr==1)r =0 
-	print("-")
-	print(a.spr)
-	print(a.gun.spr)
 	if (a.spr != 125)a.gun.cooldown += r
  
  if (a.spr == 126) a.spd = 0.8+rnd(0.4)
@@ -1486,10 +1491,10 @@ end
 
 function update_boss(i)
 	i.phasetimer -= 1
-	if(i.phasetimer<0)i.phasetimer=0; i.phase+=1
+	if(i.phasetimer<0)i.phasetimer=600+rnd(600); i.phase+=1
 	if(i.phase>3)i.phase=1
 	
-	i.gun=i.guns[1]
+	--i.gun=i.guns[1]
 end
 
 function changedirection(i)
