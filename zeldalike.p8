@@ -90,6 +90,7 @@ checker = {}
 end
 
 function _update60()
+ --hard mod
  if btn(🅾️) and btn(❎) and 
  menu == "main" and diffi != 17 then
  	shake = 5
@@ -1722,11 +1723,6 @@ function draw_weel()
 	end
 	end
 end
-
-
-
-
-
 
 ----
 
