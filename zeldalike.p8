@@ -216,7 +216,7 @@ end
 ----------
 function set_stats()
 	stats.time=(time()-stats.time)
-	stats.time=flr(stats.time*10)/10
+	stats.time=(flr(stats.time)\60)+((flr(stats.time)-(flr(stats.time)\60)*60)/100)
 	stats.wagon=wagon_n+1
 end
 
@@ -2184,7 +2184,7 @@ function spawn_loot(x,y)
 		make_drop(x,y,g.spr,"gun",
 		copy(g))
 	elseif r < .04 then
-		make_drop(x,y,79,"ammo",30)
+		make_drop(x,y,79,"ammo",flr(players[1].gun.maxammo/5))
 	elseif degaplus == 0 and r < .06 then
 		make_drop(x,y,78,"health",2)
 	elseif degaplus == 1 and r < .045 then
