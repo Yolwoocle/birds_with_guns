@@ -10,7 +10,6 @@ __lua__
 degaplus = 0
 
 function _init()
-init_guns()
 enemies = {}
 checker = {}
 	--mouse
@@ -63,6 +62,8 @@ checker = {}
 	
 	bird_choice=0
 	
+	hardmodetimer=0
+	
 	bullets_shooted=1
 	bullets_hit=1
 	stats={
@@ -90,12 +91,11 @@ checker = {}
 end
 
 function _update60()
- if btn(🅾️) and btn(❎) and 
+ if hardmodetimer>120 and 
  menu == "main" and diffi != 17 then
  	shake = 5
  	diffi = 17
  	degaplus = 1
- 	init_guns()
  	init_enemies()
  end
 	mouse_x_y()
@@ -287,10 +287,31 @@ function update_camera()
 	local wl = wl
 	local maxlen = 240
 	
+	--poke(0x5f40,0)
+	--poke(0x5f43,0)
 	if px > 128*(wl-1) then
 		--pan cam to connector room
 		cam_follow_player=false
 		targetcamx=128*(wl-1)
+		
+		--low-pass filter & slow
+		--poke(0x5f40,15)
+		--poke(0x5f43,15)
+		
+		--bass only,music chnl 3&4 off
+		--thx: https://www.youtube.com/watch?v=jdizzjm9i6y
+		for i=0x3100,0x3148,4 do
+			--off
+			poke(i+2,peek(i+2)|0b01000000)
+			poke(i+3,peek(i+3)|0b01000000)
+		end
+	else
+		for i=0x3100,0x3148,4 do
+			--on
+			for j=0,3 do
+				poke(i+j,peek(i+j)&0b10111111)
+			end
+		end
 	end
 	
 	if cam_follow_player then 
@@ -404,6 +425,8 @@ function player_update()
 		--death
 		if p.life <= 0 
 		and menu!="death"then
+			sfx(34)
+			
 			menu = "death"
 			shake += 9
 			burst_ptc(p.x+4,p.y+4,7)
@@ -436,8 +459,10 @@ function player_update()
 			if p.lmbp == true then
 				make_ptc(p.x+cos(p.a)*6+4, 
 				p.y+sin(p.a)*3+4, rnd(3)+6,7,.7)
+				
 				p.gun.ammo -= 1
 				p.gun:fire(p.x+4,p.y+4,p.a)
+				
 				p.lmbp = false
 			end
 			
@@ -496,8 +521,9 @@ function player_update()
 			p.x+4,p.y+4,
 			e.x+1,e.y+1,e.x+7,e.y+7) then
 				
-				if(shake<=2)shake += 2
 				if (p.tbnd == 0) then
+					sfx(35)
+					if(shake<=2)shake += 2
 					p.life-=e.gun.dmg 
 					p.tbnd = 30 
 				end
@@ -621,7 +647,8 @@ end
 --gun & bullet
 
 function make_gun(name,spr,cd,
-spd,oa,dmg,is_enemy,auto,maxammo,fire)
+spd,oa,dmg,is_enemy,auto,
+maxammo,sfxx,fire)
 	--todo:not have 3000 args
 	local gun = {
 		name=name,
@@ -642,17 +669,24 @@ spd,oa,dmg,is_enemy,auto,maxammo,fire)
 		x=0,y=0,
 		dir=0,
 		burst=0,
+		
+		sfx=sfxx,
 	}
 	
 	gun.fire = fire
 	
 	gun.shoot=function(gun,x,y,dir,spd)
 		--remove? it complicates code
+		if(gun.burst<=0)dir+=rnd(2*gun.oa)-gun.oa
+		
+		sfx(gun.sfx)
+		
 		local s=93
 		if(gun.is_enemy)s=95
 		if(gun.name=="kak")s=77 lifspa=5
 		if(gun.name=="explosion")s=57 lifspa=10
-		if not gun.is_enemy and gun.name!="debuggun" then
+		if not gun.is_enemy 
+		and gun.name!="debuggun" then
 			if(shake<1)shake+=1 
 		end
 		
@@ -682,23 +716,20 @@ degaplus = 0
 debuggun = make_gun("debuggun",
 --spr cd spd oa dmg is_enemy auto
 		64, 1, 3, .02,10, false,  true,
---maxammo
-		999999,
+--maxammo sfx
+		999999, 0,
 		function(gun,x,y,dir)
-			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
 		end
 	)
 
-function init_guns()
- guns = {
+guns = {
 	revolver = make_gun("revolver",
 --spr cd spd oa dmg is_enemy auto
-		64, 15,2.5, .02,2   ,false,  false,
-		--maxammo
-		250,
+		64, 15,2.5,.015,2   ,false,  false,
+--maxammo sfx
+		250,    32,
 		function(gun,x,y,dir)
-			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
 		end
 	),
@@ -706,10 +737,10 @@ function init_guns()
 	shotgun = make_gun("shotgun",
 --spr cd spd oa dmg is_enemy auto
 	 65, 60,4, .05,1,  false,   false,
-	 --maxammo
-		100,
+--maxammo sfx
+		100,    32,
 	 function(gun,x,y,dir)
-	 	for i=1,8 do
+	 	for i=1,6 do
 	 		local o=rnd(.1)-.05
 	 		local ospd=gun.spd*(rnd(.2)+.9)
 	 		gun:shoot(x,y,dir+o, ospd)
@@ -719,35 +750,32 @@ function init_guns()
 	machinegun = make_gun("machinegun",
 --spr cd spd oa dmg is_enemy auto
 		66, 7, 3, .05,2   ,false,  true,
-		--maxammo
-		500,
+--maxammo sfx
+		500,    32,
 		function(gun,x,y,dir)
-			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
 		end
 	),
 	
 	assaultrifle = make_gun("assault rifle",
 --spr cd spd oa dmg is_enemy auto
-		67, 30,4, .02,1   ,false,  true,
-		--maxammo
-		150,
+		67, 30,4, .015,1   ,false,  true,
+--maxammo sfx
+		150,    32,
 		function(gun,x,y,dir)
-			dir+=rnd(2*gun.oa)-gun.oa
 			gun.burst = 4
 			gun.x, gun.y = x, y
-			gun.dir = dir
-			gun:shoot(x,y,dir)
+			gun.dir =dir+(rnd(2)-1)*gun.oa
+			gun:shoot(x,y,gun.dir)
 		end
 	),
 	
 	sniper = make_gun("sniper",
 --spr cd spd oa dmg is_enemy auto
 		68, 40,7, .0, 5  ,false,   false,
-		--maxammo
-		50,
+--maxammo sfx
+		50,     32,
 		function(gun,x,y,dir)
-			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
 		end
 	),
@@ -755,8 +783,8 @@ function init_guns()
 	gunslime = make_gun("gunslime",
 --spr cd spd oa  dmg is_enemy auto
 		64, 100,1.5, .02,2 + degaplus,  true,  true,
-		--maxammo
-		250,
+--maxammo sfx
+		250,    32,
 		function(gun,x,y,dir)
 			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
@@ -766,8 +794,8 @@ function init_guns()
 	gunslimebuff = make_gun("gunslimebuff",
 --spr cd spd oa  dmg is_enemy auto
 		64, 100,1, .04,2+(degaplus*2),  true,  true,
-		--maxammo
-		250,
+--maxammo sfx
+		250,    32,
 		function(gun,x,y,dir)
 		 for i=0,2 do
 			local o=rnd(.1)-.05
@@ -781,8 +809,8 @@ function init_guns()
 	shotgunmechant = make_gun("shotgunmechant",
 --spr cd spd oa dmg is_enemy  auto
 	 65, 60,1.35, .04,3+degaplus*2,  true,  true,
-	 --maxammo
-		250,
+--maxammo sfx
+		250,    32,
 	 function(gun,x,y,dir)
 	 	for i=1,4 do
 	 		local o=rnd(.1)-.05
@@ -794,27 +822,26 @@ function init_guns()
 	 null = make_gun("null",
 --spr cd spd oa dmg is_enemy  auto
 	 57, 0,57, 0,1+degaplus,  true,  true,
-	 --maxammo
-		250,
+--maxammo sfx
+		250,    32,
 	 function(gun,x,y,dir) 
 	 end),
 	 
 	 machinegunmechant = make_gun("machinegunmechant",
 --spr cd spd oa dmg is_enemy auto
-		66, 5, .75, .05,2+degaplus*2   ,true,  true,
-		--maxammo
-		250,
+		66, 5, .75,.05,2+degaplus*2   ,true,  true,
+--maxammo sfx
+		250,    32,
 		function(gun,x,y,dir)
-			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
 		end
 	),
 	
 	explosion = make_gun("explosion",
 --spr cd spd oa dmg is_enemy auto
-		57, 0, 2, 1,5+degaplus*2   ,true,  false,
-		--maxammo
-		1,
+		57, 0, 2,  0,5+degaplus*2   ,true,  false,
+--maxammo sfx
+		1,      32,
 		function(gun,x,y,dir)
 			for i=1,30 do
 	 		local o=rnd(1)-.5
@@ -828,10 +855,9 @@ function init_guns()
 	make_gun("boss target gun",
 --spr cd spd oa dmg is_enemy auto
 		65, 6, 1.2,.05,2+degaplus   ,true,  true,
-		--maxammo
-		250,
+--maxammo sfx
+		250,    32,
 		function(gun,x,y,dir)
-			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
 		end
 	),
@@ -839,11 +865,11 @@ function init_guns()
 	boss_360gun = 
 	make_gun("boss 360 gun",
 --spr cd spd oa dmg is_enemy auto
-		65, 1, 1, 1,2 +degaplus  ,true,  true,
-		--maxammo
-		250,
+		65, 1, 1,  0,2 +degaplus  ,true,  true,
+--maxammo sfx
+		250,    32,
 		function(gun,x,y,dir)
-			gun.dir+=.01+1/6
+			gun.dir+=.01+1/5
 			gun:shoot(x,y,gun.dir)
 		end
 	),
@@ -852,8 +878,8 @@ function init_guns()
 	make_gun("boss_enemygun",
 --spr cd spd oa dmg is_enemy auto
 		65, 150, 1, 1,2+degaplus   ,true,  true,
-		--maxammo
-		250,
+--maxammo sfx
+		250,    32,
 		function(gun,x,y,dir)
 			gun.timer = gun.cooldown
 			if(rnd(2)<1)return spawn_enemy(x,y,enemy.hedgehog)
@@ -866,17 +892,16 @@ iguns={}
 for k,v in pairs(guns)do
 	if(not v.is_enemy)add(iguns,v)
 end
-end
+
 kak = make_gun("kak",
 --spr cd spd oa  dmg is_enemy auto
 		57, 20,2.1,.005,2 ,false,  false,
-		--maxammo
-		0,
+--maxammo sfx
+		0,      36,
 		function(gun,x,y,dir)
-			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
 		end
-	)
+)
 
 
 
@@ -926,7 +951,11 @@ function update_bullet(b)
 			p.x+p.hx, p.y+p.hy,
 			x2,y2) then
 				
-				if (p.tbnd == 0)p.life-=b.dmg p.tbnd = 30
+				if p.tbnd == 0 then
+					p.life-=b.dmg 
+					p.tbnd = 30
+					sfx(35)
+				end
 				if(shake<=4)shake += 4
 				knockback_player(p,b)
 				make_ptc(b.x,b.y,rnd(4)+6,7,.8)
@@ -1503,6 +1532,7 @@ function update_enemy(e)
 			
 			if i.gun.timer<=0 and 
 			(canshoot(i) or i.spr==1)then
+				
 				i.gun:fire(i.x+4,i.y+4,i.a)
 			end
 			if mouvrnd then
@@ -1900,12 +1930,12 @@ function draw_death_menu(m)
 	--hard mode prompt
 	if degaplus == 0 then
 	 if m.iswin then
-		oprint("hold the ❎ and 🅾️ \non the title screen\nto unlock hard mode\n"
+		oprint("hold the 'i' button\non the title screen\nto unlock hard mode\n"
 		,camx+25,1/t+70+sin(t)*2, 13)
 	 end
 	else
 	if m.iswin then
-		oprint("bro what !!!\nthis was not \nsupposed to be possible !"
+		oprint("bro what !!!\nthis mode was not \nsupposed to be possible !"
 		,camx+25,1/t+70+sin(t)*2, 13)
 	end
 	end
@@ -2001,8 +2031,15 @@ function update_main_menu(m)
 				i.oy = 2
 				m.sel = i.n
 				
-				if lmb and i.n<=12 then
-					m.done = true
+				if lmb then 
+					if i.n<=12 then
+						m.done = true
+					end
+					if i.n==13 then
+						hardmodetimer+=1
+					else
+						hardmodetimer=0
+					end
 				end
 			end
 		end
@@ -2285,17 +2322,17 @@ ddddddd144444444111444441111111112222222222222112222222111211211ffffffff00000000
 11d8188d3003a44211242111177066119aaa0c1cee11fff17909a097444977665f8888fe21109990777cc044d0a22a7000440440000000000d500d5000000000
 15dd88dd30139444994442111760566699aa0c1cee2100f1777997774499aa77f828828f2222a0001777764467a211a0004222000000049077700000cccccccc
 53ddddd553333994a941422116000666e9909acc2ee000116799a977499a7777f2e22e2f2222a9101177764467911997042777200000400a00000000ccc77ccc
-33d3ddd1253333391a742222161006688e00aaa71ee001110719a16749a47777fffeeffe22227aa9c1777444678999774271f170002e720077700000cccccccc
-3233d3512233333216777222111288882807777712ee21110600a017444477775feeeff52222777acc1764447788887724f1f1f002eee72077700000cc777ccc
-2223333122533372116777611128888225777777e11ee21101009006444d77775feeee2522267777cd71444477e88877427fff440e1eee1077700000ccc77ccc
-2222232226557744411e1e111928882827777777ee12ee1100000010d6666777552eee2522267777d776444477788e77247777700ee1e1e000000000ccc77ccc
-62626226d66d554424e11e11aa8889a805777777ee21ee211000001066666677555eeee22227777777744444777777770247770002eeee2000000000cc7777cc
-6666626666666dd51224e421cca88caa00057777eee12ee110010000666666665552eeee22277777776444447777777700220220002ee20000000000cccccccc
+33d3ddd1253333391a742222161006688e00aaa71ee001110719a16749a47777fffeeffe22227aa9c1777444678999774271f1700028720077700000cccccccc
+3233d3512233333216777222111288882807777712ee21110600a017444477775feeeff52222777acc1764447788887724f1f1f00288872077700000cc777ccc
+2223333122533372116777611128888225777777e11ee21101009006444d77775feeee2522267777cd71444477e88877427fff440818881077700000ccc77ccc
+2222232226557744411e1e111928882827777777ee12ee1100000010d6666777552eee2522267777d776444477788e77247777700881818000000000ccc77ccc
+62626226d66d554424e11e11aa8889a805777777ee21ee211000001066666677555eeee2222777777774444477777777024777000288882000000000cc7777cc
+6666626666666dd51224e421cca88caa00057777eee12ee110010000666666665552eeee222777777764444477777777002202200028820000000000cccccccc
 11115d1111113b111111111111288e1110001111111eeee111167711111167111111eef111000011dccccd111111888111d66dd5003bbb000000000011100000
 1115ddd1111333b111111111127078710779aa01111e7075116079a1111677711111f0ee1000000111c777c1117888811d6777dd03bbbbb00000000017110000
 11152dd111130aa111111111127770770c799990e111ee151167799a1116079951111ff100a70999111d707d167779aa6777776d331bb3100050506017711000
-5113dd7711133a991111441118870066077888892eeeee11100005191166777115544ff10000aa111111d771677077887772777d33b1b130000ee20017771000
-56623331dddd334111414691aa88881100770118122ee1111000005166666671545544e100077611cd7ccc71677777787728e776333bbbb00002220017111000
+5113dd7711133a991111441118870066077888892eeeee11100005191166777115544ff10000aa111111d771677077887772777d33b1b130000eef0017771000
+56623331dddd334111414691aa88881100770118122ee1111000005166666671545544e100077611cd7ccc71677777787728e776333bbbb0000fff0017111000
 d566222116664441111461111baa821100000111117171110007000156666771feff4411000776111cd7c761667777616778777622444f400050506011100000
 1d666611116444111111111111cc2111100011111171711117700011157776111e11e11100776611117776111667761117777611022222000000000000000000
 118181111191911111111111115151111c1c11111121211111911911111e1e111e11e111007550011115151111919111117611110244f4000000000000000000
@@ -2530,7 +2567,7 @@ __map__
 3939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939393939
 1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c
 __sfx__
-000100001a0601f000230002100000000000003400039000000003c000000000000029000290002d00036000000003b0003e0003c00000000300002200014000090001900022000260002400000000000001d000
+000100001a0001f000230002100000000000003400039000000003c000000000000029000290002d00036000000003b0003e0003c00000000300002200014000090001900022000260002400000000000001d000
 010c00000c9500b9310a911189500000000000169500000000050000000005000000000500000000050000000c9500b9310a91118950000001895016950000000c0500000000050000000c050000000005000000
 030c000024635180003c6303c62024635180003c6303c62024635180003c6303c62024635180003c6303c62024635180003c6303c62024635180003c6303c620246353c6553c6353c6253c6353c6553c6353c625
 010c00000c9500b9310a911189500000000000169500000002050009000e0500c90002050000000e050000000f9500e9310d9111b95000000000001a950000000505000000110500000005050000001105000000
@@ -2562,14 +2599,17 @@ __sfx__
 001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-000200001f6501265017650136501b640126300f63017630156300e620086200d6200362008610006100000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-0001000008550075500654003540005300d6000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0002000008270041700f270136701b670052600f6600c250156500e653042430d6430363308623006130000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00020000122700c6600d650076400d640041300762003620156000e603042030d6030360308603006030000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00050000272501c250142501b250152500e250102500825004250022500125000250002500025000250002400024000230002300022000210002100020000200002000020000200002000020000200002003e200
+0003000019250132500f2500b25007250042500225001250002500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0001000015650156401464013630106300d6300962004620046100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __music__
-00 01024344
-00 01024344
-01 03020444
-00 01020544
-00 03020644
+00 01020000
+00 01020000
+01 03020400
+00 01020500
+00 03020600
 00 03020708
 00 09020a0b
 00 0c020d0e
