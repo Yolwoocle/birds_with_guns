@@ -143,7 +143,7 @@ function _update60()
 	shake = max(0,shake)
 	
 	--remove for release
-	-- [[
+	--[[
 	if btn(❎) then
 		for e in all(enemies)do 
 			del(enemies,e)
@@ -151,10 +151,10 @@ function _update60()
 		wagon_n = tl-1
 		pal_n = tl
 		players[1].x = 3*128+90
-		--players[1].gunls[1]=debuggun
-		--players[1].gunls[2]=guns.boss_enemygun
-		--players[1].maxlife = 2000 
-		--players[1].life = 2000 
+		players[1].gunls[1]=debuggun
+		players[1].gunls[2]=guns.boss_enemygun
+		players[1].maxlife = 2000 
+		players[1].life = 2000 
 		update_gun(players[1])
 		update_door()
 	end
@@ -587,8 +587,13 @@ function draw_player_ui(p)
 	end
 	
 	--wagon
+	local color = 7
+	if degaplus == 1 then
+		color = 8
+		else color = 7
+	end
 	oprint("wagon "..wagon_n+1,
-	camx+50,2,7,1)
+	camx+50,2,color,1)
 	--print(test,0,80)
 end
 
