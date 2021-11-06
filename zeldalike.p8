@@ -213,6 +213,12 @@ function _draw()
 end
 
 ----------
+function set_stats()
+	stats.time=(time()-stats.time)
+	stats.time=flr(stats.time*10)/10
+	stats.wagon=wagon_n+1
+end
+
 function begin_game()
 	music()
 	
@@ -436,9 +442,7 @@ function player_update()
 			shake += 9
 			burst_ptc(p.x+4,p.y+4,7)
 			
-			stats.time=(time()-stats.time)
-			stats.time=flr(stats.time*10)/10
-			stats.wagon=wagon_n+1
+			set_stats()
 		end
 		
 		--shooting
