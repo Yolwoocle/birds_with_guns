@@ -7,9 +7,12 @@ __lua__
 --bird ideas
 --goose,pelican,colibri,
 --dinosaur,crow,owl
+degaplus = 0
 
 function _init()
- degaplus = 0
+init_guns()
+enemies = {}
+checker = {}
 	--mouse
 	mx=0
 	my=0
@@ -83,14 +86,18 @@ function _init()
 		birdchoice=tonum(stat(6))
 		begin_game()
 	end
+
 end
 
 function _update60()
- --if btn(🅾️) and btn(❎) and menu == "main" and diffi != 17 then
- 	--shake = 5
+ if btn(🅾️) and btn(❎) and 
+ menu == "main" and diffi != 17 then
+ 	shake = 5
  	diffi = 17
  	degaplus = 1
- --end
+ 	init_guns()
+ 	init_enemies()
+ end
 	mouse_x_y()
 	grasstile()
 	if(win) wintimer += 1
@@ -683,7 +690,8 @@ debuggun = make_gun("debuggun",
 		end
 	)
 
-guns = {
+function init_guns()
+ guns = {
 	revolver = make_gun("revolver",
 --spr cd spd oa dmg is_enemy auto
 		64, 15,2.5, .02,2   ,false,  false,
@@ -757,7 +765,7 @@ guns = {
 	
 	gunslimebuff = make_gun("gunslimebuff",
 --spr cd spd oa  dmg is_enemy auto
-		64, 100,1, .04,2+degaplus,  true,  true,
+		64, 100,1, .04,2+(degaplus*2),  true,  true,
 		--maxammo
 		250,
 		function(gun,x,y,dir)
@@ -793,7 +801,7 @@ guns = {
 	 
 	 machinegunmechant = make_gun("machinegunmechant",
 --spr cd spd oa dmg is_enemy auto
-		66, 5, .75, .05,2+degaplus   ,true,  true,
+		66, 5, .75, .05,2+degaplus*2   ,true,  true,
 		--maxammo
 		250,
 		function(gun,x,y,dir)
@@ -853,7 +861,12 @@ guns = {
 		end
 	),
 }
-
+--table of number-indexed guns
+iguns={}
+for k,v in pairs(guns)do
+	if(not v.is_enemy)add(iguns,v)
+end
+end
 kak = make_gun("kak",
 --spr cd spd oa  dmg is_enemy auto
 		57, 20,2.1,.005,2 ,false,  false,
@@ -865,11 +878,7 @@ kak = make_gun("kak",
 		end
 	)
 
---table of number-indexed guns
-local iguns={}
-for k,v in pairs(guns)do
-	if(not v.is_enemy)add(iguns,v)
-end
+
 
 
 function rnd_gun()
@@ -1399,8 +1408,6 @@ gunt)
 end
 
 function init_enemies()
-	enemies = {}
-	checker = {}
 	enemy= {
 	
 	hedgehog=make_enemy(
@@ -1891,10 +1898,18 @@ function draw_death_menu(m)
 	end
 	
 	--hard mode prompt
+	if degaplus == 0 then
+	 if m.iswin then
+		oprint("hold the ❎ and 🅾️ \non the title screen\nto unlock hard mode\n"
+		,camx+25,1/t+70+sin(t)*2, 13)
+	 end
+	else
 	if m.iswin then
-		oprint("hold the 'i' button\non the title screen\nto unlock hard mode\n"
+		oprint("bro what !!!\nthis was not \nsupposed to be possible !"
 		,camx+25,1/t+70+sin(t)*2, 13)
 	end
+	end
+	
 end
 
 ------
@@ -2205,7 +2220,7 @@ function draw_drops()
 end
 
 function spawn_loot(x,y)
-	local r = rnd(2)
+	local r = rnd(1)
 	
 	if r < .01 then
 		local g = rnd_gun()
@@ -2213,9 +2228,11 @@ function spawn_loot(x,y)
 		copy(g))
 	elseif r < .04 then
 		make_drop(x,y,79,"ammo",30)
-	elseif r < .06 then
+	elseif degaplus == 0 and r < .06 then
 		make_drop(x,y,78,"health",2)
-	end
+	elseif degaplus == 1 and r < .045 then
+		make_drop(x,y,78,"health",1)
+		end
 end
 __gfx__
 00000000000d500000005d00777777770000000011111111777777766666666d44444444444444444444444444444444eeeeeeeeee1111ee11eeee11ee1111ee
@@ -2321,7 +2338,7 @@ c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1
 a1727272a1d0a1727272d2727213131372e2c272d1c272c1c172e2d172e2c272d0c2727272727272727272e2d0420372c1c1a2b2c1c1c1a2b2c1c1c1a2b2c1c1
 7213d0808080b080808080b0808080d072d0425262d01212727272122232d07272021372727213137272121312721213d012727272727272727272829292c093
 c2d272d1e2d07272727291a0a0a0c1c172e3c372d3c372727272e3d372e3c372d0c3727272425272727272e3d04372727270a3b370a170a3b370a170a3b37072
-d002f0808080b180808080b1808080f072d0435363d01272727272132333d07272c2d272c2d272c2d272c2d272c2d213d012727272727272727272f2727282c1
+c002f0808080b180808080b1808080f072d0435363d01272727272132333d07272c2d272c2d272c2d272c2d272c2d213d012727272727272727272f2727282c1
 c3d372d3e3d07272727272727272727272727272727272727272727272727272d0a1727272435363127272a1d002727272707070707270707070727070707072
 d072f18080808080b0b08080808080f172d0727272d07272c07272722232d07272c3d372c3d372c3d372c3d372c3d372d072727272727272727272f27272f331
 7272727272d0137213e0c2d172d2e2727272727272a172727272a17272727272828241828282c082828241828272727272f27272f272f27272f272f27272f272
@@ -2337,7 +2354,7 @@ d07272c372d372e37272c372d372e3727272727272727272727272f0233372727272727272727272
 727272727272727272d0a1727272727272727272727272727272727272727272d00372727272f17272727212d0a1727272c17272c1c1c17272c1c1c17272c172
 d07272727272727272727272727272727272727272c0a172727272f17272727272c2d272c2d272c2d272c2d272c2d272d072727272727272727272f27272f331
 223272727272727272d0c2d272d1e27272e2c272d1c272727272e2d172e2c272d04202727272727272720363d0223272e270f3f3e270c2f3f3e270c2f3f370c2
-d07272727272727272727272727272727272722232d07272727272127272727272c3d372c3d372c3d372c3d372c3d313d012727272727272727272f27272c093
+827272727272727272727272727272727272722232d07272727272127272727272c3d372c3d372c3d372c3d372c3d313d012727272727272727272f27272c093
 23331312a1727272a1d0c3d372d3e37272e3c372d3c372c1c172e3d372e3c372d04362037272727272031362d0233372e37013f3e370c3f3f3e370c3f31270c3
 72727272c272d172e2c272d172e272727272721233d07272727272727272727272721272727212131372727272727213d012727272727272727272c082828293
 82829282828292828282928282829282828292828282928282829282828282828282928282829282828292828282928282829282828292828282928282829282
