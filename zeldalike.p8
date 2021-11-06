@@ -215,7 +215,7 @@ end
 ----------
 function set_stats()
 	stats.time=(time()-stats.time)
-	stats.time=flr(stats.time*10)/10
+	stats.time=(flr(stats.time)\60)+((flr(stats.time)-(flr(stats.time)\60)*60)/100)
 	stats.wagon=wagon_n+1
 end
 
@@ -2038,7 +2038,7 @@ function oxxl(t,x,y,col)
 end
 
 function wide(t,x,y,col,pre)
-	--credit to yolwoocle
+	--credit to yolwoocle uwu
 	t1= "                ! #$%&'()  ,-./[12345[7[9:;<=>?([[c[efc[ij[l[[([([st[[[&yz[\\]'_`[[c[efc[ij[l[[([([st[[[&yz{|}~"
 	t2="                !\"=$  '()*+,-./0123]5678]:;<=>?@abcdefghijklmnopqrstuvwx]z[\\]^_`abcdefghijklmnopqrstuvwx]z{|} "
 	n1,n2="",""
