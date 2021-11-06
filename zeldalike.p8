@@ -1509,7 +1509,7 @@ function init_enemies()
 	 
 	 tourelle=make_enemy(
 --x,y,sprite,speed,life,shootrange,  
-	 x,y,125   ,0    ,15   ,6   ,
+	 x,y,125   ,0    ,15   ,6.5   ,
 --chase,seerange
 	 false,1,
 	 guns.machinegunmechant),
@@ -1554,8 +1554,8 @@ function spawn_enemy(x,y,name)
 	
  if (a.spr == 126)a.spd = 0.8+rnd(0.4)
  if a.x<175 then
-  a.gun.timer += 60
-  a.timer = 60
+  a.gun.timer += 90
+  a.timer = 90
  end
  
 	add(enemies,a)
