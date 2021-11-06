@@ -91,7 +91,7 @@ checker = {}
 end
 
 function _update60()
- if hardmodetimer > 120 and 
+ if hardmodetimer > 90 and 
  menu == "main" and diffi != 17 then
  	sfx(44)
  	shake = 5
@@ -144,7 +144,7 @@ function _update60()
 	shake = max(0,shake)
 	
 	--remove for release
-	-- [[
+	--[[
 	if btn(❎) then
 		for e in all(enemies)do 
 			del(enemies,e)
@@ -534,8 +534,17 @@ function player_update()
 				if (p.tbnd == 0) then
 					sfx(35)
 					if(shake<=2)shake += 2
-					p.life-=e.gun.dmg 
-					p.tbnd = 30 
+					if e.spr != 126 then
+					 p.life-=1+(degaplus*2)
+					 else p.life-=1+degaplus
+					end
+					p.tbnd = 30
+					
+					if e.spr == 109 then
+					 p.life+=1
+					 killbarelle(e)
+					 p.tbnd = 0
+					end
 				end
 				knockback_player(p,e)
 			
@@ -755,7 +764,7 @@ guns = {
 --maxammo sfx
 		100,    32,
 	 function(gun,x,y,dir)
-	 	for i=1,6 do
+	 	for i=1,7 do
 	 		local o=rnd(.1)-.05
 	 		local ospd=gun.spd*(rnd(.2)+.9)
 	 		gun:shoot(x,y,dir+o, ospd)
@@ -1006,17 +1015,8 @@ function update_bullet(b)
 					end
 					
 					else --animation explosion
-						
-						for i=1,15 do
-						make_ptc(
-									e.x + rnd(28)-14,
-									e.y + rnd(28)-14,
-							8+rnd(8),rnd({9,10}))
-						end
-						shake += 4
-						
-					end 
-					if (e.spr == 109) e.gun:fire(e.x+4,e.y+4,e.a)
+						killbarelle(e)
+					end
 				end
 				bullets_hit+=1
 				
@@ -1067,6 +1067,20 @@ function draw_random()
 for i in all(random)do
 	 spr(i.spr, i.x-4, i.y-4,1,1,i.f,i.r)
 	end
+end
+
+function killbarelle(e)
+for i=1,15 do
+						make_ptc(
+									e.x + rnd(28)-14,
+									e.y + rnd(28)-14,
+							8+rnd(8),rnd({9,10}))
+						end
+						shake += 7
+						sfx(0)
+						e.gun:fire(e.x+4,e.y+4,e.a)
+						del(enemies,e)
+
 end
 
 --------
@@ -1387,7 +1401,12 @@ function parcourmap()
  	for x=x1,16*(wl-1) do
   	for y=2,12 do
    	if x>3 or players[1].y-1000>y*8 or players[1].y+1000<y*8 then
-    	if fget(mget(x,y),2) and ceil(rnd(max(3,diffi-(wagon_n*1.65))))==1 then
+    	if mget(x,y)==109 then
+   	  mset(x,y,39)
+   	  if rnd({1,2})==2 then
+   	  spawn_enemy(x * 8,y * 8,enemy.explosive_barrel)
+   	  end
+    	elseif fget(mget(x,y),2) and ceil(rnd(max(3,diffi-(wagon_n*1.65))))==1 then
       sapwnrndenemy(x,y)
     	end
    	end
@@ -1398,7 +1417,7 @@ function parcourmap()
 
 function sapwnrndenemy(x,y)
 	--spawn explosive_barrel 
-      if ceil(rnd(15))==10 then
+      if ceil(rnd(25))==10 then
       spawn_enemy(x * 8,y * 8,enemy.explosive_barrel)
      --spawn juggernaut
      elseif ceil(rnd(32))>31-(wagon_n*0.7) and wagon_n>1 then
