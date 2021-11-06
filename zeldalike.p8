@@ -764,7 +764,7 @@ guns = {
 	
 	assaultrifle = make_gun("assault rifle",
 --spr cd spd oa dmg is_enemy auto
-		67, 30,4, .015,1   ,false,  true,
+		67, 30,4, .02,1   ,false,  true,
 --maxammo sfx
 		150,    32,
 		function(gun,x,y,dir)
