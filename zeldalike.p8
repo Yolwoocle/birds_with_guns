@@ -1753,11 +1753,6 @@ function draw_weel()
 	end
 end
 
-
-
-
-
-
 ----
 
 
