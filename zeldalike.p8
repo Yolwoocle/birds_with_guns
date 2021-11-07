@@ -10,6 +10,7 @@ __lua__
 degaplus = 0
 
 function _init()
+ initguns()
 	enemies = {}
 	checker = {}
 	--mouse
@@ -104,6 +105,7 @@ function _update60()
  	shake = 5
  	diffi = 17
  	degaplus = 1
+ 	initguns()
  	init_enemies()
  end
 	mouse_x_y()
@@ -741,7 +743,7 @@ debuggun = make_gun("debuggun",
 			gun:shoot(x,y,dir)
 		end
 	)
-
+function initguns()
 guns = {
 	revolver = make_gun("revolver",
 --spr cd spd oa  dmg is_enemy auto
@@ -907,9 +909,10 @@ guns = {
 	),
 }
 --table of number-indexed guns
-iguns={}
+	iguns={}
 for k,v in pairs(guns)do
 	if(not v.is_enemy)add(iguns,v)
+end
 end
 
 kak = make_gun("kak",
