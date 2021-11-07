@@ -803,7 +803,7 @@ guns = {
 	
 	gunslime = make_gun("gunslime",
 --spr cd spd oa  dmg is_enemy auto
-		64, 100,1.5, .02,2 + degaplus,  true,  true,
+		64, 100,1.5, .02,2 + degaplus*2,  true,  true,
 --maxammo sfx
 		250,    32,
 		function(gun,x,y,dir)
