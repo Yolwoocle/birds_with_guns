@@ -80,7 +80,7 @@ function _init()
 	--pal(1,130,1)
 	--pal(1,129,1)
 	reset_pal()
-	poke(0x5f2e,1)
+	poke(0x5f2e,1) 
 	
 	if stat(6) == nil then
 		menu="game"
