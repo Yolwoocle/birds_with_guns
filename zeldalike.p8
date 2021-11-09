@@ -9,7 +9,9 @@ __lua__
 --dinosaur,crow,owl,cockatiel
 degaplus = 0
 
+
 function _init()
+ clavier = false
 	initguns()
 	enemies = {}
 	checker = {}
@@ -91,6 +93,7 @@ function _init()
 end
 
 function _update60()
+ if (btn(x)) clavier = true
 	for i=0x3100,0x3148 do
 		--on
 		poke(i,peek(i)&0b10111111)
@@ -412,9 +415,21 @@ function player_update()
 		end
 		
 		--angle
+		if clavier == false then
 		p.a = atan2(mouse_x-p.x,
 		mouse_y-p.y)
-		
+		else 
+		local distmin=9999
+		local indexmin=0
+		for e in all(enemies) do
+		 if loaded(e) then
+		 local dist = dist(e)
+		 if (distmin>dist) distmin=dist indexmin=e
+		end
+		end
+		p.a = atan2(enemies.indexmin.x-p.x,
+		enemies.indexmin.y-p.y)
+		end
 		p.flip = isleft(p.a)
 		
 		--ammo & life
@@ -1471,14 +1486,14 @@ function init_enemies()
 	
 	hedgehog=make_enemy(
 --x,y,sprite,speed,life,shootrange,  
-	 x,y,108   ,1    ,5   ,7   ,
+	 x,y,108   ,1    ,5   ,8   ,
 --chase,seerange
 	 false,1,
 	 guns.gunslime),
 	 
 	hedgehogbuff=make_enemy(
 --x,y,sprite,speed,life,shootrange,  
-	 x,y,92   ,1    ,10   ,7   ,
+	 x,y,92   ,1    ,10   ,8   ,
 --chase,seerange
 	 false,1,
 	 guns.gunslimebuff),
@@ -1646,7 +1661,7 @@ function canshoot(e)
 	e.a=angle
 	local x = cos(angle)
 	local y = sin(angle) 
-	local dist =sqrt(abs(players[1].y-e.y)^2+abs(players[1].x-e.x)^2)/8
+	local dist = dist(e)
 	
 	if abs(dist)<e.agro and abs(players[1].x-e.x)<128 then
  return cansee(e,angle,x,y,dist)
@@ -1659,6 +1674,10 @@ function canshoot(e)
    
   
  end	
+end
+
+function dist(e)
+	return sqrt(abs(players[1].y-e.y)^2+abs(players[1].x-e.x)^2)/8
 end
  
 function cansee(e,angle,x,y,dist)	 
@@ -1960,7 +1979,7 @@ function update_main_menu(m)
 		
 		if m.ui_dy > 5 then
 			birdchoice = m.sel
-			menu = "game"
+		 menu = "game"
 			begin_game()
 			return
 		end 
