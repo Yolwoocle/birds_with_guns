@@ -79,7 +79,7 @@ function _init()
 	--pal(1,130,1)
 	--pal(1,129,1)
 	reset_pal()
-	poke(0x5f2e,1) 
+	poke(0x5f2e,1)
 	
 	if stat(6) != "-" then
 		menu="game"
@@ -174,7 +174,9 @@ function _draw()
 	
 	--draw map
 	drawgrass()
+
 	draw_map()
+
 	draw_weel()
 	
 	draw_drops()
@@ -738,9 +740,9 @@ function initguns()
 guns = {
 	revolver = make_gun("revolver",
 --spr cd spd oa  dmg is_enemy auto
-		64, 15,2.5,.015,2   ,false,  false,
+		64, 15,2.5,.02,2   ,false,  false,
 --maxammo sfx
-		250,    33,
+		100,    33,
 		function(gun,x,y,dir)
 			gun:shoot(x,y,dir)
 		end
@@ -750,7 +752,7 @@ guns = {
 --spr cd spd oa dmg is_enemy auto
 	 65, 60,4, .05,1,  false,   false,
 --maxammo sfx
-		100,    32,
+		50,    32,
 	 function(gun,x,y,dir)
 	 	for i=1,7 do
 	 		local o=rnd(.1)-.05
@@ -763,7 +765,7 @@ guns = {
 --spr cd spd oa dmg is_enemy auto
 		66, 7, 3, .05,2   ,false,  true,
 --maxammo sfx
-		500,    33,
+		250,    33,
 		function(gun,x,y,dir)
 			gun:shoot(x,y,dir)
 		end
@@ -773,7 +775,7 @@ guns = {
 --spr cd spd oa dmg is_enemy auto
 		67, 30,4, .02,1   ,false,  true,
 --maxammo sfx
-		150,    33,
+		75,    33,
 		function(gun,x,y,dir)
 			gun.burst = 4
 			gun.x, gun.y = x, y
@@ -786,7 +788,7 @@ guns = {
 --spr cd spd oa dmg is_enemy auto
 		68, 40,7, .0, 5  ,false,   false,
 --maxammo sfx
-		50,     32,
+		25,     32,
 		function(gun,x,y,dir)
 			gun:shoot(x,y,dir)
 		end
