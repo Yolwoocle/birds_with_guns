@@ -83,12 +83,14 @@ function _init()
 	reset_pal()
 	poke(0x5f2e,1)
 	
-	if stat(6) != "-" then
+	local b = stat(6)
+	if b == "-" 
+	or not b then
+		menu="main"
+	else
 		menu="game"
 		birdchoice=tonum(stat(6))
 		begin_game()
-	else
-		menu="main"
 	end
 end
 
@@ -148,6 +150,9 @@ function _update60()
 	end
 	
 	shake = max(0,shake-0.3)
+	
+	local txt=keyboard and "mouse" or "keyboard"
+	menuitem(2,"toggle "..txt, function() clavier = not clavier end)
 	
 	--remove for release
 	--[[
@@ -600,9 +605,10 @@ function draw_player_ui(p)
 	local l=40*(p.gun.ammo/p.gun.maxammo)
 	if(p.ammo>0)rectfill(camx+85,2,camx+85+l,6,9)
 	
-	s = tostr(p.gun.ammo)
+	local s,col = tostr(p.gun.ammo),7
+	if(s=="0") s,col="no ammo!",14
 	spr(110,camx+89,2)
-	print(s, camx+95,2,7)
+	print(s, camx+95,2,col)
 	
 	--weapon list
 	for i=1,#p.gunls do
