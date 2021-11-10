@@ -149,6 +149,10 @@ function _update60()
 	
 	shake = max(0,shake-0.3)
 	
+	local txt=clavier and "keyboard" or "mouse+keys"
+	menuitem(2,"mode:"..txt, function() clavier = not clavier end)
+	menuitem(3,"⌂ main menu", function() run("-") end)
+	
 	--remove for release
 	--[[
 	if btn(❎) then
