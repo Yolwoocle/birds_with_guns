@@ -149,6 +149,10 @@ function _update60()
 	
 	shake = max(0,shake-0.3)
 	
+	local txt=clavier and "keyboard" or "mouse+keys"
+	menuitem(2,"mode:"..txt, function() clavier = not clavier end)
+	menuitem(3,"⌂ main menu", function() run("-") end)
+	
 	--remove for release
 	--[[
 	if btn(❎) then
@@ -624,7 +628,8 @@ function draw_player_ui(p)
 	local l=40*(p.gun.ammo/p.gun.maxammo)
 	if(p.ammo>0)rectfill(camx+85,2,camx+85+l,6,9)
 	
-	s = tostr(p.gun.ammo)
+	local s,col = tostr(p.gun.ammo),7
+	if(s=="0") s,col="no ammo!",14
 	spr(110,camx+89,2)
 	print(s, camx+95,2,7)
 	
