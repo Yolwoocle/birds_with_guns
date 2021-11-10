@@ -376,7 +376,7 @@ function init_player(bird)
 		
 		gun=nil,
 		gunn=1,
-		gunls={copy(guns.sniper),copy(guns.shotgun)},
+		gunls={copy(guns.revolver),copy(guns.shotgun)},
 	
 		lmbp = true,
 		tbnd=30,
@@ -1466,14 +1466,14 @@ function init_enemies()
 	
 	hedgehog=make_enemy(
 --x,y,sprite,speed,life,shootrange,  
-	 x,y,108   ,1    ,5   ,8   ,
+	 x,y,108   ,1    ,5   ,7.75   ,
 --chase,seerange
 	 false,1,
 	 guns.gunslime),
 	 
 	hedgehogbuff=make_enemy(
 --x,y,sprite,speed,life,shootrange,  
-	 x,y,92   ,1    ,10   ,8   ,
+	 x,y,92   ,1    ,10   ,7.75   ,
 --chase,seerange
 	 false,1,
 	 guns.gunslimebuff),
