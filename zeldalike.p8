@@ -93,7 +93,6 @@ function _init()
 end
 
 function _update60()
- if (btn(x)) clavier = true
 	for i=0x3100,0x3148 do
 		--on
 		poke(i,peek(i)&0b10111111)
@@ -171,7 +170,8 @@ end
 function _draw()
 	local ox = rnd(2*shake)-shake
 	local oy = rnd(2*shake)-shake
-	camera(camx+ox, camy+oy)
+	--if (clavier == true) 
+ camera(camx+ox, camy+oy)
 	
 	cls(15)
 	
@@ -209,7 +209,7 @@ function _draw()
 	
 	-->>no code below this<<--
 	--draw mouse
-	spr(127,mouse_x-1,mouse_y-1)
+	if (not clavier) spr(127,mouse_x-1,mouse_y-1)
 	pal(1,129,1)
 end
 
@@ -345,7 +345,7 @@ function init_player(bird)
 	players={} 
 	local p = {
 		n=1,
-		
+		agro = 9999,
 		x=-64,y=-64,
 		dx=0,dy=0,
 		a=0,
@@ -368,7 +368,7 @@ function init_player(bird)
 		
 		gun=nil,
 		gunn=1,
-		gunls={copy(guns.revolver),copy(guns.shotgun)},
+		gunls={copy(guns.sniper),copy(guns.shotgun)},
 	
 		lmbp = true,
 		tbnd=30,
@@ -418,17 +418,17 @@ function player_update()
 		if clavier == false then
 		p.a = atan2(mouse_x-p.x,
 		mouse_y-p.y)
-		else 
-		local distmin=9999
-		local indexmin=0
+		else
+		distmin=9999
+		indexmin={x=players[1].x+p.dx+0.01,y=players[1].y+p.dy}
 		for e in all(enemies) do
-		 if loaded(e) then
-		 local dist = dist(e)
+		 if loaded(e) and canshoot(players[1],e) then
+		 local dist = dist(players[1],e)
 		 if (distmin>dist) distmin=dist indexmin=e
 		end
 		end
-		p.a = atan2(enemies.indexmin.x-p.x,
-		enemies.indexmin.y-p.y)
+		p.a = atan2(indexmin.x-p.x,
+		indexmin.y-p.y)
 		end
 		p.flip = isleft(p.a)
 		
@@ -450,16 +450,20 @@ function player_update()
 		end
 		
 		--shooting
-		if stat(36) ==1 or stat(36) ==-1 then
+		if stat(36) ==1 or stat(36) ==-1 or (btnp(🅾️)) then
 			nextgun(p)
 			print(p.gun.cooldown,0,0)
 			p.gun.timer = p.gun.cooldown/2
 		end
 		
-		local fire=stat(34)&1 > 0
-		local active=stat(34)&2 > 0
+		
+		local fire=lmb or btn(❎) 
+		local active=rmb
 		
 		local dofire
+		
+		if (btn(❎)) clavier = true
+		if (lmb) clavier = false
 		
 		p.kak:update()
 		p.gun:update()
@@ -1576,7 +1580,7 @@ function update_enemy(e)
 			,0)
 			
 			if i.gun.timer<=0 and 
-			(canshoot(i) or i.spr==1)then
+			(canshoot(i,players[1]) or i.spr==1)then
 				
 				i.gun:fire(i.x+4,i.y+4,i.a)
 			end
@@ -1655,15 +1659,15 @@ function changedirection(i)
 	end
 end
 
-function canshoot(e)
-	local angle = atan2(players[1].x-e.x,
-	players[1].y-e.y)
+function canshoot(e,p)
+	local angle = atan2(p.x-e.x,
+	p.y-e.y)
 	e.a=angle
 	local x = cos(angle)
 	local y = sin(angle) 
-	local dist = dist(e)
+	local dist = dist(e,p)
 	
-	if abs(dist)<e.agro and abs(players[1].x-e.x)<128 then
+	if abs(dist)<e.agro and abs(p.x-e.x)<128 then
  return cansee(e,angle,x,y,dist)
  elseif abs(dist)<e.seerange and abs(dist)>e.agro and e.chase and cansee(e,angle,x,y,dist) then
   o= e.dx+e.dy
@@ -1676,8 +1680,8 @@ function canshoot(e)
  end	
 end
 
-function dist(e)
-	return sqrt(abs(players[1].y-e.y)^2+abs(players[1].x-e.x)^2)/8
+function dist(e,p)
+	return sqrt(abs(p.y-e.y)^2+abs(p.x-e.x)^2)/8
 end
  
 function cansee(e,angle,x,y,dist)	 
@@ -1685,7 +1689,7 @@ function cansee(e,angle,x,y,dist)
 	add(checker,{x=e.x+x*i*8,y=e.y+y*i*8})  
 	 if is_solid(checker[#checker].x+4,checker[#checker].y+4) then
 	 	delchecker()
-	 	e.gun.timer = e.gun.cooldown/2
+	 	if (not(e==players[1])) e.gun.timer = e.gun.cooldown/2
 	 return false 
 	 end
 	end
