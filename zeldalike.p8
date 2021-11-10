@@ -93,6 +93,7 @@ function _init()
 end
 
 function _update60()
+ mouse_x_y()
 	for i=0x3100,0x3148 do
 		--on
 		poke(i,peek(i)&0b10111111)
@@ -107,7 +108,6 @@ function _update60()
  	initguns()
  	init_enemies()
  end
-	mouse_x_y()
 	grasstile()
 	if(win) wintimer += 1
 	if(wintimer > 180)menu="win" 
@@ -197,7 +197,6 @@ function _draw()
 		draw_ptc(p)
 	end
 	
-	drawcheck()
 	for i in all(players) do
 		draw_player_ui(players[1])
 	end
@@ -462,7 +461,7 @@ function player_update()
 		
 		local dofire
 		
-		if (btn(❎)) clavier = true
+		if (btn(❎)) clavier = true 
 		if (lmb) clavier = false
 		
 		p.kak:update()
@@ -1697,12 +1696,6 @@ function cansee(e,angle,x,y,dist)
 	return true 
 end
 
-
-function drawcheck()
-	for i in all(checker) do
-	 spr(19,i.x,i.y)
-	end
-end
 
 function delchecker()
 	checker = {}
