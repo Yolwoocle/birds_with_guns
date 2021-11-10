@@ -686,13 +686,17 @@ end
 -->8
 --gun & bullet
 
-function make_gun(name,spr,cd,
-spd,oa,dmg,is_enemy,auto,
-maxammo,sfxx,fire)
+function make_gun(args,fire)
+	local name_,sprr,cd_,spd,oa,dmg,is_enemy,auto,maxammo,sfxx=unpack(split(args))
+
+	is_enemy = is_enemy == 1
+	auto = auto == 1
+	if(is_enemy) dmg += degaplus * 2
+	
 	--todo:not have 3000 args
 	local gun = {
-		name=name,
-		spr=spr,
+		name=name_,
+		spr=sprr,
 		spd=spd,
 		oa=oa,--offset angle in [0,1[
 		dmg=dmg,
@@ -703,7 +707,7 @@ maxammo,sfxx,fire)
 		maxammo=maxammo,
 		
 		timer=0,
-		cooldown=cd,
+		cooldown=cd_,
 		is_enemy=is_enemy,
 		
 		x=0,y=0,
@@ -752,33 +756,23 @@ maxammo,sfxx,fire)
 end
 
 degaplus = 0
-
-debuggun = make_gun("debuggun",
---spr cd spd oa dmg is_enemy auto
-		64, 1, 3, .02,10, false,  true,
---maxammo sfx
-		999999, 0,
+                 --name      spr cd spd oa dmg is_enemy auto maxammo sfx
+debuggun = make_gun("debuggun, 64, 1, 3, .02,10, 0,       1,   999999, 0",
 		function(gun,x,y,dir)
 			gun:shoot(x,y,dir)
 		end
 	)
 function initguns()
 guns = {
-	revolver = make_gun("revolver",
---spr cd spd oa  dmg is_enemy auto
-		64, 15,2.5,.02,2   ,false,  false,
---maxammo sfx
-		100,    33,
+                       --name      spr cd spd oa dmg is_enemy auto maxammo sfx
+	revolver = make_gun("revolver, 64, 15,2.5,.02,2 ,0,       0,   100,    33",
 		function(gun,x,y,dir)
 			gun:shoot(x,y,dir)
 		end
 	),
 	
-	shotgun = make_gun("shotgun",
---spr cd spd oa dmg is_enemy auto
-	 65, 60,4, .05,1,  false,   false,
---maxammo sfx
-		50,    32,
+                       --name    spr cd spd oa dmg is_enemy auto maxammo sfx
+	shotgun = make_gun("shotgun,	 65, 60,4, .05,1,  0,   0,  50,    32",
 	 function(gun,x,y,dir)
 	 	for i=1,7 do
 	 		local o=rnd(.1)-.05
@@ -787,21 +781,15 @@ guns = {
 	 	end
 	 end),
 	 
-	machinegun = make_gun("machinegun",
---spr cd spd oa dmg is_enemy auto
-		66, 7, 3, .05,2   ,false,  true,
---maxammo sfx
-		250,    33,
+                          --name      spr cd spd oa dmg is_enemy auto maxammo sfx
+	machinegun = make_gun("machinegun, 66, 7, 3, .05,2  ,0,       1, 250,    33",
 		function(gun,x,y,dir)
-			gun:shoot(x,y,dir)
-		end
+	gun:shoot(x,y,dir)
+end
 	),
 	
-	assaultrifle = make_gun("assault rifle",
---spr cd spd oa dmg is_enemy auto
-		67, 30,4, .02,1   ,false,  true,
---maxammo sfx
-		75,    33,
+                           --name           spr cd spd oa dmg is_enemy auto maxammo sfx
+	assaultrifle = make_gun("assault rifle, 67, 30,4, .02,1   ,0,       1, 75,      33",
 		function(gun,x,y,dir)
 			gun.burst = 4
 			gun.x, gun.y = x, y
@@ -810,104 +798,72 @@ guns = {
 		end
 	),
 	
-	sniper = make_gun("sniper",
---spr cd spd oa dmg is_enemy auto
-		68, 40,7, .0, 5  ,false,   false,
---maxammo sfx
-		25,     32,
+                       --name  spr cd spd oa dmg is_enemy auto maxammo sfx
+	sniper = make_gun("sniper, 68, 40,7, .0, 5  ,0,        0,  25,     32",
 		function(gun,x,y,dir)
-			gun:shoot(x,y,dir)
-		end
+	gun:shoot(x,y,dir)
+end
 	),
 	
-	gunslime = make_gun("gunslime",
---spr cd spd oa  dmg is_enemy auto
-		64, 100,1.5, .02,2 + degaplus*2,  true,  true,
---maxammo sfx
-		250,    32,
+                       --name      spr cd  spd oa   dmg is_enemy auto maxammo sfx
+	gunslime = make_gun("gunslime, 64, 100,1.5, .02,2,  1,       1,   250,    32",
 		function(gun,x,y,dir)
 			dir+=rnd(2*gun.oa)-gun.oa
 			gun:shoot(x,y,dir)
 		end
-	,true),
+	),
 	
-	gunslimebuff = make_gun("gunslimebuff",
---spr cd spd oa  dmg is_enemy auto
-		64, 100,1, .04,2+(degaplus*2),  true,  true,
---maxammo sfx
-		250,    32,
+                              --name      spr cd spd   oa dmg is_enemy auto maxammo sfx
+	gunslimebuff = make_gun("gunslimebuff, 64, 100,1, .04,2,  1,       1,   250, 32",
 		function(gun,x,y,dir)
-		 for i=0,2 do
-			local o=rnd(.1)-.05
-	 		local ospd=gun.spd*(rnd(.2)+.9)
-	 		gun:shoot(x,y,dir+o, ospd)
+			for i=0,2 do
+				local o=rnd(.1)-.05
+				local ospd=gun.spd*(rnd(.2)+.9)
+				gun:shoot(x,y,dir+o, ospd)
 			end
 		end
-	,true),
+	),
 	
 	
-	shotgunmechant = make_gun("shotgunmechant",
---spr cd spd oa dmg is_enemy  auto
-	 65, 60,1.35, .04,3+degaplus*2,  true,  true,
---maxammo sfx
-		250,    32,
-	 function(gun,x,y,dir)
-	 	for i=1,4 do
-	 		local o=rnd(.1)-.05
-	 		local ospd=gun.spd*(rnd(.2)+.9)
-	 		gun:shoot(x,y,dir+o, ospd)
-	 	end
+	shotgunmechant = make_gun("shotgunmechant, 65, 60,1.35, .04,3, 1, 1, 250, 32",
+		function(gun,x,y,dir)
+	 		for i=1,4 do
+	 			local o=rnd(.1)-.05
+	 			local ospd=gun.spd*(rnd(.2)+.9)
+	 			gun:shoot(x,y,dir+o, ospd)
+	 		end
+		end
+	),
+	 
+	 null = make_gun("null, 57, 0,57, 0,1,  1,  1, 250, 32",
+	 function(gun,x,y,dir) --opti: remove args
 	 end),
 	 
-	 null = make_gun("null",
---spr cd spd oa dmg is_enemy  auto
-	 57, 0,57, 0,1+degaplus,  true,  true,
---maxammo sfx
-		250,    32,
-	 function(gun,x,y,dir) 
-	 end),
-	 
-	 machinegunmechant = make_gun("machinegunmechant",
---spr cd spd oa dmg is_enemy auto
-		66, 5, .75,.05,2+degaplus*2   ,true,  true,
---maxammo sfx
-		250,    32,
+	 machinegunmechant = make_gun("machinegunmechant, 66, 5, .75,.05,2, 1, 1,250, 32",
 		function(gun,x,y,dir)
 			gun:shoot(x,y,dir)
 		end
 	),
 	
-	explosion = make_gun("explosion",
---spr cd spd oa dmg is_enemy auto
-		57, 0, 2,  0,5+degaplus*2   ,true,  false,
---maxammo sfx
-		1,      32,
+	explosion = make_gun("explosion, 57, 0, 2,  0,5   ,1,  0, 1, 32",
 		function(gun,x,y,dir)
 			for i=1,30 do
 	 		local o=rnd(1)-.5
 	 		local ospd=gun.spd*(rnd(.2)+.9)
 	 		gun:shoot(x,y,dir+o, ospd)
 	 	end
-		end
+	end
 	),
 	
 	boss_targetgun = 
-	make_gun("boss target gun",
---spr cd spd oa dmg is_enemy auto
-		65, 6, 1.2,.05,2+degaplus   ,true,  true,
---maxammo sfx
-		250,    32,
+	make_gun("boss target gun, 65, 6, 1.2,.05,2, 1,  1, 250, 32",
 		function(gun,x,y,dir)
 			gun:shoot(x,y,dir)
 		end
 	),
 	
 	boss_360gun = 
-	make_gun("boss 360 gun",
---spr cd spd oa dmg is_enemy auto
-		65, 1, 1,  0,2 +degaplus  ,true,  true,
---maxammo sfx
-		250,    32,
+	make_gun("boss 360 gun, 65, 1, 1,  0,2  ,1,  1,	250,    32",
 		function(gun,x,y,dir)
 			gun.dir+=.01+1/6
 			gun:shoot(x,y,gun.dir)
@@ -915,11 +871,7 @@ guns = {
 	),
 	
 	boss_enemygun = 
-	make_gun("boss_enemygun",
---spr cd spd oa dmg is_enemy auto
-		65, 150, 1, 1,2+degaplus   ,true,  true,
---maxammo sfx
-		250,    32,
+	make_gun("boss_enemygun, 65, 150, 1, 1,2   ,1,  1, 250, 32",
 		function(gun,x,y,dir)
 			gun.timer = gun.cooldown
 			if(rnd(2)<1)return spawn_enemy(x,y,enemy.hedgehog)
@@ -929,16 +881,12 @@ guns = {
 }
 --table of number-indexed guns
 	iguns={}
-for k,v in pairs(guns)do
-	if(not v.is_enemy)add(iguns,v)
-end
+	for k,v in pairs(guns)do
+		if(not v.is_enemy)add(iguns,v)
+	end
 end
 
-kak = make_gun("kak",
---spr cd spd oa  dmg is_enemy auto
-		57, 20,2.1,.005,2 ,false,  false,
---maxammo sfx
-		0,      36,
+kak = make_gun("kak, 57, 20,2.1,.005,2 , 0, 0, 0,      36",
 		function(gun,x,y,dir)
 			gun:shoot(x,y,dir)
 		end
