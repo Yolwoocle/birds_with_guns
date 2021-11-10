@@ -603,8 +603,10 @@ function draw_player()
 			end
 			spr(p.gun.spr,x,y,1,1, p.flip)
 			
+			
 			palt(0,false)
 			palt(1,true)
+			
 			spr(p.spr,p.x,p.y+p.spriteoffset,1,1, p.flip)
 			
 			palt()
