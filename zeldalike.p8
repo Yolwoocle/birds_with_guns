@@ -396,19 +396,18 @@ function player_update()
 		local spd = p.spd
 		
 		for n=0,1 do
-			if (btn(⬅️,n)) p.dx-=spd
-			if (btn(➡️,n)) p.dx+=spd
-			if (btn(⬆️,n)) p.dy-=spd
-			if (btn(⬇️,n)) p.dy+=spd
+			if (btn(⬅️,n)) p.dx-=spd dx1-=spd
+			if (btn(➡️,n)) p.dx+=spd dx1+=spd
+			if (btn(⬆️,n)) p.dy-=spd dy1-=spd
+			if (btn(⬇️,n)) p.dy+=spd dy1+=spd
 		end
 		
 		p.dx *= p.fric
 		p.dy *= p.fric
 		
-		if abs(p.dx)>0.1 or abs(p.dy)>0.1 then
-		dx1 = dx
-		dy1 = dy
-		end
+		dx1 *= p.fric
+		dy1 *= p.fric
+		
 		collide(p,0.1)
 		
 		p.x += p.dx
