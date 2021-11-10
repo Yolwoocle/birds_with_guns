@@ -631,7 +631,7 @@ function draw_player_ui(p)
 	local s,col = tostr(p.gun.ammo),7
 	if(s=="0") s,col="no ammo!",14
 	spr(110,camx+89,2)
-	print(s, camx+95,2,7)
+	print(s, camx+95,2,col)
 	
 	--weapon list
 	for i=1,#p.gunls do
