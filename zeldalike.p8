@@ -15,7 +15,7 @@ function _init()
 	enemies = {}
 	checker = {}
 	--mouse
-	mx,my=0,0
+	mx,my=0,0  
 	
 	--flags
 	solid=0
