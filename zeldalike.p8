@@ -10,7 +10,7 @@ __lua__
 degaplus = 0
 
 function _init()
- clavier = false
+ keyboard = false
 	initguns()
 	enemies,checker = {},{}
 	--mouse
@@ -67,6 +67,7 @@ function _init()
 	 wagon=0,
 	}
 	
+	is_boss = false
 	boss_pos = {0,0}
 	win = false
 	wintimer = 0
@@ -146,12 +147,12 @@ function _update60()
 	
 	shake = max(0,shake-0.3)
 	
-	local txt=clavier and "keyboard" or "mouse+keys"
-	menuitem(2,"mode:"..txt, function() clavier = not clavier end)
+	local txt=keyboard and "keyboard" or "mouse+keys"
+	menuitem(2,"mode:"..txt, function() keyboard = not keyboard end)
 	menuitem(3,"⌂ main menu", function() run("-") end)
 	
-	if (btn(❎) or btn(🅾️)) clavier = true 
-	if (lmb) clavier = false
+	if (btn(❎) or btn(🅾️)) keyboard = true 
+	if (lmb) keyboard = false
 	
 	--remove for release
 	--[[
@@ -174,7 +175,7 @@ end
 function _draw()
 	local ox = rnd(2*shake)-shake
 	local oy = rnd(2*shake)-shake
-	--if (clavier == true) 
+	--if (keyboard == true) 
  camera(camx+ox, camy+oy)
 	
 	cls(15)
@@ -193,7 +194,7 @@ function _draw()
 [scroll] change 
           weapon
 		]]
-		if(clavier)s=[[
+		if(keyboard)s=[[
     ⬆️
   ⬅️⬇️➡️ move 
 
@@ -328,8 +329,10 @@ function update_camera()
 		targetcamx=128*(wl-1)
 		
 		--block off old entrance
-		mset(48,7,6)
-		mset(48,6,13)
+		if wagon_n != tl-1 then
+			--mset(48,7,6)
+			--mset(48,6,13)
+		end
 		
 		--low-pass filter & slow
 		--poke(0x5f40,15)
@@ -339,7 +342,7 @@ function update_camera()
 		--camera follows player
 		camx = px-60
 		--offset camera to cursor
-		if not clavier then
+		if not keyboard then
 		camx += (stat(32)-64)/3
 		end
 		camx = min(max(0,camx),128*(wl-2)+8)
@@ -361,6 +364,17 @@ function draw_ghost_connector()
 	if camx<0 then
 		map(0,16, -128,0, 16,16)
 	end
+end
+
+function debug_()
+	local p =players[1]
+	p.gunls[1] = debuggun
+	wagon_n = tl-1
+	for i in all(enemies)do 
+		i.destory = true
+	end
+	p.maxlife = 10000
+	p.life = 10000
 end
 
 -->8
@@ -449,7 +463,7 @@ function player_update()
 		end
 		
 		--aiming
-		if clavier then
+		if keyboard then
 			sprms=75
 			distmin=9999
 			indexmininit={x=players[1].x+dx1,y=players[1].y+dy1}
@@ -493,7 +507,6 @@ function player_update()
 		
 		--shooting
 		if stat(36) ==1 or stat(36) ==-1 or (btnp(🅾️)) then
-		 if (stat(36)!=0) clavier = false
 			nextgun(p)
 			print(p.gun.cooldown,0,0)
 			p.gun.timer = p.gun.cooldown/2
@@ -548,7 +561,9 @@ function player_update()
 		local w3=128*(wl-1)
 		
 		if wagon_n==tl and p.x>w3 
-		and cam_follow_player then
+		and cam_follow_player 
+		and not is_boss then
+			is_boss = true
 			begin_boss()
 			p.x = w3+8
 		end
@@ -1957,6 +1972,7 @@ function update_main_menu(m)
 		if(btnp(⬅️))m.sel -= 1
 		if(btnp(➡️))m.sel += 1
 		if(btnp(⬆️))m.sel=(m.sel==0)and 13 or 0
+		if(btnp(⬇️))m.sel=1
 		if(btn(❎)or btn(🅾️))selection=m.sel
 		
 		m.sel%=14
@@ -2270,7 +2286,7 @@ function update_death_menu(m)
 	
 	-- buttons
 	local o = 0
-	if clavier and m.timer>1 then
+	if keyboard and m.timer>1 then
 		if(btn(❎))o=1
 		if(btn(🅾️))o=2
 	end
@@ -2342,7 +2358,7 @@ function draw_death_menu(m)
 	     
 	for b in all(m.buttons) do
 		local a = ""
-		if clavier then
+		if keyboard then
 			if b.n == 1 then a = "❎"
 			else a = "🅾️" end
 		end
@@ -2728,6 +2744,7 @@ __sfx__
 000300001d0502205005000050000400003000030003d000230001d00018000260000d0000c0001700012000110002a000330003300015000280001b000370001f0001a0001700023000100001d0001700018000
 000300001c65017600156001360000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000900000b573121713d672004761d67400277017731c66601162226500174519646012302163501637216361c6340143019627002261b6230e6130f613002130361302603072030460306203046030620304603
+090c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002675026720000002675026720000002775027725
 __music__
 00 01024040
 00 01024040
@@ -2752,7 +2769,7 @@ __music__
 00 41424344
 00 41424344
 00 41424344
-04 1c1d1e1f
+04 1c1d1e31
 01 01424344
 02 03424344
 00 41424344

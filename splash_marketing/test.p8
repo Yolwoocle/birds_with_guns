@@ -1,28 +1,67 @@
 pico-8 cartridge // http://www.pico-8.com
 version 33
 __lua__
-p = {}
-function _update60()
-	add(p,{x=rnd(128),y=128,
-	r=rnd(30)+20,dx=rnd(10)-5,
-	dy=rnd(10)-5,
-	})
+p = {{},{},{},{}}
+function t()
+	return time()/2
+end
+
+function _update()
+	local k=1
+	for col in all{14,4,2,1} do
+		add(p[k],{
+		x=rnd(128),y=100+k*20,
+		r=rnd(30)+20,dx=rnd(10)-5,
+		dy=-rnd(2), col=col
+		})
+		
+		k+=1
+	end
 	
-	for i in all(p)do
-		i.x += i.dx
+	for j=1,4 do
+		for i in all(p[j]) do
+			i.x += i.dx
+			i.y += i.dy
+			i.r -= .4
+			if(i.r < 1) del(i, j)
+		end
 	end
 end
 
 function _draw()
 	cls(15)
+	
+	for j=1,4 do
+		for i in all(p[j]) do
+			circfill(i.x,i.y,i.r,i.col)
+		end
+	end
+	
 	draw_logo(44,35)
 	
 	pal(1,129,1)
+	
+	palt(0,false)
+	local x=0
+	for i=64,75 do
+		ix = 6+x*10 + cos(t()+x/30)*3.9
+		iy = 75+ sin(t()+x/30)*1.9
+		rectfill(ix-1,iy-1,ix+8,iy+16,1)
+		spr(i,ix,iy,1,2)
+		x += 1
+	end
+	palt()
+	
+	
+	oprint("now released!",
+	cos(t()+.7)*1.9+40,
+	sin(t()+.7)*1.9+115)
 end
+
 
 function draw_logo(x,y)
 	--"birds"
-	oxxl("birds",cos(time())*2.9+44,
+	oxxl("birds",cos(t())*2.9+44,
 	sin(t())*2.9+35,10)
 	oxxl("guns",
 	cos(t()+.2)*2.9+44+4,
@@ -30,12 +69,12 @@ function draw_logo(x,y)
 	
 	--"with"
 	oprint("with",
-	cos(t()+.7)*.9+44+11,
-	sin(t()+.7)*.9+35+10)
+	cos(t()+.7)*1.9+44+11,
+	sin(t()+.7)*1.9+35+10)
 	
 	oprint("with",
-	cos(t()+.7)*.9+44+11,
-	sin(t()+.7)*.9+35+9)
+	cos(t()+.7)*1.9+44+11,
+	sin(t()+.7)*1.9+35+9)
 	
 end
 -->8
