@@ -409,7 +409,7 @@ function init_player(bird)
 		
 		gun=nil,
 		gunn=1,
-		gunls={copy(guns.revolver),copy(guns.shotgun)},
+		gunls={copy(debuggun),copy(guns.shotgun)},
 	
 		lmbp = true,
 		tbnd=30,
@@ -829,7 +829,7 @@ guns = {
 	),
 	
                        --name    spr cd spd oa dmg is_enemy auto maxammo sfx
-	shotgun = make_gun("shotgun,    65, 60,4, .05,1,  0,   0,  50,    32",
+	shotgun = make_gun("shotgun,    65, 60,4, .05,1.25,  0,   0,  50,    32",
 	 function(gun,x,y,dir)
 	 	for i=1,7 do
 	 		local o=rnd(.1)-.05
