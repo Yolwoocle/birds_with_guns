@@ -105,7 +105,7 @@ function _update60()
  end
 	grasstile()
 	if(win) wintimer += 1
-	if wintimer > 180 then
+	if wintimer == 180 then
 		menu="win" 
 		set_stats()
 	end
@@ -234,7 +234,7 @@ function _draw()
 	-->>no code below this<<--
 	--draw mouse
 	
-	spr(sprms,mouse_x-1,mouse_y-1)
+	if(not keyboard)spr(sprms,mouse_x-1,mouse_y-1)
 	pal(1,129,1)
 end
 
