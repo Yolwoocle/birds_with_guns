@@ -234,7 +234,7 @@ function _draw()
 	-->>no code below this<<--
 	--draw mouse
 	
-	if(not keyboard)spr(sprms,mouse_x-1,mouse_y-1)
+	if(not keyboard or menu=="game")spr(sprms,mouse_x-1,mouse_y-1)
 	pal(1,129,1)
 end
 
@@ -468,6 +468,7 @@ function player_update()
 			distmin=9999
 			indexmininit={x=players[1].x+dx1,y=players[1].y+dy1}
 			indexmin=indexmininit
+			
 			for e in all(enemies) do
 			 	if loaded(e) and 
 			 	canshoot(players[1],e) then
@@ -475,10 +476,13 @@ function player_update()
 					if (distmin>dist) distmin=dist indexmin=e
 				end
 			end
+			
 			p.a = atan2(indexmin.x-p.x,
 			indexmin.y-p.y)
+			
 			mouse_x=indexmin.x+1
 			mouse_y=indexmin.y+1
+			
 			if(indexmin==indexmininit)sprms=57
 		
 		else

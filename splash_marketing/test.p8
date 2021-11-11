@@ -3,7 +3,7 @@ version 33
 __lua__
 p = {{},{},{},{}}
 function t()
-	return time()/2
+	return time()
 end
 
 function _update()
@@ -53,9 +53,13 @@ function _draw()
 	palt()
 	
 	
-	oprint("now released!",
-	cos(t()+.7)*1.9+40,
-	sin(t()+.7)*1.9+115)
+	local ix,iy=cos(t()+.7)*1.9+30,sin(t()+.7)*1.9+100
+	oprint("  now released!",
+	ix,iy)
+	
+	oprint("on         and",ix,iy+10)
+	
+	oprint("   itch.io     bbs",ix,iy+10,14)
 end
 
 
