@@ -491,6 +491,7 @@ function player_update()
 		
 		--shooting
 		if stat(36) ==1 or stat(36) ==-1 or (btnp(🅾️)) then
+		 if (stat(36)!=0) clavier = false
 			nextgun(p)
 			print(p.gun.cooldown,0,0)
 			p.gun.timer = p.gun.cooldown/2
