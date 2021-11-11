@@ -29,19 +29,17 @@ function _init()
 	{7,13},{12,13},{10,9},{0,2}}
 	pal_n = 1
 	
-	menu = "main"
+	cde,menu = 5,"main"
 	
-	cde = 5
 	
 	actors = {}
 	init_enemies()
 	
 	init_ptc()
-	diffi = 20
+	wl,diffi = 4,20
 	
-	wl = 4 --wagon length
-	wagon_n = 0
-	trainlen = 6
+	--wagon length
+	wagon_n,trainlen = 0,6
 	tl = trainlen
 	
 	gen_train()
@@ -409,7 +407,7 @@ function init_player(bird)
 		
 		gun=nil,
 		gunn=1,
-		gunls={copy(debuggun),copy(guns.shotgun)},
+		gunls={copy(guns.sniper),copy(guns.shotgun)},
 	
 		lmbp = true,
 		tbnd=30,
@@ -468,7 +466,6 @@ function player_update()
 			distmin=9999
 			indexmininit={x=players[1].x+dx1,y=players[1].y+dy1}
 			indexmin=indexmininit
-			
 			for e in all(enemies) do
 			 	if loaded(e) and 
 			 	canshoot(players[1],e) then
@@ -476,15 +473,15 @@ function player_update()
 					if (distmin>dist) distmin=dist indexmin=e
 				end
 			end
-			
-			p.a = atan2(indexmin.x-p.x,
-			indexmin.y-p.y)
-			
-			mouse_x=indexmin.x+1
-			mouse_y=indexmin.y+1
-			
+			if indexmin.spr == 1 then
+			 ofsetboss = 4
+			else ofsetboss = 0
+			end
+			p.a = atan2((indexmin.x)-p.x,
+			(indexmin.y)-p.y)
+			mouse_x=indexmin.x+1+ofsetboss
+			mouse_y=indexmin.y+1+ofsetboss
 			if(indexmin==indexmininit)sprms=57
-		
 		else
 			sprms = 127
 			p.a = atan2(mx-p.x,
