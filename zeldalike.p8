@@ -5,10 +5,9 @@ __lua__
 --by gouspourd,yolwoocle,notgoyome
 
 --bird ideas
---goose,pelican,colibri,
+--goose,pelican,colibri,raven
 --dinosaur,crow,owl,cockatiel
 degaplus = 0
-
 
 function _init()
  clavier = false
@@ -80,7 +79,7 @@ function _init()
 	--darker blue
 	--pal(1,130,1)
 	--pal(1,129,1)
-	reset_pal()
+	pal()
 	poke(0x5f2e,1)
 	
 	if stat(6) != "-" then
@@ -153,6 +152,9 @@ function _update60()
 	menuitem(2,"mode:"..txt, function() clavier = not clavier end)
 	menuitem(3,"⌂ main menu", function() run("-") end)
 	
+	if (btn(❎) or btn(🅾️)) clavier = true 
+	if (lmb) clavier = false
+	
 	--remove for release
 	--[[
 	if btn(❎) then
@@ -183,6 +185,26 @@ function _draw()
 	drawgrass()
 
 	draw_map()
+	if wagon_n==0 and menu=="game" then
+		local s= [[
+  ⬆️        [e]
+⬅️⬇️➡️ or [s d f] 
+     move 
+
+[click]  shoot
+[scroll] change 
+          weapon
+		]]
+		if(clavier)s=[[
+    ⬆️
+  ⬅️⬇️➡️ move 
+
+  ❎ (x) shoot
+  🅾️ (c) change 
+         weapon
+		]]
+		print(s,33,42,2)
+	end
 
 	draw_weel()
 	
@@ -261,12 +283,8 @@ function isleft(a)
 	return a<.75 and .25<a
 end
 
-function reset_pal()
-	pal()
-end
-
 function ospr(s,x,y,col)
-	for i=0,15do
+	for i=0,15 do
 		pal(i,col)
 	end
 	
@@ -276,7 +294,7 @@ function ospr(s,x,y,col)
 		end
 	end
 	
-	reset_pal()
+	pal()
 	spr(s,x,y)
 end
 
@@ -429,31 +447,28 @@ function player_update()
 			p.spriteoffset = 0
 		end
 		
-		--angle
-		
-		
-		
+		--aiming
 		if clavier == false then
-		sprms = 127
-		p.a = atan2(mouse_x-p.x,
-		mouse_y-p.y)
+			sprms = 127
+			p.a = atan2(mouse_x-p.x,
+			mouse_y-p.y)
 		else
-		sprms=75
-		distmin=9999
-		indexmininit={x=players[1].x+dx1,y=players[1].y+dy1}
-		indexmin=indexmininit
-		for e in all(enemies) do
-		 if loaded(e) and canshoot(players[1],e) then
-		 local dist = dist(players[1],e)
-		 if (distmin>dist) distmin=dist indexmin=e
-		end
-		end
-		p.a = atan2(indexmin.x-p.x,
-		indexmin.y-p.y)
-		mouse_x=indexmin.x+1
-		mouse_y=indexmin.y+1
-		if(indexmin==indexmininit)sprms=57
-		
+			sprms=75
+			distmin=9999
+			indexmininit={x=players[1].x+dx1,y=players[1].y+dy1}
+			indexmin=indexmininit
+			for e in all(enemies) do
+			 if loaded(e) and 
+			 canshoot(players[1],e) then
+			 	local dist = dist(players[1],e)
+			 	if (distmin>dist) distmin=dist indexmin=e
+				end
+			end
+			p.a = atan2(indexmin.x-p.x,
+			indexmin.y-p.y)
+			mouse_x=indexmin.x+1
+			mouse_y=indexmin.y+1
+			if(indexmin==indexmininit)sprms=57
 		end
 		p.flip = isleft(p.a)
 		
@@ -486,9 +501,6 @@ function player_update()
 		local active=rmb
 		
 		local dofire
-		
-		if (btn(❎)) clavier = true 
-		if (lmb) clavier = false
 		
 		p.kak:update()
 		p.gun:update()
@@ -569,8 +581,9 @@ function player_update()
 					sfx(35)
 					if(shake<=2)shake += 2
 					if e.spr != 126 then
-					 p.life-=1+(degaplus*2)
-					 else p.life-=1+degaplus
+						p.life-=1+(degaplus*2)
+					else 
+						p.life-=1+degaplus
 					end
 					p.tbnd = 30
 					
@@ -654,6 +667,8 @@ function draw_player_ui(p)
 end
 
 function nextgun(p)
+	sfx(36)
+	
 	p.gunn += 1
 	if(p.gunn > #p.gunls) p.gunn = 1
 	update_gun(p)
@@ -750,8 +765,7 @@ function make_gun(args,fire)
 		if(gun.is_enemy)s=95
 		if(gun.name=="kak")s=77 lifspa=5
 		if(gun.name=="explosion")s=57 lifspa=10
-		if not gun.is_enemy 
-		and gun.name!="debuggun" then
+		if not gun.is_enemy then
 			if(shake<1)shake+=1 
 		end
 		
@@ -776,6 +790,12 @@ function make_gun(args,fire)
 	return gun
 end
 
+function shoot1(gun,x,y,dir)
+	gun:shoot(x,y,dir)
+end
+
+-- init guns
+
 degaplus = 0
                  --name      spr cd spd oa dmg is_enemy auto maxammo sfx
 debuggun = make_gun("debuggun, 64, 1, 3, .02,10, 0,       1,   999999, 0",
@@ -787,9 +807,7 @@ function initguns()
 guns = {
                        --name      spr cd spd oa dmg is_enemy auto maxammo sfx
 	revolver = make_gun("revolver, 64, 15,2.5,.02,2 ,0,       0,   100,    33",
-		function(gun,x,y,dir)
-			gun:shoot(x,y,dir)
-		end
+		shoot1
 	),
 	
                        --name    spr cd spd oa dmg is_enemy auto maxammo sfx
@@ -804,9 +822,7 @@ guns = {
 	 
                           --name      spr cd spd oa dmg is_enemy auto maxammo sfx
 	machinegun = make_gun("machinegun, 66, 7, 3, .05,2  ,0,       1, 250,    33",
-		function(gun,x,y,dir)
-	gun:shoot(x,y,dir)
-end
+		shoot1
 	),
 	
                            --name           spr cd spd oa dmg is_enemy auto maxammo sfx
@@ -821,9 +837,7 @@ end
 	
                        --name  spr cd spd oa dmg is_enemy auto maxammo sfx
 	sniper = make_gun("sniper, 68, 40,7, .0, 5  ,0,        0,  25,     32",
-		function(gun,x,y,dir)
-	gun:shoot(x,y,dir)
-end
+		shoot1
 	),
 	
                        --name      spr cd  spd oa   dmg is_enemy auto maxammo sfx
@@ -857,13 +871,11 @@ end
 	),
 	 
 	 null = make_gun("null, 57, 0,57, 0,1,  1,  1, 250, 32",
-	 function(gun,x,y,dir) --opti: remove args
+	 function() --opti: remove args
 	 end),
 	 
 	 machinegunmechant = make_gun("machinegunmechant, 66, 5, .75,.05,2, 1, 1,250, 32",
-		function(gun,x,y,dir)
-			gun:shoot(x,y,dir)
-		end
+		shoot1
 	),
 	
 	explosion = make_gun("explosion, 57, 0, 2,  0,5   ,1,  0, 1, 32",
@@ -878,9 +890,7 @@ end
 	
 	boss_targetgun = 
 	make_gun("boss target gun, 65, 6, 1.2,.05,2, 1,  1, 250, 32",
-		function(gun,x,y,dir)
-			gun:shoot(x,y,dir)
-		end
+		shoot1
 	),
 	
 	boss_360gun = 
@@ -908,9 +918,7 @@ end
 end
 
 kak = make_gun("kak, 57, 20,2.1,.005,2 , 0, 0, 0,      36",
-		function(gun,x,y,dir)
-			gun:shoot(x,y,dir)
-		end
+		shoot1
 )
 
 
@@ -920,7 +928,7 @@ function rnd_gun()
 	--todo: "power" param
 	--later weapons should be  
 	--more powerful
-	return iguns[flr(rnd(#iguns))+1]
+	return rnd(iguns)
 end
 
 function spawn_bullet(x,y,dir,spd,r,spr,dmg,is_enemy,lifspa)
@@ -1260,7 +1268,7 @@ function gen_train()
 	
 	for i=0,tl do
 		local w = i*wl
-		for j=0,wl-2 do
+		for j=0,2 do
 			
 			local n = 10+flr(rnd(21))
 			if(#nums>0)n=nums[flr(rnd(#nums+1))]--#nums
@@ -1268,15 +1276,15 @@ function gen_train()
 			del(nums,n)
 			
 		end
-		train[w+wl-1] = 8
+		train[w+3] = 8
 	end
 	
 	train[0]=9
 	
-	for j=0,wl-2 do
-		train[tl*wl+j]=30
+	for j=0,2 do
+		train[tl*4+j]=30
 	end
-	train[(tl+1)*wl-1]=31
+	train[(tl+1)*4 - 1]=31
 end
 
 function clone_room(a,b)
@@ -1297,8 +1305,7 @@ function update_door()
 	if #enemies <= 0 and 
 	not enemiescleared then
 		
-		sfx(37)
-		sfx(42)
+		music(32)
 		
 		local x=(wl-1)*16
 		local g=rnd_gun()
@@ -1310,7 +1317,7 @@ function update_door()
 		for i=1,5 do
 			make_ptc(
 			  x*8 + rnd(16)-8,
-			  7*8 + rnd(16)-8,
+			  56  + rnd(16)-8,
 			8+rnd(8),rnd({9,10}))
 		end
 		
@@ -1365,7 +1372,7 @@ function draw_map()
 	draw_random()
 	
 	palt()
-	reset_pal()
+	pal()
 end
 
 function break_crate(x,y)
@@ -1860,94 +1867,108 @@ function make_main_menu()
 	local names=split("pigeon,duck,sparrow,parrot,toucan,flamingo,eagle,seagull,ostrich,penguin,jay,chicken")
 	local x=4
 	local y=105
-	for i=0,11 do
+	for i=1,12 do
 		add(m.buttons,{
-		  n=i+1,
-		  spr=i+80,
-		  bird=i+112,
+		  n=i,
+		  spr=i+79,
+		  bird=i+111,
 		  
-		  x=i*10+4,
+		  x=i*10-6,
 		  y=105,
 		  w=9,
 		  h=17,
 		  col=1,
 		  sh=2,
 		  
-		  name=names[i+1],
+		  name=names[i],
 		  active=false,
 		})
 	end
-	m.buttons[0]={
-		  n=0,
-		  spr=124,
-		  bird=39,
+	
+	-------
+	function make_btn(args)
+		n,sp,bird,x,y,w,h,name=unpack(split(args))
+		return {
+		  n=n,
+		  spr=sp,
+		  bird=bird,
 		  
-		  x=114,
-		  y=91,
-		  w=9,
-		  h=9,
+		  x=x,y=y,
+		  w=w,h=h,
 		  
 		  oy=0,
 		  col=1,
 		  sh=1,
 		  
-		  name="random",
+		  name=name,
 		  active=false,
 		}
+	end
+	-------
+	m.buttons[0]=make_btn("0,124,39,114,91,9,9,random")
 		
-	m.buttons[13]={
-	  n=13,
-	  spr=111,
-	  bird=39,
-	  
-	  x=2,
-	  y=2,
-	  w=9,
-	  h=9,
-	  
-	  oy=0,
-	  col=1,
-	  sh=1,
-	  
-	  name="random",
-	  active=false,
-	}
+	m.buttons[13]=make_btn("13,111,39,2,2,9,9,random")
 	
 	return m
 end
 
 function update_main_menu(m)
+	local selection=1000
+	
 	if not m.done then
-		
+		--update buttons
 		for k=0,#m.buttons do
-			i=m.buttons[k]
+			local i = m.buttons[k]
 			
-			i.active = false
-			i.col = 1
-			i.oy = 0
+			--on hover
 			if touches_rect(mx,my,i.x,i.y,
 			i.x+i.w-1, i.y+i.h-1) then
 				i.col = 7
 				i.oy = 2
 				
-				if(i.n!=m.sel) sfx(43)
+				if(not i.active) sfx(43)
 				m.has_active=true
 				m.sel = i.n
 				i.active=true
 				
+				-- on click
 				if lmb then 
-					if i.n<=12 then
-						m.done = true
-					end
-					if i.n==13 then
-						hardmodetimer+=1
-					else
-						hardmodetimer=0
-					end
+					selection = i.n
 				end
-			end
+			
+			else
+				
+				i.active = false
+				i.col = 1
+				i.oy = 0
+				
+			end--if
+		end--for
+		
+		--buttons
+		if(btnp()>0)sfx(43)
+		if(btnp(⬅️))m.sel -= 1
+		if(btnp(➡️))m.sel += 1
+		if(btnp(⬆️))m.sel=(m.sel==0)and 13 or 0
+		if(btn(❎)or btn(🅾️))selection=m.sel
+		
+		m.sel%=14
+		local b=m.buttons[m.sel]
+		b.active = true
+		m.has_active=true
+		b.oy = 2
+		b.col = 7
+		
+		-- run selection
+		if selection<=12 then
+			m.done = true
+		elseif selection==13 then
+			hardmodetimer+=1
+		else
+			hardmodetimer=0
 		end
 	else
+		--animation 
 		m.ui_dy += .1
 		m.ui_oy += m.ui_dy
 		
@@ -1988,17 +2009,19 @@ function draw_main_menu(m)
 		
 		if i.n==13and i.active then
 			oprint("a game by:",2,13, 14)
-			oprint("\nyOLWOOCLE"..
-			"\ngOUSPOURD\nnOTGOYOME"..
-			"\nsIMON.t",2,13)
-			oprint("\ncode,art"..
-			"\ncode"..
-			"\ncode"..
-			"\nmusic",45,13, 13)
+			oprint([[yOLWOOCLE
+gOUSPOURD
+nOTGOYOME
+sIMON t.]],2,13)
+			oprint([[code,art
+code
+code
+music]],45,13, 13)
 		end
 	end
 	oy=abs(oy)
 	
+	-- buttons
 	local sel=m.buttons[m.sel]
 	rectfill(
 	2,93+oy,
@@ -2006,10 +2029,10 @@ function draw_main_menu(m)
 	wide(sel.name,4,95+oy,7)
 	palt()
 	
+	-- encaged bird
 	palt(1,true)
 	spr(sel.bird,6*8,7*8)
 	spr(32,6*8,7*8)
-	
 	palt()
 end
 
@@ -2174,7 +2197,7 @@ function spawn_loot(x,y)
 		make_drop(x,y,g.spr,"gun",
 		copy(g))
 	elseif r < .03 then
-		make_drop(x,y,79,"ammo",1/4)
+		make_drop(x,y,79,"ammo",1/6)
 		
 	elseif r < .04 and degaplus == 0 then
 		make_drop(x,y,78,"health",2)
@@ -2220,11 +2243,15 @@ end
 
 function update_death_menu(m)
 	m.circt=min(m.circt*1.05,600)
+	
+	--circle timer
 	if m.circt>=600 then
 		if(m.timer==0) music(23)
 		
 		if(m.timer==220) music(24)
 		if m.timer%60==59 
+		
+		--"ploop" sfx on every stat
 		and m.nstats<3 then
 			sfx(41) 
 			m.nstats+=1
@@ -2232,6 +2259,13 @@ function update_death_menu(m)
 		
 		m.showtext=true
 		m.timer += 1
+	end
+	
+	-- buttons
+	local o = 0
+	if clavier and m.timer>1 then
+		if(btn(❎))o=1
+		if(btn(🅾️))o=2
 	end
 	
 	for i=1,#m.buttons do
@@ -2244,21 +2278,27 @@ function update_death_menu(m)
 		b.y = 1/t + 80 + i*15 
 		+ sin(t+i/10)*1.5
 		
-		b.active = false
 		if touches_rect(mx,my,
 		b.x-4,b.y-4,
 		b.x+#b.t*4+3, b.y+9) then
 			
+			if(not b.active)sfx(43)
 			b.active = true
+			b.oy = 3
 			if lmb then
-				if(b.n==1)run(tostr(birdchoice))
-				if(b.n==2)run("-")
+				o = b.n
 			end
 			
-			if(m.sel != i)sfx(43)
 			m.sel = i
+			
+		else
+			b.active = false
+			
 		end
 	end
+	
+	if(o==1)run(tostr(birdchoice))
+	if(o==2)run("-")
 end
 
 function draw_death_menu(m)
@@ -2279,24 +2319,31 @@ function draw_death_menu(m)
 		circfill(x,y,c    ,c4)
 		circfill(x,y,c*.75,c3)
 		circfill(x,y,c*.5 ,c2)
+		--spr(p.spr,p.x,p.y)
 		circfill(x,y,c*.25,col)
-		spr(p.spr,p.x,p.y)
 	end
 	palt()
 	
 	--text & buttons
 	local t=m.timer/100
-	local txt="game over"
-	if(m.iswin)txt="congrats!"
+	local txt=m.iswin and 
+	   "congrats!" or "game over"
 	
 	oxxl(txt,
 	     camx+30+cos(t)*3,
 	     1/t +20+sin(t)*3, txtcol)
+	     
 	for b in all(m.buttons) do
+		local a = ""
+		if clavier then
+			if b.n == 1 then a = "❎"
+			else a = "🅾️" end
+		end
+		
 		if b.active then
-			oprint(b.t,b.x,b.y,1,7)
+			oprint(a..b.t,b.x,b.y-b.oy,1,7)
 		else
-			oprint(b.t,b.x,b.y,14,1)
+			oprint(a..b.t,b.x,b.y,14,1)
 		end
 	end
 	
@@ -2362,14 +2409,14 @@ ddddddd177777777444f4f4f2424242417c717a6b6b6bd112222222112424214ff3f3fff00000000
 d1d1515144444444111444441111111116c6262d2d2d2d11d9da6a6124424441ffffffff00000000777772222227777755566661122222211666655511155111
 d1515151411141441114222411111111162d2d2d2d2d2d11d1d9d16112422421ffffffff00000000dddddddddddddddd55555551111661111555555511111111
 ddddddd144444444111444441111111112222222222222112222222111211211ffffffff00000000dddddddddddddddd55555551111661111555555511111111
-000000000000000000000000000000000066d6000000000000000000000000000000000000000000000000008000000800777700006000000111110002222200
-000000000000000000000000000000000066d6000000000000000000000000000000000000000000000000000800008007000070000600001678761029a9a920
-06000000060000000000000000ddd000000dd0000000000000000000000000000000000000000000000000000080080070774007000760001688861029242920
-0066660000d666660446d6d6446664000d666666000000000000000000000000000000000000000000000000000000007077f407000760001678761029a9a920
-046ddd00444504404440500044ddd4dd4d444000000000000000000000000000000000000000000000000000000000007041f1f7000760001766671024949420
-444500004400000044005000404050004405000000000000000000000000000000000000000000000000000000800800704fff070077600015ddd51024949420
-44000000000000000000000000405000000000000000000000000000000000000000000000000000000000000800008007040470077600000111110002222200
-00000000000000000000000000000500000000000000000000000000000000000000000000000000000000008000000800777700076000000000000000000000
+000000000000000000000000000000000066d60000000000000000000000000000000000000000000000000009aaaa9000777700006000000111110002222200
+000000000000000000000000000000000066d6000000000000000000000000000000000000000000000000009a9009a907000070000600001678761029a9a920
+06000000060000000000000000ddd000000dd000000000000000000000000000000000000000000000000000a900009a70774007000760001688861029242920
+0066660000d666660446d6d6446664000d666666000000000000000000000000000000000000000000000000a000000a7077f407000760001678761029a9a920
+046ddd00444504404440500044ddd4dd4d444000000000000000000000000000000000000000000000000000a000000a7041f1f7000760001766671024949420
+4445000044000000440050004040500044050000000000000000000000000000000000000000000000000000a900009a704fff070077600015ddd51024949420
+44000000000000000000000000405000000000000000000000000000000000000000000000000000000000009a9009a907040470077600000111110002222200
+000000000000000000000000000005000000000000000000000000000000000000000000000000000000000009aaaa9000777700076000000000000000000000
 11111111222222221111111111111111222222221111111155555555444444445555555522222222444444445555552806000005000000000667677000000000
 1111111122222222111111111111111122222222112ee21155555555444444445555555522222222cd4444445555288804600054009aa90066668867008ee800
 115dd511222222221111111111288821222222221eeeee215567765544446776555eee5522222210cccd4444555288880599999609a77a905c68788608e77e80
@@ -2656,7 +2703,7 @@ __sfx__
 010c00000c9500c9000c9500c9000c9500c9000c9500c9000c9500c9100c9500c9100c9500c9100c9500c9100c9500c9300c9500c9300c9500c9300c9500c9300a9500a920000000a9500a920000000c9500c920
 030c000024630180003c6303c62024635180003c6303c62024635180003c6303c62024635180003c6303c62024635180003c6303c62024635180003c6303c6202463500000000002463500000000003c6303c625
 090c00000050000500005000050000500005000050000500005000050000500005000050000500005000050000500005000050000500005000050000500005002e5502e522005002e5502e522005003055030522
-090c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002675026720000002675026720000002775027725
+090c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000267502672000000267502672000000277502772500000
 00020000082700b3700f4701367027670052600f6600b350156500e653042430d6430363308623006130000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000200000a4700f6701e670022600d650044400762000420026200e603042030d6030360308603006030000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 00060000272501c250142501b250152500e250102500825004250022500125000250002500025000250002400024000230002300022000210002100020000200002000020000200002000020000200002003e200
@@ -2707,6 +2754,6 @@ __music__
 00 41424344
 00 41424344
 00 41424344
-01 1e424344
-02 1f424344
+01 252a4344
+02 5f424344
 
