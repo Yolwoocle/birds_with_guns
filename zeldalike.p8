@@ -811,7 +811,7 @@ guns = {
 	),
 	
                        --name    spr cd spd oa dmg is_enemy auto maxammo sfx
-	shotgun = make_gun("shotgun,	 65, 60,4, .05,1,  0,   0,  50,    32",
+	shotgun = make_gun("shotgun,	 65, 60,4, .05,1.30,  0,   0,  50,    32",
 	 function(gun,x,y,dir)
 	 	for i=1,7 do
 	 		local o=rnd(.1)-.05
@@ -1168,11 +1168,6 @@ function mouse_x_y()
 	rmb=stat(34)&2 > 0
 	mmb=stat(34)&4 > 0
 end	
-
-function get_traj(x_satr,y_start,x_end,y_end)
-	angle=atan2(x_end-x_satr-4, y_end-y_start-4)
-	return {x=cos(angle),y=sin(angle),angle=angle}
-end
 
 function check_flag(flag,x,y)
 	return fget(mget((x\8),(y\8)),flag)
