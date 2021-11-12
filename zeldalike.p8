@@ -401,7 +401,7 @@ function init_player(bird)
 		
 		gun=nil,
 		gunn=1,
-		gunls={debuggun,copy(guns.shotgun)},
+		gunls={copy(guns.revolver),copy(guns.shotgun)},
 	
 		lmbp = true,
 		tbnd=30,
