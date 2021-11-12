@@ -20,47 +20,39 @@ function _init()
 	solid,breakable,spawnable,lootable,notbulletsolid=0,1,2,3,4
 	
 	--camera
-	camx=0
-	camy=0
-	targetcamx=0
+
+	shake,camy,camx,targetcamx=0,0,0,0
+
 	cam_follow_player=true
-	shake = 0
 	trainpal = {{8,2},{11,3},
 	{7,13},{12,13},{10,9},{0,2}}
-	pal_n = 1
 	
-	menu = "main"
+	pal_n,cde,menu = 1,5,"main"
 	
-	cde = 5
 	
 	actors = {}
 	init_enemies()
 	
 	init_ptc()
-	diffi = 20
+	wl,diffi = 4,20
 	
-	wl = 4 --wagon length
-	wagon_n = 0
-	trainlen = 6
+	--wagon length
+	wagon_n,trainlen = 0,6
 	tl = trainlen
 	
 	gen_train()
 	update_room()
-	random = {}
-	
-	enemies = {}
+	random,enemies = {},{}
 	parcourmap()
 	
 	drops={}
 	
 	init_menus()
 	
-	birdchoice=0
+	birdchoice,hardmodetimer=0,0
+ ofsetboss,bullets_shooted,bullets_hit = 0,1,1
 	
-	hardmodetimer=0
-	
-	bullets_shooted=1
-	bullets_hit=1
+
 	stats={
 	 time=0,
 	 kills=0,
@@ -148,8 +140,8 @@ function _update60()
 	shake = max(0,shake-0.3)
 	
 	local txt=keyboard and "keyboard" or "mouse+keys"
-	menuitem(2,"mode:"..txt, function() keyboard = not keyboard end)
-	menuitem(3,"⌂ main menu", function() run("-") end)
+	menuitem(3,"mode:"..txt, function() keyboard = not keyboard end)
+	menuitem(2,"⌂ main menu", function() run("-") end)
 	
 	if (btn(❎) or btn(🅾️)) keyboard = true 
 	if (lmb) keyboard = false
@@ -466,9 +458,8 @@ function player_update()
 		if keyboard then
 			sprms=75
 			distmin=9999
-			indexmininit={x=players[1].x+dx1,y=players[1].y+dy1}
+			indexmininit={x=players[1].x-ofsetboss+dx1,y=players[1].y-ofsetboss+dy1}
 			indexmin=indexmininit
-			
 			for e in all(enemies) do
 			 	if loaded(e) and 
 			 	canshoot(players[1],e) then
@@ -476,15 +467,15 @@ function player_update()
 					if (distmin>dist) distmin=dist indexmin=e
 				end
 			end
-			
-			p.a = atan2(indexmin.x-p.x,
-			indexmin.y-p.y)
-			
-			mouse_x=indexmin.x+1
-			mouse_y=indexmin.y+1
-			
+			if indexmin.spr == 1 then
+			 ofsetboss = 4
+			else ofsetboss = 0
+			end
+			p.a = atan2(indexmin.x+ofsetboss-p.x,
+			indexmin.y+ofsetboss-p.y)
+			mouse_x=indexmin.x+1+ofsetboss
+			mouse_y=indexmin.y+1+ofsetboss
 			if(indexmin==indexmininit)sprms=57
-		
 		else
 			sprms = 127
 			p.a = atan2(mx-p.x,
@@ -818,7 +809,7 @@ end
 
 -- init guns
 
-degaplus = 0
+--degaplus = 0
                  --name      spr cd spd oa dmg is_enemy auto maxammo sfx
 debuggun = make_gun("debuggun, 64, 1, 3, .02,10, 0,       1,   999999, 0",
 		function(gun,x,y,dir)
@@ -1978,19 +1969,21 @@ function update_main_menu(m)
 		end--for
 		
 		--buttons
+		for n=0,1 do
 		if(btnp()>0)sfx(43)
-		if(btnp(⬅️))m.sel -= 1
-		if(btnp(➡️))m.sel += 1
-		if(btnp(⬆️))m.sel=(m.sel==0)and 13 or 0
-		if(btnp(⬇️))m.sel=1
+		if(btnp(⬅️,n))m.sel -= 1
+		if(btnp(➡️,n))m.sel += 1
+		if(btnp(⬆️,n))m.sel=(m.sel==0)and 13 or 0
+		if(btnp(⬇️,n))m.sel=1
+		end
 		if(btn(❎)or btn(🅾️))selection=m.sel
 		
 		m.sel%=14
 		local b=m.buttons[m.sel]
 		b.active = true
 		m.has_active=true
-		b.oy = 2
-		b.col = 7
+		b.oy,b.col = 2,7
+		
 		
 		-- run selection
 		if selection<=12 then
