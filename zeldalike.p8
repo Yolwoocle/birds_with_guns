@@ -44,18 +44,15 @@ function _init()
 	
 	gen_train()
 	update_room()
-	random = {}
-	
-	enemies = {}
+	random,enemies = {},{}
 	parcourmap()
 	
 	drops={}
 	
 	init_menus()
 	
-	birdchoice=0
-	
-	hardmodetimer=0
+	birdchoice,hardmodetimer=0,0
+ ofsetboss = 0
 	
 	bullets_shooted=1
 	bullets_hit=1
@@ -407,7 +404,7 @@ function init_player(bird)
 		
 		gun=nil,
 		gunn=1,
-		gunls={copy(guns.sniper),copy(guns.shotgun)},
+		gunls={copy(guns.revolver),copy(guns.shotgun)},
 	
 		lmbp = true,
 		tbnd=30,
@@ -464,7 +461,7 @@ function player_update()
 		if keyboard then
 			sprms=75
 			distmin=9999
-			indexmininit={x=players[1].x+dx1,y=players[1].y+dy1}
+			indexmininit={x=players[1].x-ofsetboss+dx1,y=players[1].y-ofsetboss+dy1}
 			indexmin=indexmininit
 			for e in all(enemies) do
 			 	if loaded(e) and 
@@ -477,8 +474,8 @@ function player_update()
 			 ofsetboss = 4
 			else ofsetboss = 0
 			end
-			p.a = atan2((indexmin.x)-p.x,
-			(indexmin.y)-p.y)
+			p.a = atan2(indexmin.x+ofsetboss-p.x,
+			indexmin.y+ofsetboss-p.y)
 			mouse_x=indexmin.x+1+ofsetboss
 			mouse_y=indexmin.y+1+ofsetboss
 			if(indexmin==indexmininit)sprms=57
