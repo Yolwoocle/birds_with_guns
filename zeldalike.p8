@@ -409,7 +409,7 @@ function init_player(bird)
 		
 		gun=nil,
 		gunn=1,
-		gunls={copy(debuggun),copy(guns.shotgun)},
+		gunls={copy(guns.revolver),copy(guns.shotgun)},
 	
 		lmbp = true,
 		tbnd=30,
@@ -822,8 +822,14 @@ degaplus = 0
                  --name      spr cd spd oa dmg is_enemy auto maxammo sfx
 debuggun = make_gun("debuggun, 64, 1, 3, .02,10, 0,       1,   999999, 0",
 		function(gun,x,y,dir)
-			gun:shoot(x,y,dir)
-		end
+	  for i=1,7 do
+	 		local o=rnd(1)
+	 		gun:shoot(x,y,dir+o, ospd)
+	 	end
+end
+--		function(gun,x,y,dir)
+--			gun:shoot(x,y,dir)
+--		end
 	)
 function initguns()
 guns = {

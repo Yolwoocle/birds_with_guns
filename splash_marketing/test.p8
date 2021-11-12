@@ -18,12 +18,18 @@ function _update()
 		k+=1
 	end
 	
+	add(p[1],{
+		x=64,y=35,
+		r=rnd(5)+10,dx=rnd(4)-2,
+		dy=rnd(4)-2, col=7
+		})
+	
 	for j=1,4 do
 		for i in all(p[j]) do
 			i.x += i.dx
 			i.y += i.dy
 			i.r -= .4
-			if(i.r < 1) del(i, j)
+			if(i.r < 1) del(i,p[j])
 		end
 	end
 end
@@ -52,33 +58,34 @@ function _draw()
 	end
 	palt()
 	
-	
 	local ix,iy=cos(t()+.7)*1.9+30,sin(t()+.7)*1.9+100
-	oprint("  now released!",
-	ix,iy)
+	--oprint("  now released!",ix+2,iy)
+	oprint("\"mess with the flock,\n  you get the glock\"",ix-5,iy)
 	
-	oprint("on         and",ix,iy+10)
+	--oprint("on         and",ix,iy+10)
 	
-	oprint("   itch.io     bbs",ix,iy+10,14)
+	local ix,iy=cos(t()+.8)*1.9+30,sin(t()+.8)*1.9+100
+	
+	--oprint("   itch.io     bbs",ix,iy+10,14)
 end
 
 
 function draw_logo(x,y)
 	--"birds"
 	oxxl("birds",cos(t())*2.9+44,
-	sin(t())*2.9+35,10)
+	sin(t())*2.9+25,10)
 	oxxl("guns",
 	cos(t()+.2)*2.9+44+4,
-	sin(-t()+.2)*2.9+35+15, 6)
+	sin(-t()+.2)*2.9+25+15, 6)
 	
 	--"with"
 	oprint("with",
 	cos(t()+.7)*1.9+44+11,
-	sin(t()+.7)*1.9+35+10)
+	sin(t()+.7)*1.9+25+10)
 	
 	oprint("with",
 	cos(t()+.7)*1.9+44+11,
-	sin(t()+.7)*1.9+35+9)
+	sin(t()+.7)*1.9+25+9)
 	
 end
 -->8
