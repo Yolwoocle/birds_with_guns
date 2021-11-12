@@ -1,12 +1,15 @@
 pico-8 cartridge // http://www.pico-8.com
 version 33
 __lua__
--- -- birds with guns --
---by gouspourd,yolwoocle,notgoyome
+--      -- birds with guns --
+--by yolwoocle & gouspourd
+--extra credits :notgoyome
+--music: simon t.
 
 --bird ideas
 --goose,pelican,colibri,raven
 --dinosaur,crow,owl,cockatiel
+
 degaplus = 0
 
 function _init()
