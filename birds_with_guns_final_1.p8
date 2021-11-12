@@ -13,7 +13,7 @@ __lua__
 degaplus = 0
 
 function _init()
- keyboard = false
+	keyboard = false
 	initguns()
 	enemies,checker = {},{}
 	--mouse
@@ -23,9 +23,8 @@ function _init()
 	solid,breakable,spawnable,lootable,notbulletsolid=0,1,2,3,4
 	
 	--camera
-
 	shake,camy,camx,targetcamx=0,0,0,0
-
+	
 	cam_follow_player=true
 	trainpal = {{8,2},{11,3},
 	{7,13},{12,13},{10,9},{0,2}}
@@ -73,12 +72,15 @@ function _init()
 	pal()
 	poke(0x5f2e,1)
 	
-	if stat(6) != "-" then
+	local s = stat(6)
+	if s == "-"
+	or s == "" 
+	or s == nil then
+		menu="main"
+	else
 		menu="game"
 		birdchoice=tonum(stat(6))
 		begin_game()
-	else
-		menu="main"
 	end
 end
 
