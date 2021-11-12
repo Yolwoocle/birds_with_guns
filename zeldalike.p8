@@ -140,8 +140,8 @@ function _update60()
 	shake = max(0,shake-0.3)
 	
 	local txt=keyboard and "keyboard" or "mouse+keys"
-	menuitem(2,"mode:"..txt, function() keyboard = not keyboard end)
-	menuitem(3,"⌂ main menu", function() run("-") end)
+	menuitem(3,"mode:"..txt, function() keyboard = not keyboard end)
+	menuitem(2,"⌂ main menu", function() run("-") end)
 	
 	if (btn(❎) or btn(🅾️)) keyboard = true 
 	if (lmb) keyboard = false
