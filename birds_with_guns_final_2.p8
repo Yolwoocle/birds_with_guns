@@ -95,8 +95,7 @@ function _update60()
  if hardmodetimer > 90 and 
  menu == "main" and diffi != 17 then
  	sfx(44)
- 	shake = 5
- 	diffi = 17
+ 	shake,diffi = 5,17
  	degaplus = 1
  	initguns()
  	init_enemies()
@@ -117,7 +116,12 @@ function _update60()
 		for a in all(actors) do
 			--actors are just bullets
 			a:update()
-			if(a.destroy_flag)del(actors,a)
+			if a.destroy_flag then
+			if a.dmg == 0 then
+			guns.explosion:fire(a.x,a.y,1)
+			end
+			del(actors,a)
+			end
 		end
 		
 		--for e in all(enemies) do
@@ -408,7 +412,7 @@ function init_player(bird)
 		
 		gun=nil,
 		gunn=1,
-		gunls={copy(guns.revolver),copy(guns.shotgun)},
+		gunls={copy(guns.basuka),copy(guns.shotgun)},
 	
 		lmbp = true,
 		tbnd=30,
@@ -832,10 +836,13 @@ end
 function initguns()
 guns = {
                        --name      spr cd spd oa dmg is_enemy auto maxammo sfx
-	revolver = make_gun("revolver, 64, 15,2.5,.02,2 ,0,       0,   100,    33",
+	revolver = make_gun("revolver, 64, 15,2.5,.02,2.5 ,0,       0,   100,    33",
 		shoot1
 	),
 	
+	basuka = make_gun("basuka, 64, 15,2.5,.02,0 ,0,       0,   100,    33",
+		shoot1
+	),
                        --name    spr cd spd oa dmg is_enemy auto maxammo sfx
 	shotgun = make_gun("shotgun,    65, 60,4, .05,1.25,  0,   0,  50,    32",
 	 function(gun,x,y,dir)
@@ -906,10 +913,9 @@ guns = {
 	
 	explosion = make_gun("explosion, 57, 0, 2,  0,5   ,1,  0, 1, 32",
 		function(gun,x,y,dir)
-			for i=1,30 do
-	 		local o=rnd(1)-.5
-	 		local ospd=gun.spd*(rnd(.2)+.9)
-	 		gun:shoot(x,y,dir+o, ospd)
+			for i=1,15 do
+	 		local o=i/15
+	 		gun:shoot(x,y,dir+o)
 	 	end
 	end
 	),
