@@ -822,7 +822,7 @@ guns = {
 		shoot1
 	),
 	
-	bazooka = make_gun("bazooka, 64, 90,2,.015,0 ,0,       0,   20,    33",
+	bazooka = make_gun("bazooka, 64, 90,1.5,.01,0 ,0,       0,   20,    33",
 		shoot1
 	),
                        --name    spr cd spd oa dmg is_enemy auto maxammo sfx
