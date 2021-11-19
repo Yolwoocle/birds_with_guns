@@ -399,7 +399,7 @@ function init_player(bird)
 		
 		gun=nil,
 		gunn=1,
-		gunls={copy(guns.bazooka),copy(guns.shotgun)},
+		gunls={copy(guns.flamethrower),copy(guns.shotgun)},
 	
 		lmbp = true,
 		tbnd=30,
@@ -768,6 +768,7 @@ function make_gun(args,fire)
 		local s=93
 		if(gun.is_enemy)s=95
 		if(gun.name=="kak")s=77 lifspa=5
+		if(gun.name=="flamethrower") lifspa=30
 		if(gun.name=="explosion")s=57 lifspa=10
 		if not gun.is_enemy then
 			if(shake<1)shake+=1 
@@ -823,6 +824,10 @@ guns = {
 	),
 	
 	bazooka = make_gun("bazooka, 64, 90,1.5,.01,0 ,0,       0,   20,    33",
+		shoot1
+	),
+	
+	flamethrower = make_gun("flamethrower, 64, 1,2,.02,0.3 ,0,       1,   3000,    33",
 		shoot1
 	),
                        --name    spr cd spd oa dmg is_enemy auto maxammo sfx
