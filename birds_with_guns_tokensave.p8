@@ -396,52 +396,51 @@ function init_player(bird)
 end
 
 function player_update()
-	local ply = {x=p_x,
-	y=p_y,
-	dx=p_dx,
-	dy=p_dy,
-	a=p_a,
-	bw=p_bw, bh=p_bh,
-	bx=p_bx, by=p_by}
-
 	--damage
 	p_iframes = max(0,p_iframes-1)
 	--movement
 	local dx,dy = p_dx,p_dy
-	local spd = p_spd
-
+	
 	for n=0,1 do
-		if (btn(⬅️,n)) p_dx-=spd dx1-=spd
-		if (btn(➡️,n)) p_dx+=spd dx1+=spd
-		if (btn(⬆️,n)) p_dy-=spd dy1-=spd
-		if (btn(⬇️,n)) p_dy+=spd dy1+=spd
+		if(btn(⬅️,n)) p_dx-=p_spd dx1-=p_spd
+		if(btn(➡️,n)) p_dx+=p_spd dx1+=p_spd
+		if(btn(⬆️,n)) p_dy-=p_spd dy1-=p_spd
+		if(btn(⬇️,n)) p_dy+=p_spd dy1+=p_spd
 	end
-
+	
 	p_dx *= p_fric
 	p_dy *= p_fric
-
+	
 	if (abs(dx1)+abs(dy1))>0.1 then
 		dx1 *= p_fric
 		dy1 *= p_fric
 	end
-
+	
+		local ply = {
+	x=p_x, y=p_y,
+	dx=p_dx, dy=p_dy,
+	
+	a=p_a,
+	
+	bw=p_bw, bh=p_bh,
+	bx=p_bx, by=p_by}
+	
 	collide(ply,0.1)
 	p_dx = ply.dx
 	p_dy = ply.dy
-
+	
 	p_x += p_dx
 	p_y += p_dy
-
-
+	
 	--animation
-
+	
 	if abs(p_dx) > 0.1
 	or abs(p_dy) > 0.1 then
 		animplayer()
 	else
 		p_spriteoffset = 0
 	end
-
+	
 	--aiming
 	if keyboard then
 		sprms=75
@@ -451,7 +450,7 @@ function player_update()
 		for e in all(enemies) do
 			--todo:we shouldn't have to do this
 			local ply = {x=p_x,y=p_x,a=p_a,type="player"}
-
+			
 			if loaded(e) and
 			canshoot(ply,e) then
 				p_x = ply.x
@@ -1652,6 +1651,10 @@ function canshoot(e,p)
 	local y = sin(angle) 
 	local dist = dist(e,p)
 	
+	printh(e.x)
+	printh(p_x)
+	printh("")
+	
 	if (abs(dist)<e.agro and abs(p_x-e.x)<128) 
 	or e.type==p.type then
 		return cansee(e,angle,x,y,dist)
@@ -2179,9 +2182,9 @@ function update_drops()
 				.98,0,-0.3,txt
 			)
 		end
+		
+		if(d.destroy)del(drops,d)
 	end
-	
-	if(d.destroy)del(drops,d)
 end
 
 function draw_drops()
