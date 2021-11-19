@@ -1271,7 +1271,7 @@ wagon_n = 0
 function gen_train()
 	--gen talbe of all wagon nums
 	nums = {}
-	for i=11,29 do
+	for i=10,29 do
 		add(nums,i)
 	end
 	
@@ -1283,7 +1283,9 @@ function gen_train()
 		for j=0,2 do
 			
 			local n = 10+flr(rnd(21))
-			if(#nums>0)n=nums[flr(rnd(#nums+1))]--#nums
+			m = n
+			
+			if(#nums>0)n=nums[flr(rnd(#nums))+1]
 			train[w+j]=n
 			del(nums,n)
 			
@@ -1371,9 +1373,10 @@ function update_room()
 	for i=0,3 do
 		local w=wagon_n*wl + i
 		
-		printh(tostr(w)..":"..tostr(a))
+		printh("train["..tostr(w).."]:"..tostr(train[w]))
 		clone_room(train[w],i)
 	end
+	printh("---")
 end
 
 function draw_map()
