@@ -151,22 +151,6 @@ function _update60()
 	
 	if (btn(❎) or btn(🅾️)) keyboard = true 
 	if (lmb) keyboard = false
-	
-	--remove for release
-	--[[
-	if btn(❎) then
-		wagon_n = tl-1
-		pal_n = tl
-		local p=players[1]
-		p.gunls[1]=debuggun
-		p.maxlife,p.life = 2000,2000
-		players[1].x = 570 
-		update_gun(p)
-		update_door()for e in all(enemies)do 
-			del(enemies,e)
-		end
-	end
-	--]]
 end
 
 
@@ -210,7 +194,8 @@ function _draw()
 	for e in all(enemies) do
 		draw_enemy(e)
 	end
-	draw_player()
+	local game = menu=="game"
+	if(game) draw_player()
 	
 	for a in all(actors) do
 		a:draw()
@@ -220,9 +205,7 @@ function _draw()
 		draw_ptc(p)
 	end
 	
-	for i in all(players) do
-		draw_player_ui(players[1])
-	end
+	if(game) draw_player_ui()
 	
 	local m = menus[menu]
 	if m then
@@ -260,9 +243,7 @@ function begin_game()
 	
 	stats.time = time()
 	
-	for p in all(players) do
-		p.x,p.y = 48,56
-	end
+	p_x,p_y = 48,56
 	
 	shake += 7
 	for i=1,10 do
@@ -315,7 +296,7 @@ function copy(t)
 end
 
 function update_camera()
-	local px = players[1].x
+	local px = p_x
 	local wl = wl
 	local maxlen = 240
 	
@@ -364,322 +345,320 @@ function draw_ghost_connector()
 	end
 end
 
---[[
-function debug_()
-	local p =players[1]
-	p.gunls[1] = debuggun
-	wagon_n = tl-1
-	for i in all(enemies)do 
-		i.destory = true
-	end
-	p.maxlife = 10000
-	p.life = 10000
-end--]]
-
 -->8
 --player
 function init_player(bird)
 	b=0
 	dx1=1
 	dy1=0
-	players={} 
-	local p = {
-		n=1,
-		agro = 9999,
-		x=-64,y=-64,
-		dx=0,dy=0,
-		a=0,
-		
-		spd=.4,
-		fric=0.75,
-		
-		bx=2,by=2,
-		bw=4,bh=4,
-		
-		hx=2,hy=2,
-		hw=4,
-		
-		life=10,
-		maxlife=10,
-		ammo=250,
-		maxammo=250,
-		
-		spr=bird,
-		
-		gun=nil,
-		gunn=1,
-		gunls={copy(guns.revolver),copy(guns.shotgun)},
-	
-		lmbp = true,
-		tbnd=30,
-		
-		damage=damage_player,
-		spriteoffsettime=7,
-		spriteoffsetcount=7,
-		spriteoffset = 0,
-		kak = copy(kak)
-	}
-	p.gun = p.gunls[p.gunn]
-	add(players,p)
+
+	p_n=1
+	p_agro = 9999
+	p_x=-64
+	p_y=-64
+	p_dx=0
+	p_dy=0
+	p_a=0
+
+	p_spd=.4
+	p_fric=0.75
+
+	p_bx=2
+	p_by=2
+	p_bw=4
+	p_bh=4
+
+	p_hx=2
+	p_hy=2
+	p_hw=4
+
+	p_life=10
+	p_maxlife=10
+	p_ammo=250
+	p_maxammo=250
+
+	p_spr=bird
+
+	p_gun=nil
+	p_gunn=1
+	p_gunls={copy(guns.revolver),copy(guns.shotgun)}
+
+	p_lmbp = true
+	p_iframes=30
+
+	p_damage=damage_player
+	p_spriteoffsettime=7
+	p_spriteoffsetcount=7
+	p_spriteoffset = 0
+	p_kak = copy(kak)
+
+	p_gun = p_gunls[p_gunn]
 end
 
 function player_update()
-	for p in all(players) do
-	 --damage
-	 p.tbnd = max(0,p.tbnd-1)
-		--movement
-		local dx,dy = p.dx,p.dy
-		local spd = p.spd
-		
-		for n=0,1 do
-			if (btn(⬅️,n)) p.dx-=spd dx1-=spd
-			if (btn(➡️,n)) p.dx+=spd dx1+=spd
-			if (btn(⬆️,n)) p.dy-=spd dy1-=spd
-			if (btn(⬇️,n)) p.dy+=spd dy1+=spd
-		end
-		
-		p.dx *= p.fric
-		p.dy *= p.fric
-		
-  if (abs(dx1)+abs(dy1))>0.1 then
-		dx1 *= p.fric
-		dy1 *= p.fric
-		end
-		
-		collide(p,0.1)
-		
-		p.x += p.dx
-		p.y += p.dy
-		
-		
-		--animation
-		
-		if abs(p.dx) > 0.1 
-		or abs(p.dy) > 0.1 then
-		 animplayer(p)
-		else 
-			p.spriteoffset = 0
-		end
-		
-		--aiming
-		if keyboard then
-			sprms=75
-			distmin=9999
-			indexmininit={x=players[1].x-ofsetboss+dx1,y=players[1].y-ofsetboss+dy1}
-			indexmin=indexmininit
-			for e in all(enemies) do
-			 	if loaded(e) and 
-			 	canshoot(players[1],e) then
-					local dist = dist(players[1],e)
-					if (distmin>dist) distmin=dist indexmin=e
-				end
+	local ply = {x=p_x,
+	y=p_y,
+	dx=p_dx,
+	dy=p_dy,
+	a=p_a,
+	bw=p_bw, bh=p_bh,
+	bx=p_bx, by=p_by}
+
+	--damage
+	p_iframes = max(0,p_iframes-1)
+	--movement
+	local dx,dy = p_dx,p_dy
+	local spd = p_spd
+
+	for n=0,1 do
+		if (btn(⬅️,n)) p_dx-=spd dx1-=spd
+		if (btn(➡️,n)) p_dx+=spd dx1+=spd
+		if (btn(⬆️,n)) p_dy-=spd dy1-=spd
+		if (btn(⬇️,n)) p_dy+=spd dy1+=spd
+	end
+
+	p_dx *= p_fric
+	p_dy *= p_fric
+
+	if (abs(dx1)+abs(dy1))>0.1 then
+		dx1 *= p_fric
+		dy1 *= p_fric
+	end
+
+	collide(ply,0.1)
+	p_dx = ply.dx
+	p_dy = ply.dy
+
+	p_x += p_dx
+	p_y += p_dy
+
+
+	--animation
+
+	if abs(p_dx) > 0.1
+	or abs(p_dy) > 0.1 then
+		animplayer()
+	else
+		p_spriteoffset = 0
+	end
+
+	--aiming
+	if keyboard then
+		sprms=75
+		distmin=9999
+		indexmininit={x=p_x-ofsetboss+dx1,y=p_y-ofsetboss+dy1}
+		indexmin=indexmininit
+		for e in all(enemies) do
+			--todo:we shouldn't have to do this
+			local ply = {x=p_x,y=p_x,a=p_a,type="player"}
+
+			if loaded(e) and
+			canshoot(ply,e) then
+				p_x = ply.x
+				p_y = ply.y
+				p_a = ply.a
+				
+				local dist = dist(p,e)
+				if (distmin>dist) distmin=dist indexmin=e
+				
 			end
-			if indexmin.spr == 1 then
-			 ofsetboss = 4
-			else ofsetboss = 0
-			end
-			p.a = atan2(indexmin.x+ofsetboss-p.x,
-			indexmin.y+ofsetboss-p.y)
-			mx=indexmin.x+1+ofsetboss
-			my=indexmin.y+1+ofsetboss
-			if(indexmin==indexmininit)sprms=57
+		end
+		if indexmin.spr == 1 then
+			ofsetboss = 4
 		else
-			sprms = 127
-			p.a = atan2(mx-p.x,
-			my-p.y)	
+			ofsetboss = 0
 		end
-		p.flip = isleft(p.a)
+		p_a = atan2(indexmin.x+ofsetboss-p_x,
+		indexmin.y+ofsetboss-p_y)
+		mx=indexmin.x+1+ofsetboss
+		my=indexmin.y+1+ofsetboss
+		if(indexmin==indexmininit)sprms=57
+	else
+		sprms = 127
+		p_a = atan2(mx-p_x, my-p_y)
+	end
+	p_flip = isleft(p_a)
+	
+	--ammo & life
+	p_life=min(max(0,p_life),p_maxlife)
+	p_gun.ammo=min(max(0,p_gun.ammo),p_gun.maxammo)
+	
+	--death
+	if p_life <= 0
+	and menu!="death"then
+		sfx(34)
+		music(-1, 300)
 		
-		--ammo & life
-		p.life=min(max(0,p.life),p.maxlife)
-		p.gun.ammo=min(max(0,p.gun.ammo),p.gun.maxammo)
+		menu = "death"
+		shake += 9
+		burst_ptc(p_x+4,p_y+4,7)
 		
-		--death
-		if p.life <= 0 
-		and menu!="death"then
-			sfx(34)
-			music(-1, 300)
-			
-			menu = "death"
-			shake += 9
-			burst_ptc(p.x+4,p.y+4,7)
-			
-			set_stats()
-		end
-		
-		--shooting
-		if stat(36) ==1 or stat(36) ==-1 or (btnp(🅾️)) then
-			nextgun(p)
-			print(p.gun.cooldown,0,0)
-			p.gun.timer = p.gun.cooldown/2
-		end
-		
-		
-		local fire=lmb or btn(❎) 
-		local active=rmb
-		
-		local dofire
-		
-		p.kak:update()
-		p.gun:update()
-		test = p.gun.name
-		-- not auto
-		if fire and
-		p.gun.timer<=0 and
-		p.gun.ammo > 0 and p.gun.auto == false
-		then
-			if p.lmbp == true then
-				dofire = true
-				
-				p.lmbp = false
-			end
-			
-		-- auto
-		elseif fire and p.gun.timer<=0 
-		and p.gun.ammo > 0 then
+		set_stats()
+	end
+
+	--shooting
+	if stat(36) ==1 or stat(36) ==-1 or (btnp(🅾️)) then
+		nextgun(p)
+		print(p_gun.cooldown,0,0)
+		p_gun.timer = p_gun.cooldown/2
+	end
+
+
+	local fire=lmb or btn(❎)
+	local active=rmb
+
+	local dofire
+
+	p_kak:update()
+	p_gun:update()
+	-- not auto
+	if fire and
+	p_gun.timer<=0 and
+	p_gun.ammo > 0 and p_gun.auto == false
+	then
+		if p_lmbp == true then
 			dofire = true
-		elseif fire and
-        p.gun.ammo < 1 and
-        p.lmbp == true and
-        p.kak.timer<=0 then
-        coupdekak(p) 
-        p.lmbp = false
+			p_lmbp = false
+		
 		end
 		
-		if dofire then
-			make_ptc(p.x+cos(p.a)*6+4, 
-				p.y+sin(p.a)*3+4, rnd(3)+6,7,.7)
-				
-			p.gun.ammo -= 1
-			p.gun:fire(p.x+4,p.y+4,p.a)
-		end
+		-- auto
+	elseif fire and p_gun.timer<=0
+	and p_gun.ammo > 0 then
+		dofire = true
 		
-		-- if mleft not pressed 
-		if not fire then
-			p.lmbp = true
-		end
+	elseif fire and
+	p_gun.ammo < 1 and
+	p_lmbp == true and
+	p_kak.timer<=0 then
+		coupdekak()
+		p_lmbp = false
+	end
+	
+	if dofire then
+		make_ptc(p_x+cos(p_a)*6+4,
+		p_y+sin(p_a)*3+4, rnd(3)+6,7,.7)
 		
-		--begin boss
-		local w3=128*(wl-1)
-		
-		if wagon_n==tl and p.x>w3 
-		and cam_follow_player 
-		and not is_boss then
-			is_boss = true
-			begin_boss()
-			p.x = w3+8
-		end
-		
-		--next wagon
-		if p.x>128*wl then
-			random = {}
-			
-			wagon_n += 1
-			update_room()
-			enemiescleared=false
-			pal_n += 1
-			
-			--pan cam to next wagon
-			camx = -128
-			targetcamx=0
-			drops = {}
-			enemies = {}
-			parcourmap()
-			--teleport players
-			for p in all(players)do
-				p.x -= 128*wl
-				p.x = max(p.x, 0)
-			end
-		end
-		for e in all(enemies)do
-			
-			if touches_rect(
-			p.x+4,p.y+4,
-			e.x+1,e.y+1,e.x+7,e.y+7) then
-				
-				if (p.tbnd == 0) then
-					sfx(35)
-					if(shake<=2)shake += 2
-					if e.spr != 126 then
-						p.life-=1+(degaplus*2)
-					else 
-						p.life-=1+degaplus
-					end
-					p.tbnd = 30
-					
-					if e.spr == 109 then
-					 p.life+=1
-					 killbarelle(e)
-					 p.tbnd = 0
-					end
+		p_gun.ammo -= 1
+		p_gun:fire(p_x+4,p_y+4,p_a)
+	end
+
+	-- if mleft not pressed
+	if not fire then
+		p_lmbp = true
+	end
+
+	--begin boss
+	local w3=128*(wl-1)
+
+	if wagon_n==tl and p_x>w3
+	and cam_follow_player
+	and not is_boss then
+		is_boss = true
+		begin_boss()
+		p_x = w3+8
+	end
+
+	--next wagon
+	if p_x>128*wl then
+		random = {}
+
+		wagon_n += 1
+		update_room()
+		enemiescleared=false
+		pal_n += 1
+
+		--pan cam to next wagon
+		camx = -128
+		targetcamx=0
+		drops = {}
+		enemies = {}
+		parcourmap()
+		--teleport players
+		p_x -= 128*wl
+		p_x = max(p_x, 0)
+	end
+	for e in all(enemies)do
+		if touches_rect(p_x+4,p_y+4,e.x+1,e.y+1,e.x+7,e.y+7) then
+			if (p_iframes == 0) then
+				sfx(35)
+				if(shake<=2)shake += 2
+				if e.spr != 126 then
+					p_life-=1+(degaplus*2)
+				else
+					p_life-=1+degaplus
 				end
-				knockback_player(p,e)
-			
+				p_iframes = 30
+
+				if e.spr == 109 then
+					p_life+=1
+					killbarelle(e)
+					p_iframes = 0
+				end
 			end
+			knockback_player(e)
 		end
 	end
 end
 
 function draw_player()
-	for p in all(players) do
-		if (p.tbnd%5) == 0  then
-			local x=flr(p.x) + cos(p.a)*6 +0
-			local y=flr(p.y) + sin(p.a)*3 +0
-			
-			if p.gun.name=="sniper" then
-				local c,s=cos(p.a),sin(p.a)
-				line(
-				x+4+c*6,
-				y+4+s*6,
-				p.x+c*128,
-				p.y+s*128,8)
-			end
-			spr(p.gun.spr,x,y,1,1, p.flip)
-			
-			
-			palt(0,false)
-			palt(1,true)
-			
-			spr(p.spr,p.x,p.y+p.spriteoffset,1,1, p.flip)
-			
-			palt()
+	if (p_iframes%5) == 0  then
+		local x=flr(p_x) + cos(p_a)*6 +0
+		local y=flr(p_y) + sin(p_a)*3 +0
+
+		if p_gun.name=="sniper" then
+			local c,s=cos(p_a),sin(p_a)
+			line(
+			x+4+c*6,
+			y+4+s*6,
+			p_x+c*128,
+			p_y+s*128,8)
 		end
+		spr(p_gun.spr,x,y,1,1, p_flip)
+
+
+		palt(0,false)
+		palt(1,true)
+
+		spr(p_spr,p_x,p_y+p_spriteoffset,1,1, p_flip)
+
+		palt()
 	end
 end
 
 function draw_player_ui(p)
 	--life counter
 	rectfill(camx+1,1,camx+43,7,2)
-	local l=40*(p.life/p.maxlife)
+	local l=40*(p_life/p_maxlife)
 	rectfill(camx+2,2,camx+2+l,6,8)
-	
-	local s="♥"..p.life.."/"..p.maxlife.." "
+
+	local s="♥"..p_life.."/"..p_maxlife.." "
 	print(s, camx+2,2,7)
-	
+
 	--ammo bar
 	rectfill(camx+84,1,camx+84+42,7,4)
-	local l=40*(p.gun.ammo/p.gun.maxammo)
-	if(p.ammo>0)rectfill(camx+85,2,camx+85+l,6,9)
-	
-	local s,col = tostr(p.gun.ammo),7
+	local l=40*(p_gun.ammo/p_gun.maxammo)
+	if(p_ammo>0)rectfill(camx+85,2,camx+85+l,6,9)
+
+	local s,col = tostr(p_gun.ammo),7
 	if(s=="0") s,col="no ammo!",14
 	spr(110,camx+89,2)
 	print(s, camx+95,2,col)
-	
+
 	--weapon list
-	for i=1,#p.gunls do
+	for i=1,#p_gunls do
 		local col = 1
-		if(i==p.gunn)col=7
-		
-		ospr(p.gunls[i].spr, 
+		if(i==p_gunn)col=7
+
+		ospr(p_gunls[i].spr,
 		camx+90+(i-1)*10, 10,col)
 	end
-	
+
 	--wagon
 	local color = 7
 	if degaplus == 1 then
 		color = 8
-		else color = 7
+	else color = 7
 	end
 	oprint("wagon "..(wagon_n+1).."/7",
 	camx+46,2,color,1)
@@ -688,56 +667,49 @@ end
 
 function nextgun(p)
 	sfx(36)
-	
-	p.gunn += 1
-	if(p.gunn > #p.gunls) p.gunn = 1
+
+	p_gunn += 1
+	if(p_gunn > #p_gunls) p_gunn = 1
 	update_gun(p)
-	--[[local f = 0
-	for i=1,#p.gunls do
-	if p.gunls[i] == p.gunn then
-		if (((i+stat(36))%#p.gunls)<1) f = #p.gunls
-		 return p.gunls[(i+stat(36))%(#p.gunls)+f]
-		end
-	end]]
 end
 
 function update_gun(p)
-	p.gun = p.gunls[p.gunn]
+	p_gun = p_gunls[p_gunn]
 end
 
-function knockback_player(p,e)
-	if abs(p.dx)+abs(p.dy) < 3 then
-			  p.dx+=e.dx*e.spd*2
-				 p.dy+=e.dy*e.spd*2
-			end	
+function knockback_player(e)
+	if abs(p_dx)+abs(p_dy) < 3 then
+		p_dx+=e.dx*e.spd*2
+		p_dy+=e.dy*e.spd*2
+	end
 end
 
 function knockback_enemy(e,b)
-	
-		if (abs(e.dx)+abs(e.dy<30)) then
-			e.dx+=b.dx*b.spd*.1
-			e.dy+=b.dy*b.spd*.1
-		end
+
+	if (abs(e.dx)+abs(e.dy<30)) then
+		e.dx+=b.dx*b.spd*.1
+		e.dy+=b.dy*b.spd*.1
+	end
 
 end
 
 function animplayer(p)
-	p.spriteoffsetcount = max(0,p.spriteoffsetcount-1)
-	if p.spriteoffsetcount==0 then
-	 p.spriteoffsetcount=p.spriteoffsettime
-	 if p.spriteoffset == 1 then
-	  p.spriteoffset=0
-	 else 
-	  p.spriteoffset=1
-	 end
+	p_spriteoffsetcount = max(0,p_spriteoffsetcount-1)
+	if p_spriteoffsetcount==0 then
+		p_spriteoffsetcount=p_spriteoffsettime
+		if p_spriteoffset == 1 then
+			p_spriteoffset=0
+		else
+			p_spriteoffset=1
+		end
 	end
 end
 
-function coupdekak(p)
-	local x=flr(p.x) + cos(p.a)*6 +0
-	local y=flr(p.y) + sin(p.a)*3 +0
-	
-	p.kak:fire(x+4,y+4,p.a)
+function coupdekak()
+	local x=p_x\1 + cos(p_a)*6 
+	local y=p_y\1 + sin(p_a)*3 
+
+	p_kak:fire(x+4,y+4,p_a)
 end
 -->8
 --gun & bullet
@@ -988,25 +960,23 @@ function update_bullet(b)
 	debug=""
 	if b.is_enemy then
 		
-		for p in all(players)do
-			local x,y= b.x,b.y
-			local x2 = p.x+p.hx+p.hw
-			local y2 = p.y+p.hx+p.hw 
-			if touches_rect(x,y,
-			p.x+p.hx, p.y+p.hy,
-			x2,y2) then
-				
-				if p.tbnd == 0 then
-					p.life-=b.dmg 
-					p.tbnd = 30
-					sfx(35)
-				end
-				if(shake<=4)shake += 4
-				knockback_player(p,b)
-				make_ptc(b.x,b.y,rnd(4)+6,7,.8)
-				b.destroy_flag = true
-				
+		local x,y= b.x,b.y
+		local x2 = p_x+p_hx+p_hw
+		local y2 = p_y+p_hx+p_hw 
+		if touches_rect(x,y,
+		p_x+p_hx, p_y+p_hy,
+		x2,y2) then
+			
+			if p_iframes == 0 then
+				p_life-=b.dmg 
+				p_iframes = 30
+				sfx(35)
 			end
+			if(shake<=4)shake += 4
+			knockback_player(b)
+			make_ptc(b.x,b.y,rnd(4)+6,7,.8)
+			b.destroy_flag = true
+			
 		end
 	end
 		
@@ -1085,7 +1055,7 @@ function update_bullet(b)
 end
 
 function draw_bullet(b)
-	spr(b.spr, b.x-4, b.y-4,1,1, players[1].flip)
+	spr(b.spr, b.x-4, b.y-4,1,1)
 end
 
 function draw_random()
@@ -1095,16 +1065,16 @@ for i in all(random)do
 end
 
 function killbarelle(e)
-for i=1,15 do
-						make_ptc(
-									e.x + rnd(28)-14,
-									e.y + rnd(28)-14,
-							8+rnd(8),rnd({9,10}))
-						end
-						shake += 7
-						sfx(37)
-						e.gun:fire(e.x+4,e.y+4,e.a)
-						del(enemies,e)
+	for i=1,15 do
+		make_ptc(
+					e.x + rnd(28)-14,
+					e.y + rnd(28)-14,
+			8+rnd(8),rnd({9,10}))
+	end
+	shake += 7
+	sfx(37)
+	e.gun:fire(e.x+4,e.y+4,e.a)
+	del(enemies,e)
 end
 
 --------
@@ -1281,7 +1251,6 @@ function collide(o,bounce1)
 end
 -->8
 --map 
-test = 0
 wagon_n = 0
 
 function gen_train()
@@ -1421,7 +1390,7 @@ function parcourmap()
  if(wagon_n==0)x1=16
  	for x=x1,16*(wl-1) do
   	for y=2,12 do
-   	if x>3 or players[1].y-1000>y*8 or players[1].y+1000<y*8 then
+   	if x>3 or p_y-1000>y*8 or p_y+1000<y*8 then
     	if mget(x,y)==109 then
    	  mset(x,y,39)
    	  if rnd({1,2,3,4})==4 then
@@ -1567,9 +1536,11 @@ end
 
 function spawn_enemy(x,y,name)
 	local a=copy(name)
+
 	a.x = x
 	a.y = y
 	a.gun = copy(a.gun)
+	a.type="enemy"
 	local r = rnd(60)
 	if(a.spr==1)r = 0
 	if (a.spr != 125)a.gun.cooldown += r
@@ -1584,7 +1555,10 @@ function spawn_enemy(x,y,name)
 end
 
 function update_enemy(e)
+	--todo: we shouldn't have to do this
+	local ply = {x=p_x,y=p_x,a=p_a,type="player"}
 	for i in all(enemies) do
+
 		if loaded(i) then
 			mouvrnd = true
 			
@@ -1592,7 +1566,7 @@ function update_enemy(e)
 			,0)
 			
 			if i.gun.timer<=0 and 
-			(canshoot(i,players[1]) or i.spr==1)then
+			(canshoot(i,ply) or i.spr==1)then
 				
 				i.gun:fire(i.x+4,i.y+4,i.a)
 			end
@@ -1601,8 +1575,7 @@ function update_enemy(e)
 			end
 			collide(i,0.1)
 			
-			local p = players[1]
-			i.pangle=atan2(p.x-i.x,p.y-i.y)
+			i.pangle=atan2(p_x-i.x,p_y-i.y)
 			if not (i.spr== 109) then
 				i.flip=isleft(i.pangle)
 			end
@@ -1679,21 +1652,21 @@ function canshoot(e,p)
 	local y = sin(angle) 
 	local dist = dist(e,p)
 	
-	if (abs(dist)<e.agro and abs(p.x-e.x)<128) or e==players[1] then
- return cansee(e,angle,x,y,dist)
- elseif abs(dist)<e.seerange and abs(dist)>e.agro and e.chase and cansee(e,angle,x,y,dist) then
-  o= e.dx+e.dy
-   e.dx=x*(e.spd*2)/max(dist,4)
-   e.dy=y*(e.spd*2)/max(dist,4)
+	if (abs(dist)<e.agro and abs(p_x-e.x)<128) 
+	or e.type==p.type then
+		return cansee(e,angle,x,y,dist)
+	elseif abs(dist)<e.seerange and abs(dist)>e.agro 
+	and e.chase and cansee(e,angle,x,y,dist) then
+		o= e.dx+e.dy
+		e.dx=x*(e.spd*2)/max(dist,4)
+		e.dy=y*(e.spd*2)/max(dist,4)
    
-    mouvrnd = false
-   
-  
- end	
+    	mouvrnd = false
+	end	
 end
 
 function dist(e,p)
-	return sqrt(abs(p.y-e.y)^2+abs(p.x-e.x)^2)/8
+	return sqrt(abs(p_y-e.y)^2+abs(p_x-e.x)^2)/8
 end
  
 function cansee(e,angle,x,y,dist)	 
@@ -1701,7 +1674,7 @@ function cansee(e,angle,x,y,dist)
 	add(checker,{x=e.x+x*i*8,y=e.y+y*i*8})  
 	 if is_solid(checker[#checker].x+4,checker[#checker].y+4) then
 	 	delchecker()
-	 	if (not(e==players[1])) e.gun.timer = e.gun.cooldown/2
+	 	if (e.type!="player") e.gun.timer = e.gun.cooldown/2
 	 return false 
 	 end
 	end
@@ -1769,10 +1742,9 @@ end
 function draw_ptc(p)
 	--kinda bodgey but whatever
 	if p.txt==nil then
-		circfill(p.x,p.y,p.r,p.col)
-	else
-		print(p.txt,p.x,p.y,p.col)
+		return circfill(p.x,p.y,p.r,p.col)
 	end
+	print(p.txt,p.x,p.y,p.col)
 end
 
 function burst_ptc(x,y,col)
@@ -2140,79 +2112,76 @@ end
 function update_drops()
 	for d in all(drops) do
 		d.cooldown=max(0,d.cooldown-1)
+			
+		local touches = touches_rect(
+		p_x+4,p_y+4,
+		d.x,d.y,d.x+8,d.y+8)
 		
-		for p in all(players) do
+		if(not touches)d.touched=false
+		if touches then
 			
-			local touches = touches_rect(
-			p.x+4,p.y+4,
-			d.x,d.y,d.x+8,d.y+8)
+			local col=7
+			local txt=""
+			local do_ptc = false
 			
-			if(not touches)d.touched=false
-			if touches then
+			if d.type=="ammo" then
+				d.destroy = true
+				local q = flr(d.q*p_gun.maxammo)
+				p_gun.ammo += q
 				
-				local col=7
-				local txt=""
-				local do_ptc = false
+				do_ptc=true
+				col=9
+				txt="+"..q.." ammo"
 				
-				if d.type=="ammo" then
-					d.destroy = true
-					local q = flr(d.q*p.gun.maxammo)
-					p.gun.ammo += q
-					
-					do_ptc=true
-					col=9
-					txt="+"..q.." ammo"
-					
-					sfx(38)
-					
-				elseif d.type=="health"then
-					d.destroy = true
-					p.life += d.q
-					
-					do_ptc=true
-					col=8
-					txt="+"..d.q.." health"
-					
-					sfx(38)
-					
-				elseif d.type=="gun" 
-				and not d.touched
-				and d.cooldown<=0 then
-					d.touched = true
-					d.cooldown = 60
-					
-					do_ptc=true
-					col=6
-					txt=d.q.name
-					
-					p.gunls[p.gunn],d.q=d.q,p.gunls[p.gunn]
-					update_gun(p)
-					d.spr = d.q.spr
-					
-					sfx(36)
-				end
+				sfx(38)
 				
-				if do_ptc then
-					for i=1,5 do
-						make_ptc(
-						   d.x+rnd(16)-8,
-						   d.y+rnd(16)-8,
-						   rnd(5)+5,col,
-						   0.9+rnd(0.07))
-					end 
-				end
+			elseif d.type=="health"then
+				d.destroy = true
+				p_life += d.q
 				
-				make_ptc(
-				   d.x+4-(#txt*2),
-				   d.y+4,
-				   rnd(5)+5,7,
-				   .98,0,-0.3,txt
-				)
+				do_ptc=true
+				col=8
+				txt="+"..d.q.." health"
+				
+				sfx(38)
+				
+			elseif d.type=="gun" 
+			and not d.touched
+			and d.cooldown<=0 then
+				d.touched = true
+				d.cooldown = 60
+				
+				do_ptc=true
+				col=6
+				txt=d.q.name
+				
+				p_gunls[p_gunn],d.q=d.q,p_gunls[p_gunn]
+				update_gun(p)
+				d.spr = d.q.spr
+				
+				sfx(36)
 			end
+			
+			if do_ptc then
+				for i=1,5 do
+					make_ptc(
+						d.x+rnd(16)-8,
+						d.y+rnd(16)-8,
+						rnd(5)+5,col,
+						0.9+rnd(0.07))
+				end 
+			end
+			
+			make_ptc(
+				d.x+4-(#txt*2),
+				d.y+4,
+				rnd(5)+5,7,
+				.98,0,-0.3,txt
+			)
 		end
-		
-		if(d.destroy)del(drops,d)
 	end
+	
+	if(d.destroy)del(drops,d)
 end
 
 function draw_drops()
@@ -2345,15 +2314,15 @@ function draw_death_menu(m)
 		if(t()%2<1)txtcol = 9
 	end
 	
-	for p in all(players)do
-		local x,y = p.x+4,p.y+4
-		local c = m.circt
-		circfill(x,y,c    ,c4)
-		circfill(x,y,c*.75,c3)
-		circfill(x,y,c*.5 ,c2)
-		--spr(p.spr,p.x,p.y)
-		circfill(x,y,c*.25,col)
-	end
+	local x,y = p_x+4,p_y+4
+	local c = m.circt
+	--circles
+	circfill(x,y,c    ,c4)
+	circfill(x,y,c*.75,c3)
+	circfill(x,y,c*.5 ,c2)
+	--spr(p_spr,p_x,p_y)
+	circfill(x,y,c*.25,col)
+	
 	palt()
 	
 	--text & buttons
@@ -2443,11 +2412,11 @@ d1515151411141441114222411111111162d2d2d2d2d2d11d1d9d16112422421ffffffff00000000
 ddddddd144444444111444441111111112222222222222112222222111211211ffffffff00000000dddddddddddddddd55555551111661111555555511111111
 000000000000000000000000000000000066d60000000000000000000000000000000000000000000000000009aaaa9000777700006000000111110002222200
 000000000000000000000000000000000066d6000000000000000000000000000000000000000000000000009a9009a907000070000600001678761029a9a920
-06000000060000000000000000ddd000000dd000000000000000000000000000000000000000000000000000a900009a70774007000760001688861029242920
-0066660000d666660446d6d6446664000d666666000000000000000000000000000000000000000000000000a000000a7077f407000760001678761029a9a920
-046ddd00444504404440500044ddd4dd4d444000000000000000000000000000000000000000000000000000a000000a7041f1f7000760001766671024949420
-4445000044000000440050004040500044050000000000000000000000000000000000000000000000000000a900009a704fff070077600015ddd51024949420
-44000000000000000000000000405000000000000000000000000000000000000000000000000000000000009a9009a907040470077600000111110002222200
+06000000060000000000000000ddd000000dd000090000000000000000000000000000000000000000000000a900009a70774007000760001688861029242920
+0066660000d666660446d6d6446664000d66666600aaaa000000000000000000000000000000000000000000a000000a7077f407000760001678761029a9a920
+046ddd00444504404440500044ddd4dd4d44400009a999000000000000000000000000000000000000000000a000000a7041f1f7000760001766671024949420
+4445000044000000440050004040500044050000999400000000000000000000000000000000000000000000a900009a704fff070077600015ddd51024949420
+44000000000000000000000000405000000000009900000000000000000000000000000000000000000000009a9009a907040470077600000111110002222200
 000000000000000000000000000005000000000000000000000000000000000000000000000000000000000009aaaa9000777700076000000000000000000000
 11111111222222221111111111111111222222221111111155555555444444445555555522222222444444445555552806000005000000000667677000000000
 1111111122222222111111111111111122222222112ee21155555555444444445555555522222222cd4444445555288804600054009aa90066668867008ee800
