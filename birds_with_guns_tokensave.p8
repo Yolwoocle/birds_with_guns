@@ -117,7 +117,12 @@ function _update60()
 		for a in all(actors) do
 			--actors are just bullets
 			a:update()
-			if(a.destroy_flag)del(actors,a)
+			if a.destroy_flag then 
+			if a.dmg == 0 then
+	 		guns.explosion:fire(a.x,a.y,1)
+			end
+			del(actors,a)
+			end
 		end
 		
 		--for e in all(enemies) do
@@ -381,7 +386,7 @@ function init_player(bird)
 
 	p_gun=nil
 	p_gunn=1
-	p_gunls={copy(guns.revolver),copy(guns.shotgun)}
+	p_gunls={copy(guns.basuka),copy(guns.shotgun)}
 
 	p_lmbp = true
 	p_iframes=30
@@ -803,7 +808,11 @@ end
 function initguns()
 guns = {
                        --name      spr cd spd oa dmg is_enemy auto maxammo sfx
-	revolver = make_gun("revolver, 64, 15,2.5,.02,2 ,0,       0,   100,    33",
+	revolver = make_gun("revolver, 64, 15,2.5,.02,2.5 ,0,       0,   100,    33",
+		shoot1
+	),
+	
+	basuka = make_gun("basuka, 64, 15,2.5,.02,0 ,0,       0,   100,   32",
 		shoot1
 	),
 	
@@ -875,12 +884,11 @@ guns = {
 		shoot1
 	),
 	
-	explosion = make_gun("explosion, 57, 0, 2,  0,5   ,1,  0, 1, 32",
+	explosion = make_gun("explosion, 57, 0, 2,  0,5   ,2,  0, 1, 32",
 		function(gun,x,y,dir)
-			for i=1,30 do
-	 		local o=rnd(1)-.5
-	 		local ospd=gun.spd*(rnd(.2)+.9)
-	 		gun:shoot(x,y,dir+o, ospd)
+			for i=1,15 do
+	 		local o=i/15
+	 		gun:shoot(x,y,dir+o)
 	 	end
 	end
 	),
