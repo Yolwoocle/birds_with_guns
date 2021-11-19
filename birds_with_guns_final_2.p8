@@ -825,11 +825,11 @@ guns = {
 		shoot1
 	),
 	
-	bazooka = make_gun("bazooka, 64, 90,1.5,.01,0 ,0,       0,   20,    33",
+	bazooka = make_gun("bazooka, 69, 90,1.5,.01,0 ,0,       0,   20,    33",
 		shoot1
 	),
 	
-	flamethrower = make_gun("flamethrower, 64, 1,2,.02,0.3 ,0,       1,   3000,    33",
+	flamethrower = make_gun("flamethrower, 70, 1,2,.02,0.3 ,0,       1,   1000,    33",
 		shoot1
 	),
                        --name    spr cd spd oa dmg is_enemy auto maxammo sfx
