@@ -826,7 +826,7 @@ guns = {
 		shoot1
 	),
 	
-	bazooka = make_gun("bazooka, 69, 90,1.5,.01,0 ,0,       0,   25,    33",
+	bazooka = make_gun("bazooka, 69, 90,1.5,.007,0 ,0,       0,   25,    33",
 		shoot1
 	),
 	
