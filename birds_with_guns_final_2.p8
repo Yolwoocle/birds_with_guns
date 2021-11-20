@@ -770,7 +770,7 @@ function make_gun(args,fire)
 		local s=93
 		if(gun.is_enemy)s=95
 		if(gun.name=="kak")s=77 lifspa=5
-		if(gun.name=="flamethrower") lifspa=30
+		if(gun.name=="flamethrower") lifspa=40
 		if(gun.name=="explosion")s=57 lifspa=10
 		if(gun.name=="gun360uwu") lifspa=25
 		if not gun.is_enemy then
@@ -821,7 +821,7 @@ end
 function initguns()
 guns = {
 
-                       --name   spr cd spd oa dmg is_enemy auto maxammo sfx
+                      --name   spr cd spd oa dmg is_enemy auto maxammo sfx
 	revolver = make_gun("revolver, 64, 15,2.5,.02,3 ,0,       0,   100,    33",
 		shoot1
 	),
@@ -2258,7 +2258,7 @@ function spawn_loot(x,y)
 	elseif r < .03 then
 		make_drop(x,y,79,"ammo",1/4)
 		
-	elseif r < .045 and degaplus == 0 then
+	elseif r < .0425 and degaplus == 0 then
 		make_drop(x,y,78,"health",2)
 	
 	elseif r < .04 and degaplus == 1 then
