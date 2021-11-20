@@ -119,7 +119,7 @@ function _update60()
 			if a.destroy_flag then
 			if a.dmg == 0 then
 			animexplo(a)
-			guns.explosion:fire(a.x-a.dx,a.y-a.dy,1)
+			guns.explosion:fire(a.x-a.dx*2,a.y-a.dy*2,1)
 			end
 			del(actors,a)
 			end
@@ -401,7 +401,7 @@ function init_player(bird)
 		
 		gun=nil,
 		gunn=1,
-		gunls={copy(guns.flamethrower),copy(guns.shotgun)},
+		gunls={copy(guns.bazooka),copy(guns.shotgun)},
 	
 		lmbp = true,
 		iframes=30,
@@ -830,11 +830,11 @@ guns = {
 		shoot1
 	),
 	
-	flamethrower = make_gun("flamethrower, 70, 2,2,.02,0.3 ,0,       1,   1000,    33",
+	flamethrower = make_gun("flamethrower, 70, 2,2,.02,0.34 ,0,       1,   1000,    33",
 		shoot1
 	),
 	
-	gun360uwu = make_gun("gun360uwu,    71, 60,2, .05,3,  0,   0,  50,    50",
+	gun360uwu = make_gun("gun360uwu,    71, 60,2, .01,2,  0,   0,  50,    50",
 	 function(gun,x,y,dir)
 	 	for i=1,20 do
 	 		local o=i/20
@@ -910,11 +910,11 @@ guns = {
 		shoot1
 	),
 	
-	explosion = make_gun("explosion, 57, 0, 2,  0,4   ,1,  0, 1, 32",
+	explosion = make_gun("explosion, 57, 0, 2,  0,5   ,1,  0, 1, 32",
 		function(gun,x,y,dir)
 
-			for i=1,13 do
-	 		local o=i/13
+			for i=1,12 do
+	 		local o=i/12
 	 		gun:shoot(x,y,dir+o)
 
 	 	end
