@@ -423,8 +423,8 @@ function init_player(bird)
 ,spd,    .4, .4, .6, .4, .4, .4, .4, .4, .55, .4, .4, .4
 ,fric,   .75,.75,.75,.75,.75,.75,.75,.75,.75,.74,.75,.75
 ]])
-	--                        [    default    ][     pigeon    ][       duck         ][         sparrow ][          parrot ][    toucan   ][          flamingo  ][      eagle   ][    seagull   ][      ostrich     ][    penguin  ][      jay           ][     chicken    ] 
-	local bird_weapons=split("revolver,shotgun,revolver,shotgun,revolver,flamethrower,revolver,machinegun,assaultrifle,rifle,shotgun,rifle,assaultrifle,revolver,shotgun,shotgun,revolver,rifle,machinegun,machinegun,sniper,shotgun,assaultrifle,shotgun,revolver,bazooka")
+	--                 [    default    ][     pigeon    ][       duck         ][         sparrow ][          parrot ][    toucan   ][          flamingo  ][      eagle   ][    seagull   ][      ostrich     ][    penguin  ][      jay           ][     chicken    ] 
+	bird_weapons=split("revolver,shotgun,revolver,shotgun,revolver,flamethrower,revolver,machinegun,assaultrifle,rifle,shotgun,rifle,revolver,assaultrifle,shotgun,shotgun,revolver,rifle,machinegun,machinegun,shotgun,sniper,shotgun,assaultrifle,revolver,bazooka")
 	for i=1,#bird_stats,13 do
 		p[bird_stats[i]] = bird_stats[i+n]
 	end
