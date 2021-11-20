@@ -9,6 +9,7 @@ __lua__
 --bird ideas
 --crow,owl,raven,pelican,goose,
 --colibri,dinosaur,cockatiel
+--peafowl
 
 degaplus = 0
 
@@ -415,7 +416,7 @@ function init_player(bird)
 
 	-- this is horrible but it kinda works
 	local n = bird-111
-	bird_stats=split(
+	local bird_stats=split(
 [[n,     1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12
 ,life,   10, 10, 5,  10, 10, 10, 10, 10, 10, 2,  10, 10
 ,maxlife,10, 10, 5,  10, 10, 10, 10, 10, 10, 15, 10, 10
@@ -423,7 +424,7 @@ function init_player(bird)
 ,fric,   .75,.75,.75,.75,.75,.75,.75,.75,.75,.74,.75,.75
 ]])
 	--                        [    default    ][     pigeon    ][       duck         ][         sparrow ][          parrot ][    toucan   ][          flamingo  ][      eagle   ][    seagull   ][      ostrich     ][    penguin  ][      jay           ][     chicken    ] 
-	bird_weapons=split("revolver,shotgun,revolver,shotgun,revolver,flamethrower,revolver,machinegun,assaultrifle,rifle,shotgun,rifle,assaultrifle,revolver,shotgun,shotgun,revolver,rifle,machinegun,machinegun,sniper,shotgun,assaultrifle,shotgun,revolver,bazooka")
+	local bird_weapons=split("revolver,shotgun,revolver,shotgun,revolver,flamethrower,revolver,machinegun,assaultrifle,rifle,shotgun,rifle,assaultrifle,revolver,shotgun,shotgun,revolver,rifle,machinegun,machinegun,sniper,shotgun,assaultrifle,shotgun,revolver,bazooka")
 	for i=1,#bird_stats,13 do
 		p[bird_stats[i]] = bird_stats[i+n]
 	end
@@ -861,7 +862,7 @@ guns = {
 	 	end
 	end),
 	
-	burstring = make_gun("burst ring,    71, 45,2, .01,3 ,  0,   0,  50,    50",
+	burstring = make_gun("burst ring,    71, 45,2, .01,3,  0,   0,  50,    50",
 	 function(gun,x,y,dir)
 	 	for i=1,20 do
 	 		local o=i/20
@@ -979,7 +980,7 @@ guns = {
 end
 
 kak = make_gun("kak, 57, 20,2.1,.005,2 , 0, 0, 0,      36",
-		shoot1
+	shoot1
 )
 
 
