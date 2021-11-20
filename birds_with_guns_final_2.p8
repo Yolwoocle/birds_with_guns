@@ -422,8 +422,8 @@ function init_player(bird)
 ,spd,    .4,.7,.4,.4,.4,.4,.4,.4,.4,.4,.4,.4
 ,spd,    .4,.7,.4,.4,.4,.4,.4,.4,.4,.4,.4,.4
 ]])
-	--                        [    default    ][     pigeon    ][       duck         ][         sparrow ][          parrot ][    toucan   ][          flamingo  ][      eagle   ][    seagull   ][      ostrich     ][    penguin  ][      jay           ][     chicken    ] 
-	local bird_weapons=split("revolver,shotgun,revolver,shotgun,revolver,flamethrower,revolver,machinegun,assaultrifle,rifle,shotgun,rifle,revolver,assaultrifle,shotgun,shotgun,revolver,rifle,machinegun,machinegun,shotgun,sniper,shotgun,assaultrifle,revolver,bazooka")
+	--                        [    default    ][     pigeon    ][       duck         ][         sparrow ][          parrot ][    toucan   ][      flamingo   ][      eagle   ][    seagull   ][      ostrich     ][    penguin  ][      jay           ][     chicken    ] 
+	local bird_weapons=split("revolver,shotgun,revolver,shotgun,revolver,flamethrower,revolver,machinegun,assaultrifle,rifle,shotgun,rifle,revolver,burstring,shotgun,shotgun,revolver,rifle,machinegun,machinegun,shotgun,sniper,shotgun,assaultrifle,revolver,bazooka")
 	for i=1,52,13 do
 		p[bird_stats[i]] = bird_stats[i+n]
 	end
@@ -861,7 +861,7 @@ guns = {
 	 	end
 	end),
 	
-	burstring = make_gun("burst ring,    71, 60,2, .01,3,  0,   0,  50,    50",
+	burstring = make_gun("burst ring,    71, 45,2, .01,3 ,  0,   0,  50,    50",
 	 function(gun,x,y,dir)
 	 	for i=1,20 do
 	 		local o=i/20
