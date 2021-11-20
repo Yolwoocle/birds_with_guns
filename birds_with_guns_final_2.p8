@@ -33,7 +33,7 @@ function _init()
 	
 	actors = {}
 	init_enemies()
-	init_player(0)
+	init_player(111)
 	
 	init_ptc()
 	wl,diffi = 4,20
@@ -371,8 +371,6 @@ end--]]
 -->8
 --player
 function init_player(bird)
-	stats_life=split("")
-	
 	b=0
 	dx1=1
 	dy1=0
@@ -401,7 +399,7 @@ function init_player(bird)
 		
 		gun=nil,
 		gunn=1,
-		gunls={copy(guns.rifle),copy(guns.shotgun)},
+		gunls={copy(guns.revolver),copy(guns.shotgun)},
 	
 		lmbp = true,
 		iframes=30,
@@ -412,7 +410,28 @@ function init_player(bird)
 		spriteoffset = 0,
 		kak = copy(kak)
 	}
-	p.gun = p.gunls[p.gunn]
+
+	p.gun = p.gunls[1]
+
+	-- this is horrible but it kinda works
+	local n = bird-111
+	local bird_stats=split(
+[[n,     1, 2, 3, 4, 5, 6, 7, 8, 9, 10,11,12
+,life,   10,10,5, 10,10,10,10,10,10,10,10,10
+,maxlife,10,10,5, 10,10,10,10,10,10,10,10,10
+,spd,    .4,.7,.4,.4,.4,.4,.4,.4,.4,.4,.4,.4
+,spd,    .4,.7,.4,.4,.4,.4,.4,.4,.4,.4,.4,.4
+]])
+	--                        [    default    ][     pigeon    ][       duck         ][         sparrow ][          parrot ][    toucan   ][          flamingo  ][      eagle   ][    seagull   ][      ostrich     ][    penguin  ][      jay           ][     chicken    ] 
+	local bird_weapons=split("revolver,shotgun,revolver,shotgun,revolver,flamethrower,revolver,machinegun,assaultrifle,rifle,shotgun,rifle,assaultrifle,revolver,shotgun,shotgun,revolver,rifle,machinegun,machinegun,sniper,shotgun,assaultrifle,shotgun,revolver,bazooka")
+	for i=1,52,13 do
+		p[bird_stats[i]] = bird_stats[i+n]
+	end
+	for i=1,2 do
+		p.gunls[i] = copy(guns[bird_weapons[2*n+i]])
+	end
+
+	p.gun = p.gunls[1]
 end
 
 function player_update()
@@ -454,7 +473,7 @@ function player_update()
 		
 		--aiming
 		if keyboard then
-			sprms=75
+			sprms=76
 			distmin=9999
 			indexmininit={x=p.x-ofsetboss+dx1,y=p.y-ofsetboss+dy1}
 			indexmin=indexmininit
@@ -501,7 +520,7 @@ function player_update()
 		--shooting
 		if stat(36) ==1 or stat(36) ==-1 or (btnp(🅾️)) then
 			nextgun(p)
-			print(p.gun.cooldown,0,0)
+			--print(p.gun.cooldown,0,0)
 			p.gun.timer = p.gun.cooldown/2
 		end
 		
@@ -730,7 +749,7 @@ end
 
 function make_gun(args,fire)
 	local name_,sprr,cd_,spd,oa,dmg,is_enemy,auto,maxammo,sfxx=unpack(split(args))
-
+	
 	is_enemy = is_enemy == 1
 	auto = auto == 1
 	if(is_enemy) dmg += degaplus * 2
@@ -769,12 +788,14 @@ function make_gun(args,fire)
 		
 		local s=93
 		if(gun.is_enemy)s=95
-		if(gun.name=="kak")s=77 lifspa=5
-		if(gun.name=="flamethrower") lifspa=40
-		if(gun.name=="explosion")s=57 lifspa=10
-		if(gun.name=="gun360uwu") lifspa=25
+		
+		local name = gun.name
+		if(name=="kak")s=77 lifspa=5
+		if(name=="flamethrower") lifspa=35
+		if(name=="explosion")s=57 lifspa=10
+		if(name=="gun360uwu") lifspa=25
 		if not gun.is_enemy then
-			if(shake<1)shake+=1 
+			if(shake<1 and name!="flamethrower")shake+=1 
 		end
 		
 		spd = spd or gun.spd
@@ -809,9 +830,8 @@ end
 debuggun = make_gun("debuggun, 64, 1, 3, .02,10, 0,       1,   999999, 64",
 		function(gun,x,y,dir)
 	  for i=1,7 do
-	 		local o=rnd()
 	 		p.life += 1
-	 		gun:shoot(x,y,dir+o, ospd)
+	 		gun:shoot(x,y,dir+rrnd(.1), ospd)
 	 	end
 end
 --		function(gun,x,y,dir)
@@ -831,7 +851,7 @@ guns = {
 		shoot1
 	),
 	
-	flamethrower = make_gun("flamethrower, 70, 2,2,.02,0.34 ,0,       1,   1000,    33",
+	flamethrower = make_gun("flamethrower, 70, 2,2,.02,0.34 ,0,       1,   1000,    51",
 		shoot1
 	),
 	
@@ -844,7 +864,7 @@ guns = {
 	 	end
 	end),
 	
-	gun360uwu = make_gun("gun360uwu,    71, 60,2, .01,2,  0,   0,  50,    50",
+	burstring = make_gun("burst ring,    71, 60,2, .01,2,  0,   0,  50,    50",
 	 function(gun,x,y,dir)
 	 	for i=1,20 do
 	 		local o=i/20
@@ -862,12 +882,12 @@ guns = {
 	 	end
 	 end),
 	 
-                          --name      spr cd spd oa dmg is_enemy auto maxammo sfx
+	                         --name      spr cd spd oa dmg is_enemy auto maxammo sfx
 	machinegun = make_gun("machinegun, 66, 7, 3, .05,2  ,0,       1, 250,    33",
 		shoot1
 	),
 	
-                           --name           spr cd spd oa dmg is_enemy auto maxammo sfx
+	                          --name           spr cd spd oa dmg is_enemy auto maxammo sfx
 	assaultrifle = make_gun("assault rifle, 67, 30,4, .02,1   ,0,       1, 75,      33",
 		function(gun,x,y,dir)
 			gun.burst = 4
@@ -1042,6 +1062,7 @@ function update_bullet(b)
 				if e.life<=0 then
 					--kill enemy
 					stats.kills+=1 del(enemies,e)
+					spawn_loot(e.x,e.y)
 					if e.spr != 109 then
 					burst_ptc(e.x+4,e.y+4,8,1,1,1)
 					
@@ -1060,7 +1081,6 @@ function update_bullet(b)
 				
 				knockback_enemy(e,b)
 				
-				spawn_loot(e.x,e.y)
 				e.timer = 5
 				make_ptc(bx,by,rnd(4)+6,7,.8)
 				b.destroy_flag = true
@@ -1211,7 +1231,6 @@ function mouse_x_y()
 	local s = stat(34)
 	lmb=s&1 > 0
 	rmb=s&2 > 0
-	mmb=s&4 > 0
 end
 
 
@@ -1658,15 +1677,15 @@ function draw_enemy(e)
 	
 	spr(e.spr,e.x,e.y,w,w, e.flip)
 	
+	--boss health bar
 	if e.spr==1 then
-		--life bar
 		rectfill(camx+1,120,
 		camx+126,126,4)
 		local l=126*(e.life/300)
 		rectfill(camx+2,121,camx+2+l,
 		125,9)
 		
-		local s="🐱"..e.life.."/".."300"
+		local s="🐱"..ceil(e.life).."/".."300"
 		print(s, camx+3,121,7)
 	end
 	
@@ -2251,17 +2270,17 @@ end
 function spawn_loot(x,y)
 	local r = rnd(1)
 	
-	if r < .01 then
+	if r < .02 then
 		local g = rnd_gun()
 		make_drop(x,y,g.spr,"gun",
 		copy(g))
-	elseif r < .03 then
+	elseif r < .09 then
 		make_drop(x,y,79,"ammo",1/4)
 		
-	elseif r < .0425 and degaplus == 0 then
+	elseif r < .016 and degaplus == 0 then
 		make_drop(x,y,78,"health",2)
 	
-	elseif r < .04 and degaplus == 1 then
+	elseif r < .017 and degaplus == 1 then
 		make_drop(x,y,78,"health",1)
 	end
 end
@@ -2467,14 +2486,14 @@ ddddddd177777777444f4f4f2424242417c717a6b6b6bd112222222112424214ff3f3fff00000000
 d1d1515144444444111444441111111116c6262d2d2d2d11d9da6a6124424441ffffffff00000000777772222227777755566661122222211666655511155111
 d1515151411141441114222411111111162d2d2d2d2d2d11d1d9d16112422421ffffffff00000000dddddddddddddddd55555551111661111555555511111111
 ddddddd144444444111444441111111112222222222222112222222111211211ffffffff00000000dddddddddddddddd55555551111661111555555511111111
-000000000000000000000000000000000066d6000000000000000000006d6d0000000000000000000000000009aaaa9000777700007777000111110002222200
-000000000000000000000000000000000066d60000000000000000000d0000600000000000000000000000009a9009a907000070077777701678761029a9a920
-06000000060000000000000000ddd000000dd000d00dd000ddd000dd6000000d600000000000000000000000a900009a70774007700067771688861029242920
-0066660000d666660446d6d6446664000d66666664466666664666ddd44550060dd666660000000000000000a000000a7077f407000006771678761029a9a920
-046ddd00444504404440500044ddd4dd4d44400064466666044050004444500d444400dd0000000000000000a000000a7041f1f7000006771766671024949420
-4445000044000000440050004040500044050000d00505000440880044000006440000000000000000000000a900009a704fff077000677715ddd51024949420
-44000000000000000000000000405000000000000005000000009900060000d00000000000000000000000009a9009a907040470077777700111110002222200
-0000000000000000000000000000050000000000000000000000880000d6d60000000000000000000000000009aaaa9000777700007777000000000000000000
+000000000000000000000000000000000066d6000000000000000000006d6d000000000000000000000000000000000009aaaa90007777000111110002222200
+000000000000000000000000000000000066d60000000000000000000d000060000000000000000000000000000000009a9009a9077777701678761029a9a920
+06000000060000000000000000ddd000000dd000d00dd000ddd000dd6000000d60000000000000000000000000000000a900009a700067771688861029242920
+0066660000d666660446d6d6446664000d66666664466666664666ddd44550060dd66666000000000000000000000000a000000a000006771678761029a9a920
+046ddd00444504404440500044ddd4dd4d44400064466666044050004444500d444400dd000000000000000000000000a000000a000006771766671024949420
+4445000044000000440050004040500044050000d0050500044088004400000644000000000000000000000000000000a900009a7000677715ddd51024949420
+44000000000000000000000000405000000000000005000000009900060000d0000000000000000000000000000000009a9009a9077777700111110002222200
+0000000000000000000000000000050000000000000000000000880000d6d6000000000000000000000000000000000009aaaa90007777000000000000000000
 11111111222222221111111111111111222222221111111155555555444444445555555522222222444444445555552806000005000000000667677000000000
 1111111122222222111111111111111122222222112ee21155555555444444445555555522222222cd4444445555288804600054009aa90066668867008ee800
 115dd511222222221111111111288821222222221eeeee215567765544446776555eee5522222210cccd4444555288880599999609a77a905c68788608e77e80
@@ -2780,6 +2799,8 @@ __sfx__
 000200001c65017600156001360000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000900000b573121713d672004761d67400277017731c66601162226500174519646012302163501637216361c6340143019627002261b6230e6130f613002130361302603072030460306203046030620304603
 090c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002675026720000002675026720000002775027725
+900200000560204602066020560206602036020000200002000020000200002000020000200002000020000200002000020000200002000020000200002000020000200002000020000200002000020000200002
+900200000564204612066320562206622036220000200002000020000200002000020000200002000020000200002000020000200002000020000200002000020000200002000020000200002000020000200002
 __music__
 00 01023232
 00 01023232
