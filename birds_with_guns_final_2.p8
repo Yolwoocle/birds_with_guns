@@ -848,7 +848,7 @@ guns = {
 		shoot1
 	),
 	
-	flamethrower = make_gun("flamethrower, 70, 2,2,.02,0.34 ,0,       1,   1000,    51",
+	flamethrower = make_gun("flamethrower, 70, 2,2,.02,0.34 ,0,       1,   1500,    51",
 		shoot1
 	),
 	
@@ -861,7 +861,7 @@ guns = {
 	 	end
 	end),
 	
-	burstring = make_gun("burst ring,    71, 60,2, .01,2,  0,   0,  50,    50",
+	burstring = make_gun("burst ring,    71, 45,2, .01,3 ,  0,   0,  50,    50",
 	 function(gun,x,y,dir)
 	 	for i=1,20 do
 	 		local o=i/20
