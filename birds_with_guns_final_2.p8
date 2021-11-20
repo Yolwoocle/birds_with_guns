@@ -732,7 +732,7 @@ function make_gun(args,fire)
 	local name_,sprr,cd_,spd,oa,dmg,is_enemy,auto,maxammo,sfxx=unpack(split(args))
 
 	is_enemy = is_enemy == 1
-	auto = auto == 1
+	auto = auto  == 1
 	if(is_enemy) dmg += degaplus * 2
 	
 	--todo:not have 3000 args
@@ -827,7 +827,7 @@ guns = {
 	),
 	
 	
-	bazooka = make_gun("bazooka, 69, 90,1.5,.007,0 ,0,       0,   25,    33",
+	bazooka = make_gun("bazooka, 69, 110,1.5,.007,0 ,0,       0,   20,    33",
 		shoot1
 	),
 	
@@ -844,7 +844,7 @@ guns = {
 	 	end
 	end),
 	
-	gun360uwu = make_gun("gun360uwu,    71, 60,2, .01,2.5,  0,   0,  50,    50",
+	gun360uwu = make_gun("gun360uwu,    71, 60,2, .01,3,  0,   0,  50,    50",
 	 function(gun,x,y,dir)
 	 	for i=1,20 do
 	 		local o=i/20
