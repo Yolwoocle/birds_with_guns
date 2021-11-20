@@ -844,7 +844,7 @@ guns = {
 	 	end
 	end),
 	
-	gun360uwu = make_gun("gun360uwu,    71, 60,2, .01,2,  0,   0,  50,    50",
+	gun360uwu = make_gun("gun360uwu,    71, 60,2, .01,2.5,  0,   0,  50,    50",
 	 function(gun,x,y,dir)
 	 	for i=1,20 do
 	 		local o=i/20
