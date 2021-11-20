@@ -861,7 +861,7 @@ guns = {
 	 	end
 	end),
 	
-	burstring = make_gun("burst ring,    71, 60,2, .01,2,  0,   0,  50,    50",
+	burstring = make_gun("burst ring,    71, 60,2, .01,3,  0,   0,  50,    50",
 	 function(gun,x,y,dir)
 	 	for i=1,20 do
 	 		local o=i/20
