@@ -836,7 +836,7 @@ guns = {
 	),
 	
 	
- rifle = make_gun("rifle, 72, 25,3.5,.01,1 ,0,       0,   60,    33",
+ rifle = make_gun("rifle, 72, 30,3.5,.01,1 ,0,       0,   60,    33",
 		function(gun,x,y,dir)
 	 	for i=1,4 do
 	 		local o=rrnd(.03)
