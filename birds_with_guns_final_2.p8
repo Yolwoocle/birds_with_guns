@@ -788,10 +788,12 @@ function make_gun(args,fire)
 		if(gun.sfx) sfx(gun.sfx)
 		
 		local s=93
+		local name = gun.name
+		
 		if(gun.is_enemy)s=95
-		if(gun.name=="kak")s=77 lifspa=5
-		if(gun.name=="flamethrower") lifspa=30
-		if(gun.name=="explosion")s=57 lifspa=10
+		if(name=="kak")s=77 lifspa=5
+		if(name=="flamethrower") lifspa=30 
+		if(name=="explosion")s=57 lifspa=10
 		if not gun.is_enemy then
 			if(shake<1 and name!="flamethrower")shake+=1 
 		end
@@ -2272,7 +2274,7 @@ function spawn_loot(x,y)
 		local g = rnd_gun()
 		make_drop(x,y,g.spr,"gun",
 		copy(g))
-	elseif r < .06 then
+	elseif r < .05 then
 		make_drop(x,y,79,"ammo",1/4)
 		
 	elseif r < .08 and degaplus == 0 then
