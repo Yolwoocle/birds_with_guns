@@ -849,21 +849,21 @@ function initguns()
 guns = {
 
                        --name   spr cd spd oa dmg is_enemy auto maxammo sfx
-	revolver = make_gun("revolver, 64, 15,2.5,.02,3 ,0,       0,   100,    33, 1",
+	revolver = make_gun("revolver, 64, 15,2.5,.02,3 ,0,       0,   100,    33, 0.3",
 		shoot1
 	),
 	
 	
-	bazooka = make_gun("bazooka, 69, 110,1.5,.007,0 ,0,       0,   20,    33, 1",
+	bazooka = make_gun("bazooka, 69, 110,1.5,.007,0 ,0,       0,   20,    33, 3",
 		shoot1
 	),
 	
-	flamethrower = make_gun("flamethrower, 70, 2,2,.015,0.34 ,0,       1,   1500,    51, 1",
+	flamethrower = make_gun("flamethrower, 70, 2,2,.015,0.34 ,0,       1,   1500,    51, 0",
 		shoot1
 	),
 	
 	
- rifle = make_gun("rifle, 72, 30,3.5,.01,1.5 ,0,       0,   60,    33, 1",
+ rifle = make_gun("rifle, 72, 30,3.5,.01,1.5 ,0,       0,   60,    33, 0.3",
 		function(gun,x,y,dir)
 	 	for i=1,4 do
 	 		local o=rrnd(.03)
@@ -871,7 +871,7 @@ guns = {
 	 	end
 	end),
 	
-	burstring = make_gun("ring cannon,    71, 45,2, .01,3,  0,   0,  50,    50, 1",
+	burstring = make_gun("ring cannon,    71, 45,2, .01,3,  0,   0,  50,    50, 0",
 	 function(gun,x,y,dir)
 	 	for i=1,20 do
 	 		local o=i/20
@@ -880,7 +880,7 @@ guns = {
 	 	end
 	 end),
 	                    --name    spr cd spd oa dmg is_enemy auto maxammo sfx
-	shotgun = make_gun("shotgun,    65, 60,4, .05,1.25,  0,   0,  50,    32, 1",
+	shotgun = make_gun("shotgun,    65, 60,4, .05,1.25,  0,   0,  50,    32, 0.4",
 	 function(gun,x,y,dir)
 	 	for i=1,7 do
 	 		local o=rrnd(.05)
@@ -890,12 +890,12 @@ guns = {
 	 end),
 	 
 	                         --name      spr cd spd oa dmg is_enemy auto maxammo sfx
-	machinegun = make_gun("machinegun, 66, 7, 3, .05,2  ,0,       1, 250,    33, 1",
+	machinegun = make_gun("machinegun, 66, 7, 3, .05,2  ,0,       1, 250,    33, .2",
 		shoot1
 	),
 	
 	                          --name           spr cd spd oa dmg is_enemy auto maxammo sfx
-	assaultrifle = make_gun("assault rifle, 67, 30,4, .02,1   ,0,       1, 75,      33, 1",
+	assaultrifle = make_gun("assault rifle, 67, 30,4, .02,1   ,0,       1, 75,      33, .3",
 		function(gun,x,y,dir)
 			gun.burst = 4
 			gun.x, gun.y = x, y
@@ -905,12 +905,12 @@ guns = {
 	),
 	
                        --name  spr cd spd oa dmg is_enemy auto maxammo sfx
-	sniper = make_gun("sniper, 68, 40,7, .0, 5  ,0,        0,  35,     32, 1",
+	sniper = make_gun("sniper, 68, 40,7, .0, 5  ,0,        0,  35,     32, 3",
 		shoot1
 	),
 	
                        --name      spr cd  spd oa   dmg is_enemy auto maxammo sfx
-	gunslime = make_gun("gunslime, 64, 100,1.5, .02,2,  1,       1,   250,    32, 1",
+	gunslime = make_gun("gunslime, 64, 100,1.5, .02,2,  1,       1,   250,    32, 0",
 		function(gun,x,y,dir)
 			dir+=rrnd(gun.oa)
 			gun:shoot(x,y,dir)
@@ -918,7 +918,7 @@ guns = {
 	),
 	
                               --name      spr cd spd   oa dmg is_enemy auto maxammo sfx
-	gunslimebuff = make_gun("gunslimebuff, 64, 100,1, .04,2,  1,       1,   250, 32, 1",
+	gunslimebuff = make_gun("gunslimebuff, 64, 100,1, .04,2,  1,       1,   250, 32, 0",
 		function(gun,x,y,dir)
 			for i=0,2 do
 				local o=rrnd(.05)
@@ -929,7 +929,7 @@ guns = {
 	),
 	
 	
-	shotgunmechant = make_gun("shotgunmechant, 65, 60,1.35, .04,3, 1, 1, 250, 32, 1",
+	shotgunmechant = make_gun("shotgunmechant, 65, 60,1.35, .04,3, 1, 1, 250, 32, 0",
 		function(gun,x,y,dir)
 	 		for i=1,4 do
 	 			local o=rrnd(.05)
@@ -939,15 +939,15 @@ guns = {
 		end
 	),
 	 
-	 null = make_gun("null, 57, 0,57, 0,1,  1,  1, 250, 32",
+	 null = make_gun("null, 57, 0,57, 0,1,  1,  1, 250, 32,0",
 	 function() --opti: remove args
 	 end),
 	 
-	 machinegunmechant = make_gun("machinegunmechant, 66, 5, .75,.05,2, 1, 1,250, 32, 1",
+	 machinegunmechant = make_gun("machinegunmechant, 66, 5, .75,.05,2, 1, 1,250, 32, 0",
 		shoot1
 	),
 	
-	explosion = make_gun("explosion, 57, 0, 2,  0,5   ,1,  0, 1, 32, 1",
+	explosion = make_gun("explosion, 57, 0, 2,  0,5   ,1,  0, 1, 32, 0",
 		function(gun,x,y,dir)
 
 			for i=1,12 do
@@ -959,12 +959,12 @@ guns = {
 	),
 	
 	boss_targetgun = 
-	make_gun("boss target gun, 65, 6, 1.2,.05,2, 1,  1, 250, 47, 1",
+	make_gun("boss target gun, 65, 6, 1.2,.05,2, 1,  1, 250, 47, 0",
 		shoot1
 	),
 	
 	boss_360gun = 
-	make_gun("boss 360 gun, 65, 1, 1,  0,2  ,1,  1,	250,    47, 1",
+	make_gun("boss 360 gun, 65, 1, 1,  0,2  ,1,  1,	250,    47, 0",
 		function(gun,x,y,dir)
 			gun.dir+=.176666
 			gun:shoot(x,y,gun.dir)
@@ -972,7 +972,7 @@ guns = {
 	),
 	
 	boss_enemygun = 
-	make_gun("boss_enemygun, 65, 150, 1, 1,2   ,1,  1, 250, 33, 1",
+	make_gun("boss_enemygun, 65, 150, 1, 1,2   ,1,  1, 250, 33, 0",
 		function(gun,x,y,dir)
 			sfx(33)
 			gun.timer = gun.cooldown
