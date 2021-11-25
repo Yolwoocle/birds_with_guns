@@ -429,7 +429,7 @@ function init_player(bird)
 	end
 --]]
 	--                        [    default    ][     pigeon    ][       duck         ][         sparrow ][          parrot ][    toucan   ][     flamingo   ][      eagle   ][    seagull   ][      ostrich     ][    penguin  ][      jay           ][     chicken    ] 
-	local bird_weapons=split("revolver,shotgun,revolver,shotgun,revolver,flamethrower,revolver,machinegun,assaultrifle,rifle,shotgun,rifle,burstring,revolver,shotgun,shotgun,revolver,rifle,gatlinggun,machinegun,sniper,shotgun,assaultrifle,shotgun,revolver,bazooka")
+	local bird_weapons=split("revolver,shotgun,revolver,shotgun,revolver,flamethrower,revolver,machinegun,assaultrifle,rifle,shotgun,rifle,revolver,burstring,shotgun,shotgun,revolver,rifle,machinegun,gatlinggun,shotgun,sniper,shotgun,assaultrifle,revolver,bazooka")
 	
 	for i=1,2 do
 		p.gunls[i] = copy(guns[bird_weapons[2*n+i] ])
@@ -855,7 +855,7 @@ guns = {
 	),
 	
 	
-	bazooka = make_gun("bazooka, 69, 110,1.5,.007,0 ,0,       0,   20,    33, 3",
+	bazooka = make_gun("bazooka, 69, 110,1.5,.007,0 ,0,       0,   20,    33, 6",
 		shoot1
 	),
 	
