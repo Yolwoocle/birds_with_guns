@@ -858,7 +858,7 @@ guns = {
 		shoot1
 	),
 	
-	flamethrower = make_gun("flamethrower, 70, 2,2,.015,0.34 ,0,       1,   1500,    51, 0",
+	flamethrower = make_gun("flamethrower, 70, 2,1.5,.015,0.34 ,0,       1,   1500,    51, 0",
 		shoot1
 	),
 	
@@ -909,7 +909,7 @@ guns = {
 	),
 	
 	                            --name  spr cd spd oa dmg is_enemy auto maxammo sfx   kb
-	gatlinggun = make_gun("gatling gun, 73, 2, 3, .08, 2  ,0,        1,  300,     33, 1",
+	gatlinggun = make_gun("gatling gun, 73, 2, 3, .08, 1.5  ,0,        1,  300,     33, 1",
 		shoot1
 	),
 	
