@@ -435,7 +435,7 @@ function init_player(bird)
 		p.gunls[i] = copy(guns[bird_weapons[2*n+i] ])
 	end
 	
-	p.gun = p.gunls[1]--]]
+	update_gun(p)
 end
 
 function player_update()
@@ -488,10 +488,10 @@ function player_update()
 					if (distmin>dist) distmin=dist indexmin=e
 				end
 			end
-			if indexmin.spr == 1 then
-			 ofsetboss = 4
-			else ofsetboss = 0
-			end
+
+			ofsetboss = 0
+			if(indexmin.spr == 1) ofsetboss = 4
+
 			p.a = atan2(indexmin.x+ofsetboss-p.x,
 			indexmin.y+ofsetboss-p.y)
 			mx=indexmin.x+1+ofsetboss
@@ -676,7 +676,7 @@ function draw_player_ui(p)
 	print(s, camx+95,2,col)
 	
 	--weapon list
-	for i=1,#p.gunls do
+	for i=1,2 do
 		local col = 1
 		if(i==p.gunn)col=7
 		
@@ -794,10 +794,11 @@ function make_gun(args,fire)
 		
 		local s=93
 		local name = gun.name
-		
+		local palette = ""
+
 		if(gun.is_enemy)s=95
 		if(name=="kak")s=77 lifspa=5
-		if(name=="flamethrower") lifspa=40 
+		if(name=="flamethrower") lifspa=40 palette="1,2,3,4,5,6,10,8,8,9"
 		if(name=="explosion")s=57 lifspa=10
 		if not gun.is_enemy then
 			if(shake<1 and name!="flamethrower")shake+=1 
@@ -805,11 +806,11 @@ function make_gun(args,fire)
 		
 		spd = spd or gun.spd
 		spawn_bullet(x,y,dir,
-		spd,3,s,dmg,is_enemy,lifspa)
+		spd,3,s,dmg,is_enemy,lifspa,palette)
 		lifspa=nil
 		gun.timer = gun.cooldown
 		p.dx-=cos(p.a)*gun.knockback
-  p.dy-=sin(p.a)*gun.knockback
+		p.dy-=sin(p.a)*gun.knockback
 	end
 	
 	gun.update=function(gun)
@@ -866,8 +867,7 @@ guns = {
  rifle = make_gun("rifle, 72, 30,3.5,.01,1.5 ,0,       0,   60,    33, 0.3",
 		function(gun,x,y,dir)
 	 	for i=1,4 do
-	 		local o=rrnd(.03)
-	 		gun:shoot(x,y,dir+o)
+	 		gun:shoot(x,y,dir+rrnd(.03))
 	 	end
 	end),
 	
@@ -910,7 +910,7 @@ guns = {
 	),
 	
 	                            --name  spr cd spd oa dmg is_enemy auto maxammo sfx   kb
-	gatlinggun = make_gun("gatling gun, 73, 2, 3, .07, 2  ,0,        1,  350,     33, 0.3",
+	gatlinggun = make_gun("gatling gun, 73, 2, 3, .08, 2  ,0,        1,  300,     33, 1",
 		shoot1
 	),
 	
@@ -998,8 +998,6 @@ kak = make_gun("kak, 57, 20,2.1,.005,2 , 0, 0, 0,      36, 1",
 )
 
 
-
-
 function rnd_gun()
 	--todo: "power" param
 	--later weapons should be  
@@ -1007,7 +1005,7 @@ function rnd_gun()
 	return rnd(iguns)
 end
 
-function spawn_bullet(x,y,dir,spd,r,spr,dmg,is_enemy,lifspa)
+function spawn_bullet(x,y,dir,spd,r,spr,dmg,is_enemy,lifspa,palette)
 	local dx=cos(dir)*spd
 	local dy=sin(dir)*spd
 	add(actors,{
@@ -1022,7 +1020,9 @@ function spawn_bullet(x,y,dir,spd,r,spr,dmg,is_enemy,lifspa)
 		
 		update=update_bullet,
 		draw=draw_bullet,
-		lifspa=lifspa
+		lifspa=lifspa,
+
+		palette=palette,
 	})
 end
 
@@ -1107,7 +1107,7 @@ function update_bullet(b)
 	and not check_flag(
 	    notbulletsolid,bx,by)) 
 	or bx+11<camx 
-	or bx>camx+128+11 
+	or bx>camx+139 
 	or by<-8 or by>132
 	then
 		
@@ -1132,7 +1132,9 @@ function update_bullet(b)
 end
 
 function draw_bullet(b)
+	pal(split(b.palette))
 	spr(b.spr, b.x-4, b.y-4,1,1, p.flip)
+	pal()
 end
 
 function draw_random()
@@ -2282,14 +2284,14 @@ end
 function spawn_loot(x,y)
 	local r = rnd(1)
 	
-	if r < .02 then
+	if r < .015 then
 		local g = rnd_gun()
 		make_drop(x,y,g.spr,"gun",
 		copy(g))
-	elseif r < .05 then
+	elseif r < .045 then
 		make_drop(x,y,79,"ammo",1/4)
 		
-	elseif r < .08 and degaplus == 0 then
+	elseif r < .075 and degaplus == 0 then
 		make_drop(x,y,78,"health",2)
 	
 	elseif r < .017 and degaplus == 1 then
@@ -2500,11 +2502,11 @@ d1515151411141441114222411111111162d2d2d2d2d2d11d1d9d16112422421ffffffff00000000
 ddddddd144444444111444441111111112222222222222112222222111211211ffffffff00000000dddddddddddddddd55555551111661111555555511111111
 000000000000000000000000000000000066d6000000000000000000006d6d000000000000000000000000000000000009aaaa90007777000111110002222200
 000000000000000000000000000000000066d60000000000000000000d000060000000000055500000000000000000009a9009a9077777701678761029a9a920
-06000000060000000000000000ddd000000dd000d00dd000ddd000dd6000000d60000000444d5ddd0000000000000000a900009a700067771688861029242920
-0066660000d666660446d6d6446664000d66666664466666664666ddd44550060dd66666dd4656660000000000000000a000000a000006771678761029a9a920
-046ddd00444504404440500044ddd4dd4d44400064466666044050004444500d445000dd554d5ddd0000000000000000a000000a000006771766671024949420
-4445000044000000440050004040500044050000d0050500044088004400000644000000dd5050000000000000000000a900009a7000677715ddd51024949420
-44000000000000000000000000405000000000000005000000009900060000d0000000005540000000000000000000009a9009a9077777700111110002222200
+06000000060000000000000000ddd000000dd000d00dd000ddd000dd6000000d60000000444d5ddd000000000d66aa98a900009a700067771688861029242920
+0066660000d666660446d6d6446664000d66666664466666664666ddd44550060dd66666dd4656660000000000a911a8a000000a000006771678761029a9a920
+046ddd00444504404440500044ddd4dd4d44400064466666044050004444500d445000dd554d5ddd0000000009a655a0a000000a000006771766671024949420
+4445000044000000440050004040500044050000d0050500044088004400000644000000dd505000000000009a59aa90a900009a7000677715ddd51024949420
+44000000000000000000000000405000000000000005000000009900060000d0000000005540000000000000a50000009a9009a9077777700111110002222200
 0000000000000000000000000000050000000000000000000000880000d6d6000000000004400000000000000000000009aaaa90007777000000000000000000
 11111111222222221111111111111111222222221111111155555555444444445555555522222222444444445555552806000005000000000667677000000000
 1111111122222222111111111111111122222222112ee21155555555444444445555555522222222cd4444445555288804600054009aa90066668867008ee800
