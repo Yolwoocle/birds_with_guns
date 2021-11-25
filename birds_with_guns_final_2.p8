@@ -414,25 +414,28 @@ function init_player(bird)
 
 	p.gun = p.gunls[1]
 
-	-- this is horrible but it kinda works
+	--should we keep this in? bird stats
+	-- [[
 	local n = bird-111
-	local bird_stats=split(
+	--[[local bird_stats=split(
 [[n,     1,  2,  3,  4,  5,  6,  7,  8,  9,  10, 11, 12
 ,life,   10, 10, 5,  10, 10, 10, 10, 10, 10, 2,  10, 10
 ,maxlife,10, 10, 5,  10, 10, 10, 10, 10, 10, 15, 10, 10
-,spd,    .4, .4, .6, .4, .4, .4, .4, .4, .55, .4, .4, .4
+,spd,    .4, .4, .4, .4, .4, .4, .4, .4, .55, .4, .4, .4
 ,fric,   .75,.75,.75,.75,.75,.75,.75,.75,.75,.74,.75,.75
-]])
-	--                 [    default    ][     pigeon    ][       duck         ][         sparrow ][          parrot ][    toucan   ][          flamingo  ][      eagle   ][    seagull   ][      ostrich     ][    penguin  ][      jay           ][     chicken    ] 
-	bird_weapons=split("revolver,shotgun,revolver,shotgun,revolver,flamethrower,revolver,machinegun,assaultrifle,rifle,shotgun,rifle,revolver,assaultrifle,shotgun,shotgun,revolver,rifle,machinegun,machinegun,shotgun,sniper,shotgun,assaultrifle,revolver,bazooka")
+]]) 
 	for i=1,#bird_stats,13 do
-		p[bird_stats[i]] = bird_stats[i+n]
+		p[bird_stats[i] ] = bird_stats[i+n]
 	end
+--]]
+	--                        [    default    ][     pigeon    ][       duck         ][         sparrow ][          parrot ][    toucan   ][     flamingo   ][      eagle   ][    seagull   ][      ostrich     ][    penguin  ][      jay           ][     chicken    ] 
+	local bird_weapons=split("revolver,shotgun,revolver,shotgun,revolver,flamethrower,revolver,machinegun,assaultrifle,rifle,shotgun,rifle,burstring,revolver,shotgun,shotgun,revolver,rifle,machinegun,machinegun,sniper,shotgun,assaultrifle,shotgun,revolver,bazooka")
+	
 	for i=1,2 do
-		p.gunls[i] = copy(guns[bird_weapons[2*n+i]])
+		p.gunls[i] = copy(guns[bird_weapons[2*n+i] ])
 	end
-
-	p.gun = p.gunls[1]
+	
+	p.gun = p.gunls[1]--]]
 end
 
 function player_update()
@@ -792,7 +795,7 @@ function make_gun(args,fire)
 		
 		if(gun.is_enemy)s=95
 		if(name=="kak")s=77 lifspa=5
-		if(name=="flamethrower") lifspa=30 
+		if(name=="flamethrower") lifspa=40 
 		if(name=="explosion")s=57 lifspa=10
 		if not gun.is_enemy then
 			if(shake<1 and name!="flamethrower")shake+=1 
@@ -851,7 +854,7 @@ guns = {
 		shoot1
 	),
 	
-	flamethrower = make_gun("flamethrower, 70, 2,2,.02,0.34 ,0,       1,   1500,    51",
+	flamethrower = make_gun("flamethrower, 70, 2,2,.015,0.34 ,0,       1,   1500,    51",
 		shoot1
 	),
 	
@@ -864,7 +867,7 @@ guns = {
 	 	end
 	end),
 	
-	burstring = make_gun("burst ring,    71, 45,2, .01,3,  0,   0,  50,    50",
+	burstring = make_gun("ring cannon,    71, 45,2, .01,3,  0,   0,  50,    50",
 	 function(gun,x,y,dir)
 	 	for i=1,20 do
 	 		local o=i/20
@@ -2413,8 +2416,8 @@ function draw_death_menu(m)
 	for b in all(m.buttons) do
 		local a = ""
 		if keyboard then
-			if b.n == 1 then a = "❎"
-			else a = "🅾️" end
+			a = "🅾️"
+			if(b.n == 1) a = "❎"
 		end
 		
 		if b.active then
@@ -2428,28 +2431,28 @@ function draw_death_menu(m)
 	local i=0
 	for k,v in pairs(stats)do
 		if i<m.nstats then
-			oprint(k,camx+35,
-			  i*8+1/t+40+sin(t+.3)*3, 7)
-			oprint(v,camx+80,
-			  i*8+1/t+40+sin(t+.3)*3, 13)
+			text_y = i*8+1/t+40+sin(t+.3)*3
+			oprint(k,camx+35,text_y)
+			oprint(v,camx+80,text_y, 13)
 		end
-		
 		i+=1
 	end
-		
+	
+	for i=0,6 do
+		local txt="▒"
+		if(i<=wagon_n)txt="█"
+		if not m.iswin then
+			oprint(txt, camx+37+i*8,
+			1/t+70+sin(t)*3, 7)
+		end
+	end
+	
 	--hard mode prompt
-	if degaplus == 0 then
-		if m.iswin then
-		oprint("hold the 'i' button\non the title screen\nto unlock hard mode\n"
+	if m.iswin then
+		local txt="hold the 'i' button\non the title screen\nto unlock hard mode\n"
+		if(degaplus!=0)txt="bro what !!!\nthis mode was not \nsupposed to be possible !"
+		oprint(txt
 		,camx+25,1/t+70+sin(t)*2, 13)
-		end
-		
-	else
-		if m.iswin then
-			oprint("bro what !!!\nthis mode was not \nsupposed to be possible !"
-			,camx+25,1/t+70+sin(t)*2, 13)
-		end
-		
 	end
 end
 
