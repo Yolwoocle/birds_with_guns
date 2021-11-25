@@ -327,8 +327,7 @@ function update_camera()
 		if not keyboard then
 		camx += (stat(32)-64)/3
 		end
-		camx = min(max(0,camx),128*(wl-2)+8)
-		camx = flr(camx)
+		camx = mid(0, camx, 128*(wl-2)+8) \ 1
 		camy = 0
 	else
 		--do a cool animation
@@ -800,6 +799,7 @@ function make_gun(args,fire)
 		if(name=="kak")s=77 lifspa=5
 		if(name=="flamethrower") lifspa=40 palette="1,2,3,4,5,6,10,8,8,9"
 		if(name=="explosion")s=57 lifspa=10
+		if(name=="bazooka") palette="1,2,3,4,5,6,6,8,5,13"
 		if not gun.is_enemy then
 			if(shake<1 and name!="flamethrower")shake+=1 
 		end
@@ -815,8 +815,7 @@ function make_gun(args,fire)
 	
 	gun.update=function(gun)
 		gun.timer = max(gun.timer-1,0)
-		gun.ammo = min(max(0,gun.ammo),
-		           gun.maxammo)
+		gun.ammo = mid(0,gun.ammo,gun.maxammo)
 		
 		if gun.burst > 0 then
 			gun:shoot(gun.x,gun.y,gun.dir)
