@@ -802,7 +802,7 @@ function make_gun(args,fire)
 
 		if(gun.is_enemy)s=95
 		if(name=="kak")s=77 lifspa=5
-		if(name=="rifle")lifspa=11
+		if(name=="shrapnel cannon")lifspa=11
 		if(name=="flamethrower") lifspa=40 palette="1,2,3,4,5,6,10,8,8,9"
 		if(name=="explosion")s=57 lifspa=10
 		if(name=="bazooka") palette="1,2,3,4,5,6,6,8,5,13"
@@ -916,7 +916,7 @@ guns = {
 	),
 	
 	                            --name  spr cd spd oa dmg is_enemy auto maxammo sfx   kb
-	gatlinggun = make_gun("gatling gun, 73, 3, 3, .08, 2  ,0,        1,  300,     33, 1",
+	gatlinggun = make_gun("gatling gun, 73, 3, 3, .08, 2  ,0,        1,  500,     33, 1",
 		shoot1
 	),
 	
