@@ -730,14 +730,16 @@ function knockback_enemy(e,b)
 end
 
 function animplayer(p)
-	p.spriteoffsetcount = max(0,p.spriteoffsetcount-1)
+	p.spriteoffsetcount = max(0, p.spriteoffsetcount-1)
+	
 	if p.spriteoffsetcount==0 then
-	 p.spriteoffsetcount=p.spriteoffsettime
-	 if p.spriteoffset == 1 then
-	  p.spriteoffset=0
-	 else 
-	  p.spriteoffset=1
-	 end
+		p.spriteoffsetcount=p.spriteoffsettime
+		
+		if p.spriteoffset == 1 then
+			p.spriteoffset=0
+		else 
+			p.spriteoffset=1
+		end
 	end
 end
 
