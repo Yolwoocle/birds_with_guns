@@ -917,7 +917,7 @@ guns = {
 	),
 	
 	                            --name  spr cd spd oa dmg is_enemy auto maxammo sfx   kb
-	gatlinggun = make_gun("gatling gun, 73, 3, 3, .08, 2  ,0,        1,  300,     33, 1",
+	gatlinggun = make_gun("gatling gun, 73, 3, 3, .08, 2  ,0,        1,  500,     33, 1",
 		shoot1
 	),
 	
