@@ -405,8 +405,6 @@ function init_player(bird)
 		iframes=30,
 		
 		damage=damage_player,
-		spriteoffsettime=7,
-		spriteoffsetcount=7,
 		spriteoffset = 0,
 		kak = copy(kak)
 	}
@@ -467,8 +465,7 @@ function player_update()
 		
 		--animation
 		
-		if abs(p.dx) > 0.1 
-		or abs(p.dy) > 0.1 then
+		if abs(p.dx)+abs(p.dy)>0.75  then
 		 animplayer(p)
 		else 
 			p.spriteoffset = 0
@@ -730,14 +727,9 @@ function knockback_enemy(e,b)
 end
 
 function animplayer(p)
-	p.spriteoffsetcount = max(0,p.spriteoffsetcount-1)
-	if p.spriteoffsetcount==0 then
-	 p.spriteoffsetcount=p.spriteoffsettime
-	 if p.spriteoffset == 1 then
-	  p.spriteoffset=0
-	 else 
-	  p.spriteoffset=1
-	 end
+	if flr(time()*7)%2==1 then
+	 p.spriteoffset = 1
+	else p.spriteoffset = 0
 	end
 end
 
