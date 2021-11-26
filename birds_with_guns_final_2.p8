@@ -437,8 +437,8 @@ function init_player(bird)
 		p[bird_stats[i] ] = bird_stats[i+n]
 	end
 --]]
-	--                        [    default    ][     pigeon    ][       duck         ][         sparrow ][          parrot           ][    toucan           ][     flamingo   ][         eagle         ][    seagull       ][      ostrich     ][    penguin  ][      jay           ][     chicken    ] 
-	local bird_weapons=split("revolver,shotgun,revolver,shotgun,revolver,flamethrower,revolver,machinegun,fireworklauncher,ringcannon,shotgun,shrapnelcannon,revolver,ringcannon,shotgun,shrapnelcannon,machinegun,sniper,machinegun,gatlinggun,shotgun,sniper,shotgun,assaultrifle,revolver,bazooka")
+	--                        [    default    ][     pigeon    ][       duck         ][         sparrow ][          parrot           ][    toucan           ][     flamingo   ][      eagle   ][    seagull   ][      ostrich     ][    penguin  ][      jay           ][     chicken    ] 
+	local bird_weapons=split("revolver,shotgun,revolver,shotgun,revolver,flamethrower,revolver,machinegun,fireworklauncher,ringcannon,shotgun,shrapnelcannon,revolver,ringcannon,shotgun,shotgun,revolver,rifle,machinegun,gatlinggun,shotgun,sniper,shotgun,assaultrifle,revolver,bazooka")
 	
 	for i=1,2 do
 		p.gunls[i] = copy(guns[bird_weapons[2*n+i] ])
@@ -802,7 +802,7 @@ function make_gun(args,fire)
 
 		if(gun.is_enemy)s=95
 		if(name=="kak")s=77 lifspa=5
-		if(name=="shrapnel cannon")lifspa=11
+		if(name=="rifle")lifspa=11
 		if(name=="flamethrower") lifspa=40 palette="1,2,3,4,5,6,10,8,8,9"
 		if(name=="explosion")s=57 lifspa=10
 		if(name=="bazooka") palette="1,2,3,4,5,6,6,8,5,13"
@@ -853,8 +853,7 @@ end
 --	)
 function initguns()
 guns = {
-
-                       --name   spr cd spd oa dmg is_enemy auto maxammo sfx
+	                      --name   spr cd spd oa dmg is_enemy auto maxammo sfx
 	revolver = make_gun("revolver, 64, 15,2.5,.02,3 ,0,       0,   100,    33, 0.3",
 		shoot1
 	),
