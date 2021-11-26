@@ -1001,7 +1001,7 @@ kak = make_gun("kak, 57, 20,2.1,.005,3 , 0, 0, 0,      36, 1",
 	shoot1
 )
 
-shrapnel = make_gun("shrapnel, 64, 15,2.5,.06,1 ,0,       0,   0,    33, 0.0",
+shrapnel = make_gun("shrapnel, 64, 15,2.5,.09,1 ,0,       0,   0,    33, 0.0",
 		shoot1
 )
 
