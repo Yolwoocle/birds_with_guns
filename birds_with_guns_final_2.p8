@@ -128,7 +128,7 @@ function _update60()
 						sfx(32)
 						guns.machinegun:shoot(a.x-a.dx*2,a.y-a.dy*2,i/10)
 					end
-				elseif a.dmg == -5.5 then
+				elseif a.dmg == -4.5 then
 					--shrapnel
 					for i=1,7 do
 						shrapnel:shoot(a.x,a.y,a.dir)
@@ -437,8 +437,8 @@ function init_player(bird)
 		p[bird_stats[i] ] = bird_stats[i+n]
 	end
 --]]
-	--                        [    default    ][     pigeon    ][       duck         ][         sparrow ][          parrot           ][    toucan           ][     flamingo   ][         eagle         ][    seagull       ][      ostrich     ][    penguin  ][      jay           ][     chicken    ] 
-	local bird_weapons=split("revolver,shotgun,revolver,shotgun,revolver,flamethrower,revolver,machinegun,fireworklauncher,ringcannon,shotgun,shrapnelcannon,revolver,ringcannon,shotgun,shrapnelcannon,machinegun,sniper,machinegun,gatlinggun,shotgun,sniper,shotgun,assaultrifle,revolver,bazooka")
+	--                        [    default    ][     pigeon    ][       duck         ][         sparrow              ][          parrot          ][    toucan           ][     flamingo   ][         eagle               ][    seagull       ][      ostrich     ][    penguin  ][      jay           ][     chicken    ] 
+	local bird_weapons=split("revolver,shotgun,revolver,shotgun,revolver,flamethrower,shrapnelcannon,fireworklauncher,machinegun,fireworklauncher,shotgun,shrapnelcannon,revolver,ringcannon,assaultrifle,shrapnelcannon,machinegun,sniper,machinegun,gatlinggun,shotgun,sniper,shotgun,assaultrifle,revolver,bazooka")
 	
 	for i=1,2 do
 		p.gunls[i] = copy(guns[bird_weapons[2*n+i] ])
@@ -874,7 +874,7 @@ guns = {
 	),
 	
 	
-	shrapnelcannon = make_gun("shrapnel cannon, 72, 30,3,.01,-5.5 ,0,       0,   60,    33, 0.3",
+	shrapnelcannon = make_gun("shrapnel cannon, 72, 30,3,.01,-4.5 ,0,       0,   60,    33, 0.3",
 		shoot1
 	),
 	
