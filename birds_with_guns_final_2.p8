@@ -121,6 +121,12 @@ function _update60()
 			if a.dmg == 0 then
 			animexplo(a)
 			guns.explosion:fire(a.x-a.dx*2,a.y-a.dy*2,1)
+			elseif a.dmg == 0.1 then
+			for i=1,12 do
+	 		local o=i/12
+	 		guns.machinegun:shoot(a.x-a.dx*2,a.y-a.dy*2,o)
+
+	 	end
 			end
 			del(actors,a)
 			end
@@ -425,8 +431,8 @@ function init_player(bird)
 		p[bird_stats[i] ] = bird_stats[i+n]
 	end
 --]]
-	--                        [    default    ][     pigeon    ][       duck         ][         sparrow ][          parrot ][    toucan   ][     flamingo   ][      eagle   ][    seagull   ][      ostrich     ][    penguin  ][      jay           ][     chicken    ] 
-	local bird_weapons=split("revolver,shotgun,revolver,shotgun,revolver,flamethrower,revolver,machinegun,assaultrifle,rifle,shotgun,rifle,revolver,burstring,shotgun,shotgun,revolver,rifle,machinegun,gatlinggun,shotgun,sniper,shotgun,assaultrifle,revolver,bazooka")
+	--                        [    default    ][     pigeon    ][       duck         ][         sparrow ][          parrot ][    toucan          ][     flamingo   ][      eagle   ][    seagull   ][      ostrich     ][    penguin  ][      jay           ][     chicken    ] 
+	local bird_weapons=split("revolver,shotgun,revolver,shotgun,revolver,flamethrower,revolver,machinegun,assaultrifle,rifle,shotgun,shrapnel_gun,revolver,burstring,shotgun,shotgun,revolver,rifle,machinegun,gatlinggun,shotgun,sniper,shotgun,assaultrifle,revolver,bazooka")
 	
 	for i=1,2 do
 		p.gunls[i] = copy(guns[bird_weapons[2*n+i] ])
@@ -801,8 +807,8 @@ function make_gun(args,fire)
 		spd,3,s,dmg,is_enemy,lifspa,palette)
 		lifspa=nil
 		gun.timer = gun.cooldown
-		p.dx-=cos(p.a)*gun.knockback
-		p.dy-=sin(p.a)*gun.knockback
+		p.dx-=cos(dir)*gun.knockback
+		p.dy-=sin(dir)*gun.knockback
 	end
 	
 	gun.update=function(gun)
@@ -826,22 +832,26 @@ end
 
 --degaplus = 0
                    --name      spr cd spd oa dmg is_enemy auto maxammo sfx knock
-debuggun = make_gun("debuggun, 64, 1, 3, .02, 0, 0,       1,   999999, 64, 1",
-		function(gun,x,y,dir)
-	  for i=1,7 do
-	 		p.life += 1
-	 		gun:shoot(x,y,dir+rrnd(.1), ospd)
-	 	end
-end
+--debuggun = make_gun("debuggun, 64, 1, 3, .02, 0, 0,       1,   999999, 64, 1",
+--		function(gun,x,y,dir)
+--	  for i=1,7 do
+--	 		p.life += 1
+--	 		gun:shoot(x,y,dir+rrnd(.1), ospd)
+--	 	end
+--end
 --		function(gun,x,y,dir)
 --			gun:shoot(x,y,dir)
 --		end
-	)
+--	)
 function initguns()
 guns = {
 
                        --name   spr cd spd oa dmg is_enemy auto maxammo sfx
 	revolver = make_gun("revolver, 64, 15,2.5,.02,3 ,0,       0,   100,    33, 0.3",
+		shoot1
+	),
+	
+	shrapnel_gun = make_gun("shrapnel_gun, 74, 25,2.5,.02,0.1 ,0,       0,   80,    33, 0.6",
 		shoot1
 	),
 	
@@ -952,6 +962,7 @@ guns = {
 
 	 	end
 	end
+
 	),
 	
 	boss_targetgun = 
@@ -2494,10 +2505,10 @@ ddddddd144444444111444441111111112222222222222112222222111211211ffffffff00000000
 000000000000000000000000000000000066d6000000000000000000006d6d000000000000000000000000000000000009aaaa90007777000111110002222200
 000000000000000000000000000000000066d60000000000000000000d000060000000000055500000000000000000009a9009a9077777701678761029a9a920
 06000000060000000000000000ddd000000dd000d00dd000ddd000dd6000000d60000000444d5ddd000000000d66aa98a900009a700067771688861029242920
-0066660000d666660446d6d6446664000d66666664466666664666ddd44550060dd66666dd4656660000000000a911a8a000000a000006771678761029a9a920
-046ddd00444504404440500044ddd4dd4d44400064466666044050004444500d445000dd554d5ddd0000000009a655a0a000000a000006771766671024949420
-4445000044000000440050004040500044050000d0050500044088004400000644000000dd505000000000009a59aa90a900009a7000677715ddd51024949420
-44000000000000000000000000405000000000000005000000009900060000d0000000005540000000000000a50000009a9009a9077777700111110002222200
+0066660000d666660446d6d6446664000d66666664466666664666ddd44550060dd66666dd4656660066666600a911a8a000000a000006771678761029a9a920
+046ddd00444504404440500044ddd4dd4d44400064466666044050004444500d445000dd554d5ddd046ddddd09a655a0a000000a000006771766671024949420
+4445000044000000440050004040500044050000d0050500044088004400000644000000dd50500044450dd09a59aa90a900009a7000677715ddd51024949420
+44000000000000000000000000405000000000000005000000009900060000d0000000005540000044000550a50000009a9009a9077777700111110002222200
 0000000000000000000000000000050000000000000000000000880000d6d6000000000004400000000000000000000009aaaa90007777000000000000000000
 11111111222222221111111111111111222222221111111155555555444444445555555522222222444444445555552806000005000000000667677000000000
 1111111122222222111111111111111122222222112ee21155555555444444445555555522222222cd4444445555288804600054009aa90066668867008ee800
