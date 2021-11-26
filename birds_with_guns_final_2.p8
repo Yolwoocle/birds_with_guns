@@ -122,8 +122,8 @@ function _update60()
 			animexplo(a)
 			guns.explosion:fire(a.x-a.dx*2,a.y-a.dy*2,1)
 			elseif a.dmg == 0.1 then
-			for i=1,12 do
-	 		local o=i/12
+			for i=1,10 do
+	 		local o=i/10
 	 		guns.machinegun:shoot(a.x-a.dx*2,a.y-a.dy*2,o)
 
 	 	end
@@ -856,7 +856,7 @@ guns = {
 	),
 	
 	
-	bazooka = make_gun("bazooka, 69, 110,1.5,.007,0 ,0,       0,   20,    33, 6",
+	bazooka = make_gun("bazooka, 69, 100,1.5,.007,0 ,0,       0,   20,    33, 4.5",
 		shoot1
 	),
 	
@@ -911,7 +911,7 @@ guns = {
 	),
 	
 	                            --name  spr cd spd oa dmg is_enemy auto maxammo sfx   kb
-	gatlinggun = make_gun("gatling gun, 73, 2, 3, .08, 1.5  ,0,        1,  300,     33, 1",
+	gatlinggun = make_gun("gatling gun, 73, 2, 3, .08, 2  ,0,        1,  300,     33, 1",
 		shoot1
 	),
 	
