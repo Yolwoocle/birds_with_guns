@@ -117,21 +117,24 @@ function _update60()
 		for a in all(actors) do
 			--actors are just bullets
 			a:update()
+			
 			if a.destroy_flag then
-			if a.dmg == 0 then
-				animexplo(a)
-				guns.explosion:fire(a.x-a.dx*2,a.y-a.dy*2,1)
-			elseif a.dmg == 0.1 then
-				for i=1,10 do
-	 			local o=i/10
-	 			guns.machinegun:shoot(a.x-a.dx*2,a.y-a.dy*2,o)
-	 		end
-	 	elseif a.dmg == -5.5 then
-	 		for i=1,7 do
-	 	 	shrapnel:shoot(a.x,a.y,a.dir)
+				if a.dmg == 0 then
+					animexplo(a)
+					guns.explosion:fire(a.x-a.dx*2,a.y-a.dy*2,1)
+				elseif a.dmg == 0.1 then
+					--firework launcher
+					for i=1,10 do
+						sfx(32)
+						guns.machinegun:shoot(a.x-a.dx*2,a.y-a.dy*2,i/10)
+					end
+				elseif a.dmg == -5.5 then
+					--shrapnel
+					for i=1,7 do
+						shrapnel:shoot(a.x,a.y,a.dir)
+					end
 				end
-			end
-			del(actors,a)
+				del(actors,a)
 			end
 		end
 		
@@ -434,8 +437,8 @@ function init_player(bird)
 		p[bird_stats[i] ] = bird_stats[i+n]
 	end
 --]]
-	--                        [    default    ][     pigeon    ][       duck         ][         sparrow ][          parrot      ][    toucan           ][     flamingo   ][      eagle   ][    seagull   ][      ostrich     ][    penguin  ][      jay           ][     chicken    ] 
-	local bird_weapons=split("revolver,shotgun,revolver,shotgun,revolver,flamethrower,revolver,machinegun,fireworklauncher,rifle,shotgun,shrapnelcannon,revolver,burstring,shotgun,shotgun,revolver,rifle,machinegun,gatlinggun,shotgun,sniper,shotgun,assaultrifle,revolver,bazooka")
+	--                        [    default    ][     pigeon    ][       duck         ][         sparrow ][          parrot           ][    toucan           ][     flamingo   ][      eagle   ][    seagull   ][      ostrich     ][    penguin  ][      jay           ][     chicken    ] 
+	local bird_weapons=split("revolver,shotgun,revolver,shotgun,revolver,flamethrower,revolver,machinegun,fireworklauncher,ringcannon,shotgun,shrapnelcannon,revolver,ringcannon,shotgun,shotgun,revolver,rifle,machinegun,gatlinggun,shotgun,sniper,shotgun,assaultrifle,revolver,bazooka")
 	
 	for i=1,2 do
 		p.gunls[i] = copy(guns[bird_weapons[2*n+i] ])
@@ -857,7 +860,7 @@ guns = {
 	),
 	
 	
-	fireworklauncher = make_gun("firework launcher, 74, 25,2.5,.02,0.1 ,0,       0,   80,    33, 0.6",
+	fireworklauncher = make_gun("firework launcher, 74, 25,2.5,.02,0.1 ,0,       0,   80,    52, 0.6",
 		shoot1
 	),
 	
@@ -875,7 +878,7 @@ guns = {
 		shoot1
 	),
 	
-	burstring = make_gun("ring cannon,    71, 45,2, .01,3,  0,   0,  50,    50, 0",
+	ringcannon = make_gun("ring cannon,    71, 45,2, .01,3,  0,   0,  50,    32, 0",
 	 function(gun,x,y,dir)
 	 	for i=1,20 do
 	 		local o=i/20
@@ -914,7 +917,7 @@ guns = {
 	),
 	
 	                            --name  spr cd spd oa dmg is_enemy auto maxammo sfx   kb
-	gatlinggun = make_gun("gatling gun, 73, 2, 3, .08, 2  ,0,        1,  500,     33, 1",
+	gatlinggun = make_gun("gatling gun, 73, 3, 3, .08, 2  ,0,        1,  300,     33, 1",
 		shoot1
 	),
 	
@@ -2824,6 +2827,7 @@ __sfx__
 090c00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000002675026720000002675026720000002775027725
 900200000560204602066020560206602036020000200002000020000200002000020000200002000020000200002000020000200002000020000200002000020000200002000020000200002000020000200002
 900200000564204612066320562206622036220000200002000020000200002000020000200002000020000200002000020000200002000020000200002000020000200002000020000200002000020000200002
+0002000008270342700f4700357027670045600f6602e250156500e653035430d643036332622300613005202340021400202201f4001e4000c2102c3002c3000000000000000000000000000000000000000000
 __music__
 00 01023232
 00 01023232
