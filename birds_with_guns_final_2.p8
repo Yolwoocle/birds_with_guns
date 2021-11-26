@@ -737,8 +737,9 @@ end
 
 function animplayer(p)
 	if flr(time()*7)%2==1 then
-	 p.spriteoffset = 1
-	else p.spriteoffset = 0
+		p.spriteoffset = 1
+	else 
+		p.spriteoffset = 0
 	end
 end
 
