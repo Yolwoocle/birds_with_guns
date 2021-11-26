@@ -119,14 +119,17 @@ function _update60()
 			a:update()
 			if a.destroy_flag then
 			if a.dmg == 0 then
-			animexplo(a)
-			guns.explosion:fire(a.x-a.dx*2,a.y-a.dy*2,1)
+				animexplo(a)
+				guns.explosion:fire(a.x-a.dx*2,a.y-a.dy*2,1)
 			elseif a.dmg == 0.1 then
-			for i=1,10 do
-	 		local o=i/10
-	 		guns.machinegun:shoot(a.x-a.dx*2,a.y-a.dy*2,o)
-
-	 	end
+				for i=1,10 do
+	 			local o=i/10
+	 			guns.machinegun:shoot(a.x-a.dx*2,a.y-a.dy*2,o)
+	 		end
+	 	elseif a.dmg == -5.5 then
+	 		for i=1,7 do
+	 	 	shrapnel:shoot(a.x,a.y,a.dir)
+				end
 			end
 			del(actors,a)
 			end
@@ -795,6 +798,7 @@ function make_gun(args,fire)
 
 		if(gun.is_enemy)s=95
 		if(name=="kak")s=77 lifspa=5
+		if(name=="rifle")lifspa=11
 		if(name=="flamethrower") lifspa=40 palette="1,2,3,4,5,6,10,8,8,9"
 		if(name=="explosion")s=57 lifspa=10
 		if(name=="bazooka") palette="1,2,3,4,5,6,6,8,5,13"
@@ -851,6 +855,7 @@ guns = {
 		shoot1
 	),
 	
+	
 	shrapnel_gun = make_gun("shrapnel_gun, 74, 25,2.5,.02,0.1 ,0,       0,   80,    33, 0.6",
 		shoot1
 	),
@@ -865,12 +870,9 @@ guns = {
 	),
 	
 	
- rifle = make_gun("rifle, 72, 30,3.5,.01,1.5 ,0,       0,   60,    33, 0.3",
-		function(gun,x,y,dir)
-	 	for i=1,4 do
-	 		gun:shoot(x,y,dir+rrnd(.03))
-	 	end
-	end),
+ rifle = make_gun("rifle, 72, 30,3,.01,-5.5 ,0,       0,   60,    33, 0.3",
+		shoot1
+	),
 	
 	burstring = make_gun("ring cannon,    71, 45,2, .01,3,  0,   0,  50,    50, 0",
 	 function(gun,x,y,dir)
@@ -995,10 +997,13 @@ guns = {
 	end
 end
 
-kak = make_gun("kak, 57, 20,2.1,.005,2 , 0, 0, 0,      36, 1",
+kak = make_gun("kak, 57, 20,2.1,.005,3 , 0, 0, 0,      36, 1",
 	shoot1
 )
 
+shrapnel = make_gun("shrapnel, 64, 15,2.5,.06,1 ,0,       0,   0,    33, 0.0",
+		shoot1
+)
 
 function rnd_gun()
 	--todo: "power" param
@@ -1019,6 +1024,7 @@ function spawn_bullet(x,y,dir,spd,r,spr,dmg,is_enemy,lifspa,palette)
 		spr=spr,
 		is_enemy=is_enemy,
 		destroy_flag=false,
+		dir=dir,
 		
 		update=update_bullet,
 		draw=draw_bullet,
