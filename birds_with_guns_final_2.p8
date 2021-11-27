@@ -432,8 +432,8 @@ function init_player(bird)
 		p[bird_stats[i] ] = bird_stats[i+n]
 	end
 --]]
-	--                        [    default    ][     pigeon    ][       duck         ][         sparrow            ][          parrot          ][    toucan           ][     flamingo   ][         eagle               ][    seagull       ][      ostrich     ][    penguin  ][      jay           ][     chicken    ] 
-	local bird_weapons=split("revolver,shotgun,revolver,shotgun,revolver,flamethrower,boxing_glove,fireworklauncher,machinegun,fireworklauncher,shotgun,shrapnelcannon,revolver,ringcannon,assaultrifle,shrapnelcannon,machinegun,sniper,machinegun,gatlinggun,shotgun,sniper,shotgun,assaultrifle,revolver,bazooka")
+	--                        [    default    ][     pigeon    ][       duck         ][         sparrow            ][          parrot          ][    toucan         ][     flamingo   ][         eagle            ][    seagull       ][      ostrich     ][    penguin  ][      jay           ][     chicken    ] 
+	local bird_weapons=split("revolver,shotgun,revolver,shotgun,revolver,flamethrower,boxing_glove,fireworklauncher,machinegun,fireworklauncher,boxing_glove,shotgun,revolver,ringcannon,boxing_glove,assaultrifle,machinegun,sniper,machinegun,gatlinggun,shotgun,sniper,shotgun,assaultrifle,revolver,bazooka")
 	
 	for i=1,2 do
 		p.gunls[i] = copy(guns[bird_weapons[2*n+i] ])
@@ -859,9 +859,9 @@ guns = {
 		shoot1
 	),
 	
-	boxing_glove = make_gun("boxing glove, 72, 15,3.3,.005,1 , 0, 1, 1,      36, -1.25",
+	boxing_glove = make_gun("boxing glove, 72, 18,3.3,.005,1 , 0, 0, 1,      36, -0.96",
  function(gun,x,y,dir)
-  for i=1,6 do
+  for i=1,7 do
 			gun:shoot(x,y,dir)
 		end
 		p.iframes,gun.ammo = 9,gun.maxammo
