@@ -797,7 +797,7 @@ function make_gun(args,fire)
 
 		if(gun.is_enemy)s=95
 		if(name=="kak")s=77 lifspa=5
-		if(name=="boxing glove")s=77 lifspa=10
+		if(name=="boxing glove")s,lifspa=77,10
 		if(name=="flamethrower") lifspa=40 palette="1,2,3,4,5,6,10,8,8,9"
 		if(name=="explosion")s=57 lifspa=10
 		if(name=="bazooka") palette="1,2,3,4,5,6,6,8,5,13"
@@ -864,8 +864,7 @@ guns = {
   for i=1,5 do
 			gun:shoot(x,y,dir)
 		end
-		p.iframes = 13
-		gun.ammo=gun.maxammo
+		p.iframes,gun.ammo = 12,gun.maxammo
 		end
  ),
 	
