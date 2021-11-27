@@ -6,6 +6,8 @@ __lua__
 --extra credits :notgoyome
 --music: simon t.
 
+--final update !
+
 --bird ideas
 --crow,owl,raven,pelican,goose,
 --colibri,dinosaur,cockatiel
