@@ -128,11 +128,6 @@ function _update60()
 						sfx(32)
 						guns.machinegun:shoot(a.x-a.dx*2,a.y-a.dy*2,i/10)
 					end
-				elseif a.dmg == -4.5 then
-					--shrapnel
-					for i=1,7 do
-						shrapnel:shoot(a.x,a.y,a.dir)
-					end
 				end
 				del(actors,a)
 			end
@@ -802,7 +797,6 @@ function make_gun(args,fire)
 
 		if(gun.is_enemy)s=95
 		if(name=="kak")s=77 lifspa=5
-		if(name=="shrapnel cannon")lifspa=11
 		if(name=="flamethrower") lifspa=40 palette="1,2,3,4,5,6,10,8,8,9"
 		if(name=="explosion")s=57 lifspa=10
 		if(name=="bazooka") palette="1,2,3,4,5,6,6,8,5,13"
@@ -870,11 +864,6 @@ guns = {
 	),
 	
 	flamethrower = make_gun("flamethrower, 70, 2,1.5,.015,0.34 ,0,       1,   1500,    51, 0",
-		shoot1
-	),
-	
-	
-	shrapnelcannon = make_gun("shrapnel cannon, 72, 30,3,.01,-4.5 ,0,       0,   60,    33, 0.3",
 		shoot1
 	),
 	
@@ -1005,9 +994,6 @@ kak = make_gun("kak, 57, 20,2.1,.005,3 , 0, 0, 0,      36, 1",
 	shoot1
 )
 
-shrapnel = make_gun("shrapnel cartridge, 64, 15,2.5,.09,1 ,0,       0,   0,    33, 0.0",
-		shoot1
-)
 
 function rnd_gun()
 	--todo: "power" param
