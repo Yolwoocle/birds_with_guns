@@ -432,8 +432,8 @@ function init_player(bird)
 		p[bird_stats[i] ] = bird_stats[i+n]
 	end
 --]]
-	--                        [    default    ][     pigeon    ][       duck         ][         sparrow            ][          parrot          ][    toucan           ][     flamingo   ][         eagle               ][    seagull       ][      ostrich     ][    penguin  ][      jay           ][     chicken    ] 
-	local bird_weapons=split("revolver,shotgun,revolver,shotgun,revolver,flamethrower,boxing_glove,fireworklauncher,machinegun,fireworklauncher,shotgun,shrapnelcannon,revolver,ringcannon,assaultrifle,shrapnelcannon,machinegun,sniper,machinegun,gatlinggun,shotgun,sniper,shotgun,assaultrifle,revolver,bazooka")
+	--                        [    default    ][     pigeon    ][       duck         ][         sparrow            ][          parrot          ][    toucan         ][     flamingo   ][         eagle            ][    seagull       ][      ostrich     ][    penguin  ][      jay           ][     chicken    ] 
+	local bird_weapons=split("revolver,shotgun,revolver,shotgun,revolver,flamethrower,boxing_glove,fireworklauncher,machinegun,fireworklauncher,boxing_glove,shotgun,revolver,ringcannon,boxing_glove,assaultrifle,machinegun,sniper,machinegun,gatlinggun,shotgun,sniper,shotgun,assaultrifle,revolver,bazooka")
 	
 	for i=1,2 do
 		p.gunls[i] = copy(guns[bird_weapons[2*n+i] ])
