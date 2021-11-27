@@ -859,12 +859,12 @@ guns = {
 		shoot1
 	),
 	
-	boxing_glove = make_gun("boxing glove, 72, 5,3.2,.005,1 , 0, 0, 1,      36, -1.25",
+	boxing_glove = make_gun("boxing glove, 72, 20,3.3,.005,1 , 0, 0, 1,      36, -1.25",
  function(gun,x,y,dir)
   for i=1,5 do
 			gun:shoot(x,y,dir)
 		end
-		p.iframes,gun.ammo = 12,gun.maxammo
+		p.iframes,gun.ammo = 8,gun.maxammo
 		end
  ),
 	
