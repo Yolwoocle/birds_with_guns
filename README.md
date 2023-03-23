@@ -14,7 +14,7 @@ You will need to own [PICO-8](https://pico-8.com/).
 
 All other files are either older versions or temporary test files we didn't delete.  
 
-You can also find all the executables, but I have no idea which one corresponds to the version actually used on itch.io. If in doubt, just export it yourself. You can pirate my game, I genuinely don't give a fuck. If you want to do cool stuff with it, it's even encouraged!!  
+You can also find all the executables, but I have no idea which one corresponds to the version actually used on itch.io. If in doubt, just export it yourself. Do whatever the fuck want with it. If you want to do cool stuff with it, it's even encouraged!!  
 
 ---
 
