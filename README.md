@@ -1,5 +1,4 @@
 # Birds With Guns
-<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a>  
 PICO-8 game about birds with guns.  
 Play on: [Itch](https://yolwoocle.itch.io/birds-with-guns) · [PICO-8 BBS](https://www.lexaloffle.com/bbs/?pid=100000) 
 
@@ -16,7 +15,4 @@ All other files are either older versions or temporary test files we didn't dele
 
 You can also find all the executables, but I have no idea which one corresponds to the version actually used on itch.io. If in doubt, just export it yourself. Do whatever the fuck want with it. If you want to do cool stuff with it, it's even encouraged!!  
 
----
-
-The code is under [CC BY-NC-SA](https://creativecommons.org/licenses/by-nc-sa/4.0/). Meaning you can **distribute and remix freely** this game, BUT you must: **credit us** somewhere, **not profit out of it**, and **keep the same license** when you do (basically, keep your remix under the same conditions I just mentionned). I added the second rule to prevent NFT companies to steal our game, because [of course it happened](https://arstechnica.com/gaming/2022/08/indie-devs-outraged-by-unlicensed-game-sales-on-gamestops-nft-market/). If you are looking to make something commercial, please [email me first](https://yolwoocle.github.io/). I will probably say yes with no royalties!  
-<a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc-sa/4.0/88x31.png" /></a>  
+All rights reserved. Please [contact me](https://yolwoocle.com/about) about licensing or copyright.
