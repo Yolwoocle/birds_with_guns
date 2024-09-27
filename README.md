@@ -13,6 +13,6 @@ You will need to own [PICO-8](https://pico-8.com/).
 
 All other files are either older versions or temporary test files we didn't delete.  
 
-You can also find all the executables, but I have no idea which one corresponds to the version actually used on itch.io. If in doubt, just export it yourself. Do whatever the fuck want with it. If you want to do cool stuff with it, it's even encouraged!!  
+You can also find all the executables, but I have no idea which one corresponds to the version actually used on itch.io. If in doubt, just export it yourself. If you want to do cool stuff with it, go for it! Do contact me if it's something commercial however.
 
 All rights reserved. Please [contact me](https://yolwoocle.com/about) about licensing or copyright.
